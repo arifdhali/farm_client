@@ -1,15 +1,95 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:is(.dark *));
+
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --color-primary: #4b2bee;
+  --color-secondary:#f6f6f8;
+  --color-black:#08070f;
+  --color-gray:#8984a3;
+  --color-light:#f1f0f4;
+
+  --active-bg:#ede9fd;  
 }
 
 html,
 body {
-  @apply bg-white dark:bg-gray-950;
+  @apply bg-secondary dark:bg-gray-950;
 
   @media (prefers-color-scheme: dark) {
     color-scheme: dark;
   }
+}
+
+:root {
+  --sidebar: #fff;
+  --sidebar-foreground: hsl(240 5.3% 26.1%);
+  --sidebar-primary: hsl(240 5.9% 10%);
+  --sidebar-primary-foreground: hsl(0 0% 98%);
+  --sidebar-accent: hsl(240 4.8% 95.9%);
+  --sidebar-accent-foreground: hsl(240 5.9% 10%);
+  --sidebar-border: hsl(220 13% 91%);
+  --sidebar-ring: hsl(217.2 91.2% 59.8%);
+}
+
+.dark {
+  --sidebar: hsl(240 5.9% 10%);
+  --sidebar-foreground: hsl(240 4.8% 95.9%);
+  --sidebar-primary: hsl(224.3 76.3% 48%);
+  --sidebar-primary-foreground: hsl(0 0% 100%);
+  --sidebar-accent: hsl(240 3.7% 15.9%);
+  --sidebar-accent-foreground: hsl(240 4.8% 95.9%);
+  --sidebar-border: hsl(240 3.7% 15.9%);
+  --sidebar-ring: hsl(217.2 91.2% 59.8%);
+}
+
+@theme inline {
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+
+
+
+input{
+  box-shadow: none;
+  border-color: var(--color-light);
+  color: var(--color-black);
+}
+input:focus{
+  box-shadow: none;
+}
+
+.sidbar-collapse svg{
+height: 25px;
+width: 35px;
+}
+
+th{
+  color: #485d79;
+  padding: 10px 20px;
+}
+table {
+color: #003355;
+}
+td{
+  border-color: red;
+  padding: 10px 20px;
+}
+.paginations button{
+ transition: all .3s ease; 
+ overflow: hidden;
+ border-radius: 4px;
+ border-color: white;
+}
+.paginations button:hover{  
+
 }
