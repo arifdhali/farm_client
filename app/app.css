@@ -6,16 +6,18 @@
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   --color-primary: #4b2bee;
-  --color-secondary:#f6f6f8;
-  --color-black:#08070f;
-  --color-gray:#8984a3;
-  --color-light:#f1f0f4;
+  --color-secondary: #f6f6f8;
+  --color-black: #08070f;
+  --color-gray: #8984a3;
+  --color-light: #f1f0f4;
 
-  --active-bg:#ede9fd;  
+  --active-bg: #ede9fd;
 }
-*{
-  box-sizing: border-box;    
+
+* {
+  box-sizing: border-box;
 }
+
 html,
 body {
   @apply bg-secondary dark:bg-gray-950;
@@ -35,6 +37,7 @@ body {
   --sidebar-border: hsl(220 13% 91%);
   --sidebar-ring: hsl(217.2 91.2% 59.8%);
 }
+
 
 .dark {
   --sidebar: hsl(240 5.9% 10%);
@@ -61,38 +64,45 @@ body {
 
 
 
-input{
+input {
   box-shadow: none;
   border-color: var(--color-light);
   color: var(--color-black);
 }
-input:focus{
+
+input:focus {
   box-shadow: none;
 }
 
-.sidbar-collapse svg{
-height: 25px;
-width: 35px;
+.sidbar-collapse svg {
+  height: 25px;
+  width: 35px;
 }
 
-th{
+th {
   color: #485d79;
   padding: 10px 20px;
 }
+
 table {
-color: #003355;
+  color: #003355;
 }
-td{
+
+td {
   border-color: red;
   padding: 10px 20px;
 }
-.paginations button{
- transition: all .3s ease; 
- overflow: hidden;
- border-radius: 4px;
- border-color: white;
-}
-.paginations button:hover{  
 
+.paginations button {
+  transition: all .3s ease;
+  overflow: hidden;
+  border-radius: 4px;
+  border-color: white;
 }
 
+.paginations button:hover {}
+
+button {
+  cursor: pointer;
+  transition: all .3s ease;
+}

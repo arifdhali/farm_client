@@ -1,25 +1,41 @@
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { Badge, ChevronLeft, ChevronRight, Download, Edit, Edit2Icon, Eye, Filter, Pencil, Plus, Search, Trash, Trash2, View } from 'lucide-react'
+import { Badge, ChevronLeft, ChevronRight, Download, Edit, Edit2Icon, Eye, Filter, Pencil, Plus, PlusIcon, Search, Trash, Trash2, View } from 'lucide-react'
+import { Link } from 'react-router'
 
 
 const list = () => {
   return (
     <>
 
-      <div
-        className="flex-1 overflow-y-auto p-8 bg-background-light dark:bg-background-dark"
-      >
+      <div className=" rounded-xl bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-8 py-6">
+        <div className="flex flex-wrap justify-between items-center gap-4">
+          <div>
+            <h2
+              className="text-slate-900 dark:text-white text-3xl font-black leading-tight tracking-tight"
+            >
+              Farmer Listing
+            </h2>
+            <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
+              Manage and monitor all registered poultry farmers across
+              locations.
+            </p>
+          </div>
+          <Link to={"/farms/add"} className=" flex items-center gap-2 px-5 py-2.5 bg-primary hover:bg-black text-white text-sm font-bold rounded-lg transition-all shadow-lg shadow-primary/20">
+            <PlusIcon />
+            Add Farmer
+          </Link>
+        </div>
+      </div>
+
+      <div className="flex-1 overflow-y-auto pb-8 pt-4 bg-background-light dark:bg-background-dark">
         <div className="space-y-6">
-          <div
-            className="bg-white dark:bg-slate-900 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col md:flex-row gap-4"
-          >
+          <div className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-col md:flex-row gap-4">
             <div className="flex-1 relative">
-              <span
-                className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
-              >search</span
-              >
+              <span className="absolute left-4 top-1/2  -translate-y-full text-slate-400 pointer-events-none">
+                <Search />
+              </span>
               <input
                 className="w-full pl-12 pr-4 py-3 bg-slate-50 dark:bg-slate-800 border-none rounded-lg text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:ring-2 focus:ring-primary/20 transition-all"
                 placeholder="Search by farmer name, address or mobile..."
@@ -29,20 +45,10 @@ const list = () => {
             <div className="flex gap-2">
               <button
                 className="flex items-center gap-2 px-4 py-3 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors text-sm font-medium"
-              >
-                <span className="material-symbols-outlined text-[20px]"
-                >filter_list</span
-                >
-                <span>Filters</span>
+              ><Filter />
+                Filters
               </button>
-              <button
-                className="flex items-center gap-2 px-4 py-3 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors text-sm font-medium"
-              >
-                <span className="material-symbols-outlined text-[20px]"
-                >download</span
-                >
-                <span>Export</span>
-              </button>
+
             </div>
           </div>
           <div
@@ -137,25 +143,17 @@ const list = () => {
                           className="p-1.5 rounded-lg text-slate-500 hover:text-primary hover:bg-primary/10 transition-colors"
                           title="View"
                         >
-                          <span className="material-symbols-outlined text-[20px]"
-                          >visibility</span
+                          <span className="text-[20px]"
+                          >
+                            <Eye className='size-5' />
+                          </span
                           >
                         </button>
-                        <button
-                          className="p-1.5 rounded-lg text-slate-500 hover:text-primary hover:bg-primary/10 transition-colors"
-                          title="Edit"
-                        >
-                          <span className="material-symbols-outlined text-[20px]"
-                          >edit</span
-                          >
+                        <button className="p-1.5 rounded-lg text-slate-500 hover:text-primary hover:bg-primary/10 transition-colors" title="Edit">
+                          <Edit className='size-5' />
                         </button>
-                        <button
-                          className="p-1.5 rounded-lg text-slate-500 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
-                          title="Delete"
-                        >
-                          <span className="material-symbols-outlined text-[20px]"
-                          >delete</span
-                          >
+                        <button className="p-1.5 rounded-lg text-red-500 hover:bg-red-100  transition-colors " title="Delete" >
+                          <Trash className='size-5' />
                         </button>
                       </div>
                     </td>
@@ -208,25 +206,17 @@ const list = () => {
                           className="p-1.5 rounded-lg text-slate-500 hover:text-primary hover:bg-primary/10 transition-colors"
                           title="View"
                         >
-                          <span className="material-symbols-outlined text-[20px]"
-                          >visibility</span
+                          <span className="text-[20px]"
+                          >
+                            <Eye className='size-5' />
+                          </span
                           >
                         </button>
-                        <button
-                          className="p-1.5 rounded-lg text-slate-500 hover:text-primary hover:bg-primary/10 transition-colors"
-                          title="Edit"
-                        >
-                          <span className="material-symbols-outlined text-[20px]"
-                          >edit</span
-                          >
+                        <button className="p-1.5 rounded-lg text-slate-500 hover:text-primary hover:bg-primary/10 transition-colors" title="Edit">
+                          <Edit className='size-5' />
                         </button>
-                        <button
-                          className="p-1.5 rounded-lg text-slate-500 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
-                          title="Delete"
-                        >
-                          <span className="material-symbols-outlined text-[20px]"
-                          >delete</span
-                          >
+                        <button className="p-1.5 rounded-lg text-red-500 hover:bg-red-100  transition-colors " title="Delete" >
+                          <Trash className='size-5' />
                         </button>
                       </div>
                     </td>
@@ -279,25 +269,17 @@ const list = () => {
                           className="p-1.5 rounded-lg text-slate-500 hover:text-primary hover:bg-primary/10 transition-colors"
                           title="View"
                         >
-                          <span className="material-symbols-outlined text-[20px]"
-                          >visibility</span
+                          <span className="text-[20px]"
+                          >
+                            <Eye className='size-5' />
+                          </span
                           >
                         </button>
-                        <button
-                          className="p-1.5 rounded-lg text-slate-500 hover:text-primary hover:bg-primary/10 transition-colors"
-                          title="Edit"
-                        >
-                          <span className="material-symbols-outlined text-[20px]"
-                          >edit</span
-                          >
+                        <button className="p-1.5 rounded-lg text-slate-500 hover:text-primary hover:bg-primary/10 transition-colors" title="Edit">
+                          <Edit className='size-5' />
                         </button>
-                        <button
-                          className="p-1.5 rounded-lg text-slate-500 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
-                          title="Delete"
-                        >
-                          <span className="material-symbols-outlined text-[20px]"
-                          >delete</span
-                          >
+                        <button className="p-1.5 rounded-lg text-red-500 hover:bg-red-100  transition-colors " title="Delete" >
+                          <Trash className='size-5' />
                         </button>
                       </div>
                     </td>
@@ -351,25 +333,17 @@ const list = () => {
                           className="p-1.5 rounded-lg text-slate-500 hover:text-primary hover:bg-primary/10 transition-colors"
                           title="View"
                         >
-                          <span className="material-symbols-outlined text-[20px]"
-                          >visibility</span
+                          <span className="text-[20px]"
+                          >
+                            <Eye className='size-5' />
+                          </span
                           >
                         </button>
-                        <button
-                          className="p-1.5 rounded-lg text-slate-500 hover:text-primary hover:bg-primary/10 transition-colors"
-                          title="Edit"
-                        >
-                          <span className="material-symbols-outlined text-[20px]"
-                          >edit</span
-                          >
+                        <button className="p-1.5 rounded-lg text-slate-500 hover:text-primary hover:bg-primary/10 transition-colors" title="Edit">
+                          <Edit className='size-5' />
                         </button>
-                        <button
-                          className="p-1.5 rounded-lg text-slate-500 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
-                          title="Delete"
-                        >
-                          <span className="material-symbols-outlined text-[20px]"
-                          >delete</span
-                          >
+                        <button className="p-1.5 rounded-lg text-red-500 hover:bg-red-100  transition-colors " title="Delete" >
+                          <Trash className='size-5' />
                         </button>
                       </div>
                     </td>
@@ -422,17 +396,17 @@ const list = () => {
                           className="p-1.5 rounded-lg text-slate-500 hover:text-primary hover:bg-primary/10 transition-colors"
                           title="View"
                         >
-                          <span className="material-symbols-outlined text-[20px]"
+                          <span className="text-[20px]"
                           >
-                            <Eye  className='size-5' />
+                            <Eye className='size-5' />
                           </span
                           >
                         </button>
                         <button className="p-1.5 rounded-lg text-slate-500 hover:text-primary hover:bg-primary/10 transition-colors" title="Edit">
-                          <Edit  className='size-5' />
+                          <Edit className='size-5' />
                         </button>
                         <button className="p-1.5 rounded-lg text-red-500 hover:bg-red-100  transition-colors " title="Delete" >
-                          <Trash className='size-5'/>
+                          <Trash className='size-5' />
                         </button>
                       </div>
                     </td>
@@ -449,7 +423,7 @@ const list = () => {
                   className="flex size-9 items-center justify-center rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors text-slate-400"
                   href="#"
                 >
-                  <span className="material-symbols-outlined text-[20px]"
+                  <span className="text-[20px]"
                   ><ChevronLeft /></span
                   >
                 </a>
@@ -478,7 +452,7 @@ const list = () => {
                   className="flex size-9 items-center justify-center rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors text-slate-400"
                   href="#"
                 >
-                  <span className="material-symbols-outlined text-[20px]"
+                  <span className="text-[20px]"
                   >
                     <ChevronRight />
                   </span
