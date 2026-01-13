@@ -13,7 +13,9 @@
 
   --active-bg:#ede9fd;  
 }
-
+*{
+  box-sizing: border-box;    
+}
 html,
 body {
   @apply bg-secondary dark:bg-gray-950;
@@ -93,3 +95,4 @@ td{
 .paginations button:hover{  
 
 }
+

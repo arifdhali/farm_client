@@ -1,181 +1,105 @@
-import React, { useEffect, useState } from "react"
+import React from "react"
 import {
-  Calendar,
-  Home,
-  Inbox,
-  Search,
-  Settings,
-  ChevronDown,
+  LayoutDashboard,
+  Warehouse,
+  Wheat,
+  Users,
+  IndianRupee,
+  Pill,
+  Egg,
+  LogOut,
 } from "lucide-react"
-import { Link, useLocation } from "react-router"
+
 
 import {
-  Sidebar as UIsidebar,
+  Sidebar,
   SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
+  SidebarHeader,
+  SidebarFooter,
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
-} from "../ui/sidebar"
+} from "@/components/ui/sidebar"
+import { Link, useLocation } from "react-router"
 
 const menuItems = [
-  {
-    title: "Feeds",
-    icon: Home,
-    children: [
-      { title: "Feed Stock", url: "/feeds/stock" },
-      { title: "Feed Usage", url: "/feeds/usage" },
-    ],
-  },
-  {
-    title: "Farms",
-    icon: Inbox,
-    url: "/farms",
-    children: [
-      { title: "List Stock", url: "/farms/list" },
-      { title: "Feed Usage", url: "/feeds/usage" },
-    ],
-  },
-  {
-    title: "Medicine",
-    icon: Calendar,
-    children: [
-      { title: "Inventory", url: "/medicine/inventory" },
-      { title: "Usage", url: "/medicine/usage" },
-    ],
-  },
-  {
-    title: "Cash",
-    icon: Search,
-    url: "/cash",
-  },
-  {
-    title: "Morality",
-    icon: Settings,
-    url: "/morality",
-  },
+  { title: "Dashboard", icon: LayoutDashboard, url: "/dashboard" },
+  { title: "Farms", icon: Warehouse, url: "/farms" },
+  { title: "Feed", icon: Wheat, url: "/feed" },
+  { title: "Users", icon: Users, url: "/users" },
+  { title: "Cash", icon: IndianRupee, url: "/cash" },
+  { title: "Medicine", icon: Pill, url: "/medicine" },
+  { title: "Chicks", icon: Egg, url: "/chicks" },
 ]
 
-const MenuSidebar = () => {
+export default function MenuSidebar() {
   const location = useLocation()
-  const [openMenu, setOpenMenu] = useState(null)
-
-  // auto open parent if child route is active
-  useEffect(() => {
-    menuItems.forEach((item) => {
-      if (
-        item.children?.some((child) =>
-          location.pathname.startsWith(child.url)
-        )
-      ) {
-        setOpenMenu(item.title)
-      }
-    })
-  }, [location.pathname])
-
-  const toggleMenu = (title) => {
-    setOpenMenu(openMenu === title ? null : title)
-  }
-
-  const isActive = (path) => location.pathname.startsWith(path)
+  const isActive = (path: string) => location.pathname.startsWith(path)
 
   return (
-    <UIsidebar className="bg-white pb-10">
-      {/* Logo */}
-      <div className="py-5 w-24 mx-auto">
-        <img src="/logo.png" alt="Logo" />
-      </div>
+    <Sidebar className="border-r bg-white dark:bg-slate-900">
+      {/* Header / Logo */}
+      <SidebarHeader className="px-6 py-5">
+        <div className="flex items-center gap-3">
+          <div className="bg-primary text-white rounded-lg p-2">
+            🌱
+          </div>
+          <div>
+            <h1 className="text-sm font-bold text-slate-900 dark:text-white">
+              AgroDash
+            </h1>
+            <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
+              Management v1.0
+            </p>
+          </div>
+        </div>
+      </SidebarHeader>
 
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {menuItems.map((item) => {
-                const parentActive =
-                  item.url && isActive(item.url) ||
-                  item.children?.some((c) => isActive(c.url))
-
-                const isOpen = openMenu === item.title
-
-                return (
-                  <SidebarMenuItem className="" key={item.title}>
-                    {/* Parent with submenu */}
-                    {item.children ? (
-                      <>
-                        <SidebarMenuButton
-                          onClick={() => toggleMenu(item.title)}
-                          className={`cursor-pointer flex justify-between items-center transition
-                            ${parentActive
-                              ? "bg-primary/10 text-primary font-medium"
-                              : ""
-                            }`}
-                        >
-                          <div className="flex items-center gap-2">
-                            <item.icon size={18} />
-                            <span>{item.title}</span>
-                          </div>
-
-                          <ChevronDown
-                            size={16}
-                            className={`transition-transform duration-300 ${isOpen ? "rotate-180" : ""
-                              }`}
-                          />
-                        </SidebarMenuButton>
-
-
-                        <div
-                          className={`ml-6 overflow-hidden transition-all duration-300 ease-in-out
-                            ${isOpen
-                              ? "max-h-40 opacity-100 mt-1"
-                              : "max-h-0 opacity-0"
-                            }`}
-                        >
-                          {item.children.map((sub) => {
-                            const subActive = isActive(sub.url)
-
-                            return (
-                              <Link
-                                key={sub.title}
-                                to={sub.url}
-                                className={`block py-2 text-sm rounded-md px-2 transition
-                                  ${subActive
-                                    ? "text-primary font-medium"
-                                    : "text-muted-foreground hover:text-foreground"
-                                  }`}
-                              >
-                                {sub.title}
-                              </Link>
-                            )
-                          })}
-                        </div>
-                      </>
-                    ) : (
-                      <SidebarMenuButton
-                        asChild
-                        className={`transition ${parentActive
-                            ? "bg-primary/10 text-primary font-medium"
-                            : ""
-                          }`}
-                      >
-                        <Link
-                          to={item.url}
-                          className="flex items-center gap-2"
-                        >
-                          <item.icon size={18} />
-                          <span>{item.title}</span>
-                        </Link>
-                      </SidebarMenuButton>
-                    )}
-                  </SidebarMenuItem>
-                )
-              })}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+      {/* Menu */}
+      <SidebarContent className="px-3">
+        <SidebarMenu>
+          {menuItems.map((item) => (
+            <SidebarMenuItem key={item.title}>
+              <SidebarMenuButton
+                asChild
+                className={`flex gap-3 rounded-lg px-3 py-2 transition
+                  ${
+                    isActive(item.url)
+                      ? "bg-primary/10 text-primary font-semibold"
+                      : "text-muted-foreground hover:bg-muted"
+                  }`}
+              >
+                <Link to={item.url}>
+                  <item.icon size={20} />
+                  <span>{item.title}</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          ))}
+        </SidebarMenu>
       </SidebarContent>
-    </UIsidebar>
+
+      {/* Footer / Profile */}
+      <SidebarFooter className="p-4 border-t">
+        <div className="flex items-center gap-3 rounded-xl bg-muted p-2">
+          <img
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBc8MReypv_84juSm1htT8mC7NE7-sSbHYeXXTbIBEDLlob-48DszqeuyYuWxKTefjVo6ibaYpAiS-sFMyQRUFwZ_McZouz8vi0iHIvYpILETBYKqj0saTVLCMXfNYEY2qA8wstaw8coMRJ3nXctC2jSfg6Op2aMtBc8VtegKJx1bC7GL7dkbR5RqirPfSd6HCnXkU-WMiSc8XHFxraMUtJ1PZE2Y7ZXDM4WIlmYecD_fpLC2LyU7xEI4QRqAv4evYI7aOsqP4FxIsg"
+            className="h-9 w-9 rounded-full object-cover"
+            alt="User"
+          />
+
+          <div className="min-w-0">
+            <p className="text-xs font-bold truncate">Alex Morgan</p>
+            <p className="text-[10px] text-muted-foreground truncate">
+              Administrator
+            </p>
+          </div>
+
+          <button className="ml-auto text-muted-foreground hover:text-foreground">
+            <LogOut size={16} />
+          </button>
+        </div>
+      </SidebarFooter>
+    </Sidebar>
   )
 }
-
-export default MenuSidebar
