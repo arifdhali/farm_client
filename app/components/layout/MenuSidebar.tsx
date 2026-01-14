@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect } from "react";
 
 import {
   LayoutDashboard,
@@ -12,7 +12,8 @@ import {
   Egg,
   LogOut,
   ChevronDown,
-} from "lucide-react"
+  NotebookIcon,
+} from "lucide-react";
 
 import {
   Sidebar,
@@ -22,53 +23,76 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
-} from "@/components/ui/sidebar"
-import { Link, useLocation } from "react-router"
+} from "@/components/ui/sidebar";
+import { Link, useLocation } from "react-router";
 
 const menuItems = [
   { title: "Dashboard", icon: LayoutDashboard, url: "/" },
+  {
+    title: "Chicks",
+    icon: Egg,
+    url: "/chicks",
+    children: [{ title: "Delivered", url: "/chicks/delivered" }],
+  },
   {
     title: "Farms",
     icon: Warehouse,
     url: "/farms",
     children: [
       { title: "List", url: "/farms/list" },
-      { title: "Mortality", url: "/farms/mortality" },
+      { title: "Lifting", url: "/farms/lifting" },
+      { title: "Mortality", url: "/mortality" },
     ],
   },
   {
-    title: "Feed", icon: Wheat, url: "/feed", children: [
+    title: "Feed",
+    icon: Wheat,
+    url: "/feed",
+    children: [
       { title: "List", url: "/feed/list" },
       { title: "Mortality", url: "/feed/mortality" },
     ],
   },
   { title: "Users", icon: Users, url: "/users" },
-  { title: "Cash", icon: IndianRupee, url: "/cash" },
-  { title: "Medicine", icon: Pill, url: "/medicine" },
-  { title: "Chicks", icon: Egg, url: "/chicks" },
-]
+  {
+    title: "Cash",
+    icon: IndianRupee,
+    url: "/cash",
+    children: [
+      { title: "Expenses", url: "/cash/expenses" },
+      { title: "Collections", url: "/cash/collection" },
+    ],
+  },
+  {
+    title: "Medicine",
+    icon: Pill,
+    url: "/medicine",
+    children: [
+      { title: "List", url: "/medicine/list" },
+      { title: "Delivered", url: "/medicine/delivered" },
+    ],
+  },
+  { title: "Reports", icon: NotebookIcon, url: "/reports" },
+];
 
 export default function MenuSidebar() {
-  const location = useLocation()
+  const location = useLocation();
   const isActive = (path: string) =>
-    location.pathname === path ||
-    location.pathname.startsWith(path + "/")
+    location.pathname === path || location.pathname.startsWith(path + "/");
 
-  const [openMenu, setOpenMenu] = useState<string | null>(null)
+  const [openMenu, setOpenMenu] = useState<string | null>(null);
 
   useEffect(() => {
     menuItems.forEach((item) => {
-      if (
-        item.children?.some((c) => location.pathname.startsWith(c.url))
-      ) {
-        setOpenMenu(item.title)
+      if (item.children?.some((c) => location.pathname.startsWith(c.url))) {
+        setOpenMenu(item.title);
       }
-    })
-    console.log(openMenu)
-  }, [location.pathname])
+    });
+    console.log(openMenu);
+  }, [location.pathname]);
 
   return (
-    <Sidebar className="border-r bg-white dark:bg-slate-900">
+    <Sidebar className="border-r border-r-[#dddbe6] bg-white dark:bg-slate-900">
       {/* Header */}
       <SidebarHeader className="px-6 py-5">
         <div className="flex items-center gap-3">
@@ -86,7 +110,7 @@ export default function MenuSidebar() {
       <SidebarContent className="px-3">
         <SidebarMenu>
           {menuItems.map((item) => {
-            const isOpen = openMenu === item.title
+            const isOpen = openMenu === item.title;
 
             return (
               <SidebarMenuItem key={item.title} className="space-y-1">
@@ -98,20 +122,22 @@ export default function MenuSidebar() {
                       : null
                   }
                   asChild={!item.children}
-                  className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 transition
-                    ${isActive(item.url)
-                      ? "bg-primary/10 text-primary font-semibold"
-                      : "text-muted-foreground hover:bg-muted"
+                  className={` flex w-full items-center gap-3 rounded-lg px-3 py-2 transition
+                    ${
+                      isActive(item.url)
+                        ? "bg-primary/10 text-primary font-semibold"
+                        : "hover:text-primary hover:bg-primary/10 transition-all duration-300"
                     }`}
                 >
                   {item.children ? (
-                    <p className="w-full flex items-center gap-3">
+                    <p className="w-full flex items-center gap-3 ">
                       <item.icon size={20} />
                       <span className="flex-1 text-left">{item.title}</span>
                       <ChevronDown
                         size={16}
-                        className={`transition-transform duration-300 ${isOpen ? "rotate-180" : ""
-                          }`}
+                        className={`transition-transform duration-300 ${
+                          isOpen ? "rotate-180" : ""
+                        }`}
                       />
                     </p>
                   ) : (
@@ -121,15 +147,10 @@ export default function MenuSidebar() {
                     </Link>
                   )}
                 </SidebarMenuButton>
-
-                {/* Submenu */}
                 {item.children && (
                   <div
                     className={`ml-9 overflow-hidden transition-all duration-300 ease-in-out
-                      ${isOpen
-                        ? "max-h-40 opacity-100"
-                        : "max-h-0 opacity-0"
-                      }`}
+                      ${isOpen ? "max-h-40 opacity-100" : "max-h-0 opacity-0"}`}
                   >
                     <div className="flex flex-col gap-1 py-1">
                       {item.children.map((child) => (
@@ -137,9 +158,10 @@ export default function MenuSidebar() {
                           key={child.title}
                           to={child.url}
                           className={`rounded-md px-3 py-1.5 text-sm transition
-                            ${isActive(child.url)
-                              ? "bg-primary/10 text-primary font-medium"
-                              : "text-muted-foreground hover:bg-muted"
+                            ${
+                              isActive(child.url)
+                                ? " text-primary font-medium"
+                                : "text-muted-foreground hover:bg-muted"
                             }`}
                         >
                           {child.title}
@@ -149,7 +171,7 @@ export default function MenuSidebar() {
                   </div>
                 )}
               </SidebarMenuItem>
-            )
+            );
           })}
         </SidebarMenu>
       </SidebarContent>
@@ -172,5 +194,5 @@ export default function MenuSidebar() {
         </div>
       </SidebarFooter>
     </Sidebar>
-  )
+  );
 }

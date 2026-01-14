@@ -6,8 +6,9 @@ export default [
     layout("components/layout/AdminLayout.tsx", [
         index("routes/home.tsx"),
         ...prefix("farms", [
-            route("list", "routes/farms/list.tsx"),
-            route("add", "routes/farms/add.tsx"),
+            route("list", "routes/farms/List.tsx"),
+            route("add", "routes/farms/Add.tsx"),
+            route(":id/edit", "routes/farms/Edit.tsx"),
         ])
     ])
 ] satisfies RouteConfig;

@@ -1,15 +1,16 @@
 import React from 'react'
 import { Input } from '../ui/input'
 import { BellIcon, Hamburger, MenuSquareIcon, Settings } from 'lucide-react'
+import { SidebarTrigger } from '../ui/sidebar'
 
 const Header = () => {
   return (
-    <header className="h-16 bg-white dark:bg-[#1a1630] border-b border-[#dddbe6] dark:border-white/10 flex items-center justify-between px-8 sticky top-0 z-10">
-      <div className="bg-primary p-1 rounded-lg">
+    <header className="h-16 bg-white dark:bg-[#1a1630] border-b border-[#dddbe6] dark:border-white/10 flex items-center justify-between px-6 sticky top-0 z-10">
 
-        <MenuSquareIcon className='' />
+      <SidebarTrigger className="bg-primary text-white p-1 rounded-lg" >
+        <MenuSquareIcon />
+      </SidebarTrigger>
 
-      </div>
       <div className="flex items-center gap-4">
         <button className="size-10 flex items-center justify-center rounded-lg bg-light dark:bg-white/5 text-[#121118] dark:text-white hover:bg-gray-200 dark:hover:bg-white/10">
           <BellIcon />

@@ -1,9 +1,11 @@
 import { ArrowLeftIcon, ArrowLeftToLineIcon } from "lucide-react";
 import React, { useState } from "react";
-import { Link } from "react-router";
+import { Link, useParams } from "react-router";
 
 const Add = () => {
   const [FarmsStatus, setFarmsStatus] = useState<"free" | "occupied">("free");
+  const id = useParams();
+  console.log(id);
 
   return (
     <div className="flex-1 overflow-y-auto bg-background-light dark:bg-background-dark">
@@ -11,10 +13,11 @@ const Add = () => {
         <div className="flex flex-wrap justify-between items-end gap-3">
           <div className="flex flex-col ">
             <h2 className="text-zinc-900 dark:text-zinc-100 text-3xl font-black leading-tight tracking-[-0.033em]">
-              Add New Farmer
+              Edit Farmer
             </h2>
             <p className="text-zinc-500 dark:text-zinc-400 text-base font-normal leading-normal">
-              Register a new farmer and their livestock capacity to the system.
+              Update the personal and operational information for this farmer
+              profile.
             </p>
           </div>
           <Link
@@ -108,33 +111,9 @@ const Add = () => {
                 </button>
               </div>
             </div>
-            <div className="col-span-1 ">
-              <div className="flex justify-between gap-x-8">
-                <div className="flex flex-col w-1/2 ">
-                  <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
-                    Farmer Rate
-                  </label>
-                  <input
-                    className="w-full rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-4 py-3 text-base"
-                    placeholder="Fixed price"
-                    type="number"
-                  />
-                </div>
-                <div className="flex flex-col w-1/2 ">
-                  <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
-                    Commision Percentage (%)
-                  </label>
-                  <input
-                    className="w-full rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-4 py-3 text-base"
-                    placeholder="10.2%"
-                    type="number"
-                  />
-                </div>
-              </div>
-            </div>
           </div>
 
-          <div className="mt-10 flex items-center justify-end gap-4">
+          <div className="mt-10 flex items-center justify-between">
             <button
               className="px-6 py-3 rounded-lg text-sm font-bold bg-red-600 text-white dark:text-zinc-400 hover:bg-red-400 dark:hover:bg-zinc-800 transition-colors"
               type="button"

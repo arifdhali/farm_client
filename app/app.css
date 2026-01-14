@@ -1,10 +1,17 @@
 @import "tailwindcss";
 
+/* ---------------------------------------------
+   Dark variant
+--------------------------------------------- */
 @custom-variant dark (&:is(.dark *));
 
+/* ---------------------------------------------
+   Theme tokens (brand only)
+--------------------------------------------- */
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+
   --color-primary: #4b2bee;
   --color-secondary: #f6f6f8;
   --color-black: #08070f;
@@ -14,56 +21,85 @@
   --active-bg: #ede9fd;
 }
 
+/* ---------------------------------------------
+   Global reset
+--------------------------------------------- */
 * {
   box-sizing: border-box;
 }
 
-html,
-body {
-  @apply bg-secondary dark:bg-gray-950;
+/* ---------------------------------------------
+   CORE DESIGN TOKENS (DO NOT BREAK THESE)
+--------------------------------------------- */
+@layer base {
+  :root {
+    /* App surface colors (USED BY DIALOGS, POPOVERS) */
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
 
-  @media (prefers-color-scheme: dark) {
-    color-scheme: dark;
+    /* Borders & focus */
+    --border: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+
+    /* Sidebar */
+    --sidebar: 0 0% 100%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 240 100% 60%;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --ring: 217.2 91.2% 59.8%;
+
+    --sidebar: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 }
 
-:root {
-  --sidebar: #fff;
-  --sidebar-foreground: hsl(240 5.3% 26.1%);
-  --sidebar-primary: hsl(240 5.9% 10%);
-  --sidebar-primary-foreground: hsl(0 0% 98%);
-  --sidebar-accent: hsl(240 4.8% 95.9%);
-  --sidebar-accent-foreground: hsl(240 5.9% 10%);
-  --sidebar-border: hsl(220 13% 91%);
-  --sidebar-ring: hsl(217.2 91.2% 59.8%);
-}
-
-
-.dark {
-  --sidebar: hsl(240 5.9% 10%);
-  --sidebar-foreground: hsl(240 4.8% 95.9%);
-  --sidebar-primary: hsl(224.3 76.3% 48%);
-  --sidebar-primary-foreground: hsl(0 0% 100%);
-  --sidebar-accent: hsl(240 3.7% 15.9%);
-  --sidebar-accent-foreground: hsl(240 4.8% 95.9%);
-  --sidebar-border: hsl(240 3.7% 15.9%);
-  --sidebar-ring: hsl(217.2 91.2% 59.8%);
-}
-
+/* ---------------------------------------------
+   Map tokens to Tailwind colors
+--------------------------------------------- */
 @theme inline {
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-border: hsl(var(--border));
+  --color-ring: hsl(var(--ring));
+
+  --color-sidebar: hsl(var(--sidebar));
+  --color-sidebar-foreground: hsl(var(--sidebar-foreground));
+  --color-sidebar-primary: hsl(var(--sidebar-primary));
+  --color-sidebar-primary-foreground: hsl(var(--sidebar-primary-foreground));
+  --color-sidebar-accent: hsl(var(--sidebar-accent));
+  --color-sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground));
+  --color-sidebar-border: hsl(var(--sidebar-border));
+  --color-sidebar-ring: hsl(var(--sidebar-ring));
 }
 
+/* ---------------------------------------------
+   Global body styles (IMPORTANT)
+--------------------------------------------- */
+html,
+body {
+  @apply bg-background text-foreground;
+}
 
-
-
+/* ---------------------------------------------
+   Inputs
+--------------------------------------------- */
 input {
   box-shadow: none;
   border-color: var(--color-light);
@@ -72,11 +108,14 @@ input {
 
 input:focus {
   box-shadow: none;
+  outline: 1px solid hsl(var(--ring));
 }
 
-.sidbar-collapse svg {
-  height: 25px;
-  width: 35px;
+/* ---------------------------------------------
+   Tables
+--------------------------------------------- */
+table {
+  color: #003355;
 }
 
 th {
@@ -84,25 +123,32 @@ th {
   padding: 10px 20px;
 }
 
-table {
-  color: #003355;
-}
-
 td {
-  border-color: red;
   padding: 10px 20px;
 }
 
+/* ---------------------------------------------
+   Buttons
+--------------------------------------------- */
+button {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* ---------------------------------------------
+   Pagination
+--------------------------------------------- */
 .paginations button {
-  transition: all .3s ease;
+  transition: all 0.3s ease;
   overflow: hidden;
   border-radius: 4px;
   border-color: white;
 }
 
-.paginations button:hover {}
-
-button {
-  cursor: pointer;
-  transition: all .3s ease;
+/* ---------------------------------------------
+   Sidebar icons
+--------------------------------------------- */
+.sidbar-collapse svg {
+  height: 25px;
+  width: 35px;
 }
