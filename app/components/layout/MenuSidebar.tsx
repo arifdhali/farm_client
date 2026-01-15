@@ -13,6 +13,7 @@ import {
   LogOut,
   ChevronDown,
   NotebookIcon,
+  PenLineIcon,
 } from "lucide-react";
 
 import {
@@ -41,7 +42,6 @@ const menuItems = [
     children: [
       { title: "List", url: "/farms/list" },
       { title: "Lifting", url: "/farms/lifting" },
-      { title: "Mortality", url: "/mortality" },
     ],
   },
   {
@@ -50,7 +50,6 @@ const menuItems = [
     url: "/feed",
     children: [
       { title: "List", url: "/feed/list" },
-      { title: "Mortality", url: "/feed/mortality" },
     ],
   },
   { title: "Users", icon: Users, url: "/users" },
@@ -73,6 +72,8 @@ const menuItems = [
     ],
   },
   { title: "Reports", icon: NotebookIcon, url: "/reports" },
+  { title: "Mortality", icon: PenLineIcon, url: "/mortality" },
+
 ];
 
 export default function MenuSidebar() {
@@ -88,7 +89,6 @@ export default function MenuSidebar() {
         setOpenMenu(item.title);
       }
     });
-    console.log(openMenu);
   }, [location.pathname]);
 
   return (
@@ -123,10 +123,9 @@ export default function MenuSidebar() {
                   }
                   asChild={!item.children}
                   className={` flex w-full items-center gap-3 rounded-lg px-3 py-2 transition
-                    ${
-                      isActive(item.url)
-                        ? "bg-primary/10 text-primary font-semibold"
-                        : "hover:text-primary hover:bg-primary/10 transition-all duration-300"
+                    ${isActive(item.url)
+                      ? "bg-primary/10 text-primary font-semibold"
+                      : "hover:text-primary hover:bg-primary/10 transition-all duration-300"
                     }`}
                 >
                   {item.children ? (
@@ -135,9 +134,8 @@ export default function MenuSidebar() {
                       <span className="flex-1 text-left">{item.title}</span>
                       <ChevronDown
                         size={16}
-                        className={`transition-transform duration-300 ${
-                          isOpen ? "rotate-180" : ""
-                        }`}
+                        className={`transition-transform duration-300 ${isOpen ? "rotate-180" : ""
+                          }`}
                       />
                     </p>
                   ) : (
@@ -158,10 +156,9 @@ export default function MenuSidebar() {
                           key={child.title}
                           to={child.url}
                           className={`rounded-md px-3 py-1.5 text-sm transition
-                            ${
-                              isActive(child.url)
-                                ? " text-primary font-medium"
-                                : "text-muted-foreground hover:bg-muted"
+                            ${isActive(child.url)
+                              ? " text-primary font-medium"
+                              : "text-muted-foreground hover:bg-muted"
                             }`}
                         >
                           {child.title}

@@ -1,5 +1,9 @@
+import { useState } from "react";
+import { Link } from "react-router";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+
 import {
   Table,
   TableBody,
@@ -8,6 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,27 +23,42 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
 } from "@/components/ui/alert-dialog";
+
 import {
-  Badge,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+
+import { Calendar } from "@/components/ui/calendar";
+
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+import {
+  ChevronDown,
   ChevronLeft,
   ChevronRight,
   Download,
+  DownloadCloudIcon,
   Edit,
-  Edit2Icon,
   Eye,
   Filter,
-  LucideFileWarning,
   Pencil,
   Plus,
   PlusIcon,
   Search,
   Trash,
-  Trash2,
   TrashIcon,
-  View,
 } from "lucide-react";
-import { useState } from "react";
-import { Link } from "react-router";
+
+import type { DateRange } from "react-day-picker";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 const List = () => {
   const [openAlert, setOpenAlert] = useState<boolean>(false);
@@ -46,10 +66,14 @@ const List = () => {
   const handleDelete = (id: number): void => {
     setOpenAlert(!openAlert);
   };
-
+  const [open, setOpen] = useState(false);
+  const [dateRange, setDateRange] = useState<DateRange | undefined>({
+    from: new Date(2025, 5, 12),
+    to: new Date(2025, 6, 15),
+  });
   return (
     <>
-      <div className=" rounded-xl bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-8 py-6">
+      <div className=" rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-8 py-6">
         <div className="flex flex-wrap justify-between items-center gap-4">
           <div>
             <h2 className="text-slate-900 dark:text-white text-3xl font-black leading-tight tracking-tight">
@@ -72,23 +96,70 @@ const List = () => {
 
       <div className="flex-1 overflow-y-auto pb-8 pt-4 bg-background-light dark:bg-background-dark">
         <div className="space-y-6">
-          <div className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-col md:flex-row gap-4">
-            <div className="flex-1 relative">
-              <span className="absolute left-4  translate-y-1/2 text-slate-400 pointer-events-none">
-                <Search />
-              </span>
-              <input
-                className="w-full pl-12 pr-4 py-3 bg-slate-50 dark:bg-slate-800 border-none rounded-lg text-sm text-slate-900 dark:text-white placeholder:text-slate-400"
+          <div className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-col lg:flex-row gap-4">
+            {/* Search */}
+            <div className="relative flex-1">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+              <Input
                 placeholder="Search by farmer name, address or mobile..."
-                type="text"
+                className="pl-11 h-11"
               />
             </div>
-            <div className="flex gap-2">
-              <button className="flex items-center gap-2 px-4 py-3 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors text-sm font-medium">
-                <Filter />
-                Filters
-              </button>
-            </div>
+
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="w-44 h-11 justify-between shadow-none font-normal border border-light"
+                >
+                  From date
+                  <ChevronDown className="h-4 w-4 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent
+                align="end"
+                className="w-75 bg-white p-0 border-0 "
+              >
+                <Calendar mode="single" className="w-full calender" />
+              </PopoverContent>
+
+            </Popover>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="w-44 h-11 justify-between font-normal border border-light shadow-none"
+                >
+                  To date
+                  <ChevronDown className="h-4 w-4 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent
+                align="end"
+                className="w-75 bg-white p-0 border-0"
+              >
+                <Calendar mode="single" className="w-full calender" />
+              </PopoverContent>
+
+            </Popover>
+
+            <Select defaultValue="10">
+              <SelectTrigger
+                size={"undefined"}
+                className="w-36 h-[44px] bg-white border border-light shadow-none"
+              >
+                <SelectValue placeholder="Per page" />
+              </SelectTrigger>
+
+              <SelectContent className="bg-white border-0">
+                <SelectItem value="10">10</SelectItem>
+                <SelectItem value="20">20</SelectItem>
+                <SelectItem value="50">50</SelectItem>
+                <SelectItem value="100">100</SelectItem>
+              </SelectContent>
+            </Select>
+
+
           </div>
           <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
             <div className="overflow-x-auto @container">
@@ -149,28 +220,46 @@ const List = () => {
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-1.5">
-                        <button
-                          className="p-1.5 rounded-lg text-slate-500 hover:text-primary hover:bg-primary/10 transition-colors"
-                          title="View"
-                        >
-                          <span className="text-[20px]">
-                            <Eye className="size-5" />
-                          </span>
-                        </button>
-                        <Link
-                          to={"/farms/1/edit"}
-                          className="p-1.5 rounded-lg text-slate-500 hover:text-primary hover:bg-primary/10 transition-colors"
-                          title="Edit"
-                        >
-                          <Edit className="size-5" />
-                        </Link>
-                        <button
-                          onClick={() => handleDelete(1)}
-                          className="p-1.5 rounded-lg text-red-500 hover:bg-red-100  transition-colors "
-                          title="Delete"
-                        >
-                          <Trash className="size-5" />
-                        </button>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Link to={"/d"}
+                              className="p-1.5 rounded-lg text-slate-500 hover:text-primary hover:bg-primary/10 transition-colors"
+                            >
+                              <DownloadCloudIcon className="size-5" />
+                            </Link>
+                          </TooltipTrigger>
+                          <TooltipContent className="bg-primary ">
+                            <p>Download Lifting</p>
+                          </TooltipContent>
+                        </Tooltip>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Link
+                              to={"/farms/1/edit"}
+                              className="p-1.5 rounded-lg text-slate-500 hover:text-primary hover:bg-primary/10 transition-colors"
+                            >
+                              <Edit className="size-5" />
+                            </Link>
+                          </TooltipTrigger>
+                          <TooltipContent className="bg-primary ">
+                            <p>Edit</p>
+                          </TooltipContent>
+                        </Tooltip>
+
+
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <button
+                              onClick={() => handleDelete(1)}
+                              className="p-1.5 rounded-lg text-red-500 hover:bg-red-100  transition-colors "
+                            >
+                              <Trash className="size-5" />
+                            </button>
+                          </TooltipTrigger>
+                          <TooltipContent className="bg-primary ">
+                            <p>Delete</p>
+                          </TooltipContent>
+                        </Tooltip>
                       </div>
                     </td>
                   </tr>

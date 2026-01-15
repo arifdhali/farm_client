@@ -152,3 +152,41 @@ button {
   height: 25px;
   width: 35px;
 }
+.calender th{
+  font-weight: 600;
+  color: black;
+}
+
+.calender th,.calender td{
+	padding: 0;
+transition: var(--default-transition-duration);
+}
+.calender td:hover{
+  background-color: #ede9ff;
+}
+.calender button{
+  border: 0;
+  box-shadow: none;
+  transition: var(--default-transition-duration);
+
+}
+.calender td button{
+  font-size: 12px;
+}
+.rdp-nav button{
+    background-color: #ede9ff;
+
+}
+.rdp-range_start button{
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0; 
+  color: white;
+}
+.rdp-range_end button{
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0; 
+  color: white;
+}
+.rdp-range_middle{
+  background-color: #ede9ff;
+}

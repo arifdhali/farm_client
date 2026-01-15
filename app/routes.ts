@@ -9,6 +9,10 @@ export default [
             route("list", "routes/farms/List.tsx"),
             route("add", "routes/farms/Add.tsx"),
             route(":id/edit", "routes/farms/Edit.tsx"),
-        ])
+        ]),
+        ...prefix("mortality", [
+            index("routes/mortality/Mortality.tsx"),
+            route("add", "routes/mortality/Add.tsx"),
+        ]),
     ])
 ] satisfies RouteConfig;
