@@ -191,7 +191,7 @@ const Mortality = () => {
                 <div className="p-4 bg-gray-50 dark:bg-gray-800/50 flex items-center justify-between border-t border-gray-100 dark:border-gray-800">
                     <span className="text-xs text-gray-500">Showing 5 of 128 entries</span>
                     <div className="flex gap-1">
-                        <button className="p-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-xs font-bold disabled:opacity-50" disabled="">Previous</button>
+                        <button className="p-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-xs font-bold disabled:opacity-50">Previous</button>
                         <button className="p-2 px-3 rounded-lg bg-primary text-white text-xs font-bold">1</button>
                         <button className="p-2 px-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-xs font-bold">2</button>
                         <button className="p-2 px-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-xs font-bold">3</button>

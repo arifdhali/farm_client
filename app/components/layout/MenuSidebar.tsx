@@ -33,7 +33,7 @@ const menuItems = [
     title: "Chicks",
     icon: Egg,
     url: "/chicks",
-    children: [{ title: "Delivered", url: "/chicks/delivered" }],
+    children: [{ title: "Delivered list", url: "/chicks/list" }],
   },
   {
     title: "Farms",
@@ -47,9 +47,10 @@ const menuItems = [
   {
     title: "Feed",
     icon: Wheat,
-    url: "/feed",
+    url: "/feeds",
     children: [
-      { title: "List", url: "/feed/list" },
+      { title: "List", url: "/feeds/list" },
+      { title: "Delivered", url: "/feeds/delivered" },
     ],
   },
   { title: "Users", icon: Users, url: "/users" },

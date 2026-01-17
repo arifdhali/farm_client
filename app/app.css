@@ -190,3 +190,7 @@ transition: var(--default-transition-duration);
 .rdp-range_middle{
   background-color: #ede9ff;
 }
+
+.color-table th{
+  color:white !important;
+}

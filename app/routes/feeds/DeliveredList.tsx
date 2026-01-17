@@ -44,6 +44,7 @@ import {
   ChevronDown,
   ChevronLeft,
   ChevronRight,
+  CircleSmall,
   Download,
   DownloadCloudIcon,
   Edit,
@@ -77,7 +78,7 @@ const List = () => {
         <div className="flex flex-wrap justify-between items-center gap-4">
           <div>
             <h2 className="text-slate-900 dark:text-white text-3xl font-black leading-tight tracking-tight">
-              Farmer Listing
+              Delivered List
             </h2>
             <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
               Manage and monitor all registered poultry farmers across
@@ -85,11 +86,11 @@ const List = () => {
             </p>
           </div>
           <Link
-            to={"/farms/add"}
+            to={"/feeds/add"}
             className=" flex items-center gap-2 px-5 py-2.5 bg-primary hover:bg-black text-white text-sm font-bold rounded-lg transition-all shadow-lg shadow-primary/20"
           >
             <PlusIcon />
-            Add Farmer
+            Make Delivery
           </Link>
         </div>
       </div>
@@ -164,25 +165,23 @@ const List = () => {
           <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
             <div className="overflow-x-auto @container">
               <div className="overflow-x-auto @container">
-                <Table className="w-full">
+                <Table className="w-full text-left border-collapse">
                   <TableHeader>
                     <TableRow className="bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800">
-                      <TableHead className="px-6 py-4 text-xs font-bold uppercase">
-                        Farmer Name
+                      <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider">
+                        Feed Type
                       </TableHead>
-                      <TableHead className="px-6 py-4 text-xs font-bold uppercase hidden md:table-cell">
-                        Address
+                      <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider">
+                        Farmer name
                       </TableHead>
-                      <TableHead className="px-6 py-4 text-xs font-bold uppercase">
-                        Mobile Number
+
+                      <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider">
+                        Unit
                       </TableHead>
-                      <TableHead className="px-6 py-4 text-xs font-bold uppercase">
-                        Farm Capacity
+                      <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider">
+                        Unit Price
                       </TableHead>
-                      <TableHead className="px-6 py-4 text-xs font-bold uppercase">
-                        Status
-                      </TableHead>
-                      <TableHead className="px-6 py-4 text-xs font-bold uppercase text-right">
+                      <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-right">
                         Actions
                       </TableHead>
                     </TableRow>
@@ -190,70 +189,57 @@ const List = () => {
 
                   <TableBody className="divide-y divide-slate-100 dark:divide-slate-800">
                     {/* ROW */}
-                    <TableRow className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
+                    <TableRow className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors group">
                       <TableCell className="px-6 py-4">
-                        <div className="flex items-center gap-3">
-                          <div
-                            className="size-10 rounded-full bg-cover bg-center"
-                            style={{
-                              backgroundImage:
-                                "url('https://lh3.googleusercontent.com/aida-public/AB6AXuB9NG1Kb7xNEXdiDP4alp3ILUnFLgQqDDlgXErXBuOCYtf3Mk2B9vdq8ImXv8JZT0H8wKfNMmqTXEUWMdIXWgWtrfbcESOyYZ3NRtHgAiDJhylsJU2ZqmyaEEgDwQBB1qWpmW5XiSBAtMEd2F0s3wMZfr3VAy5opTKAjlMC8z1UOxob6h-1s8f7gZk9BIEtqjmaYjaTcrf_RDzIX-ITM0-pVi-61xgH1sTdmQkc1ZbwRiuDxRC0PAkPl8jsj71noHlgCzvn0jmPXDW0')",
-                            }}
-                          />
-                          <span className="font-semibold text-sm">Samuel Green</span>
+                        <div className="flex items-center ">
+
+                          <CircleSmall className="text-emerald-500" />
+                          <span className="font-semibold text-sm">Small</span>
                         </div>
                       </TableCell>
 
-                      <TableCell className="px-6 py-4 text-sm hidden md:table-cell">
-                        123 North Valley, Highland St.
+                      <TableCell className="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">
+                        NutriFeed
                       </TableCell>
 
-                      <TableCell className="px-6 py-4 text-sm font-medium">
-                        +1 555-0101
+
+                      <TableCell className="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 font-medium">
+                        Bags (50kg)
                       </TableCell>
 
-                      <TableCell className="px-6 py-4 text-sm font-medium">
-                        5,000 birds
+                      <TableCell className="px-6 py-4 text-sm font-medium text-slate-900 dark:text-white">
+                        $32.50
                       </TableCell>
 
-                      <TableCell className="px-6 py-4">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
-                          <span className="w-1 h-1 rounded-full bg-emerald-500 mr-1.5" />
-                          Free
-                        </span>
-                      </TableCell>
+                      <TableCell className="flex items-center justify-end gap-1.5">
 
-                      <TableCell className="px-6 py-4 text-right">
-                        <div className="flex items-center justify-end gap-1.5">
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Link
+                              to="/farms/1/edit"
+                              className="p-1.5 rounded-lg text-slate-500 hover:text-primary hover:bg-primary/10"
+                            >
+                              <Edit className="size-5" />
+                            </Link>
+                          </TooltipTrigger>
+                          <TooltipContent>Edit</TooltipContent>
+                        </Tooltip>
 
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Link
-                                to="/farms/1/edit"
-                                className="p-1.5 rounded-lg text-slate-500 hover:text-primary hover:bg-primary/10"
-                              >
-                                <Edit className="size-5" />
-                              </Link>
-                            </TooltipTrigger>
-                            <TooltipContent>Edit</TooltipContent>
-                          </Tooltip>
-
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <button
-                                onClick={() => handleDelete(1)}
-                                className="p-1.5 rounded-lg text-red-500 hover:bg-red-100"
-                              >
-                                <Trash className="size-5" />
-                              </button>
-                            </TooltipTrigger>
-                            <TooltipContent>Delete</TooltipContent>
-                          </Tooltip>
-                        </div>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <button
+                              onClick={() => handleDelete(1)}
+                              className="p-1.5 rounded-lg text-red-500 hover:bg-red-100"
+                            >
+                              <Trash className="size-5" />
+                            </button>
+                          </TooltipTrigger>
+                          <TooltipContent>Delete</TooltipContent>
+                        </Tooltip>
                       </TableCell>
                     </TableRow>
 
-                    {/* Repeat rows as-is */}
+                    {/* Repeat rows exactly the same */}
                   </TableBody>
                 </Table>
               </div>
