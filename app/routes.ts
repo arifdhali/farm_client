@@ -22,7 +22,7 @@ export default [
             route("lifting/:id", "routes/farms/SingleLifting.tsx"),
         ]),
         ...prefix("mortality", [
-            index("routes/mortality/Mortality.tsx"),
+            route("list", "routes/mortality/List.tsx"),
             route("add", "routes/mortality/Add.tsx"),
         ]),
     ])

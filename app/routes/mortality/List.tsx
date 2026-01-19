@@ -2,7 +2,7 @@ import { PlusIcon } from 'lucide-react'
 import React from 'react'
 import { Link } from 'react-router'
 
-const Mortality = () => {
+const List = () => {
     return (
         <div className="flex flex-col gap-6">
 
@@ -203,4 +203,4 @@ const Mortality = () => {
     )
 }
 
-export default Mortality
+export default List

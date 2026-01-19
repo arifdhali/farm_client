@@ -76,7 +76,7 @@ const Add = () => {
             </div>
             <div className="flex flex-col gap-2 md:col-span-2">
               <label className="text-[#141118] dark:text-white text-sm font-semibold">Detailed Notes</label>
-              <textarea className="w-full rounded-lg border-[#e0dbe6] dark:border-[#3b2d4a] bg-white dark:bg-[#2a1f38] text-[#141118] dark:text-white focus:border-primary focus:ring-primary/20 p-4 transition-all resize-none" placeholder="Describe symptoms, environmental factors, or additional context..." rows="4"></textarea>
+              <textarea className="w-full rounded-lg border-[#e0dbe6] dark:border-[#3b2d4a] bg-white dark:bg-[#2a1f38] text-[#141118] dark:text-white focus:border-primary focus:ring-primary/20 p-4 transition-all resize-none" placeholder="Describe symptoms, environmental factors, or additional context..."></textarea>
             </div>
             <div className="flex flex-col sm:flex-row items-center justify-end gap-3 pt-6 md:col-span-2 border-t border-[#f2f0f4] dark:border-[#3b2d4a] mt-2">
               <button className="w-full sm:w-auto px-6 h-12 rounded-lg text-[#756189] dark:text-[#a393b5] font-bold hover:bg-[#f2f0f4] dark:hover:bg-[#3b2d4a] transition-all" type="button">

@@ -33,13 +33,17 @@ const menuItems = [
     title: "Chicks",
     icon: Egg,
     url: "/chicks",
-    children: [{ title: "Delivered list", url: "/chicks/list" }],
+    children: [
+      { title: "Send Farmer", url: "/chicks/delivery" },
+      { title: "Delivered list", url: "/chicks/list" }
+    ],
   },
   {
     title: "Farms",
     icon: Warehouse,
     url: "/farms",
     children: [
+      { title: "Add Farmer", url: "/farms/add" },
       { title: "List", url: "/farms/list" },
       { title: "Lifting", url: "/farms/lifting" },
     ],
@@ -49,6 +53,7 @@ const menuItems = [
     icon: Wheat,
     url: "/feeds",
     children: [
+      { title: "Add Feed", url: "/feeds/add" },
       { title: "List", url: "/feeds/list" },
       { title: "Delivered", url: "/feeds/delivered" },
     ],
@@ -73,7 +78,13 @@ const menuItems = [
     ],
   },
   { title: "Reports", icon: NotebookIcon, url: "/reports" },
-  { title: "Mortality", icon: PenLineIcon, url: "/mortality" },
+  {
+    title: "Mortality", icon: PenLineIcon, url: "/mortality",
+    children: [
+      { title: "Add Mortality", url: "/mortality/add" },
+      { title: "List", url: "/mortality/list" },
+    ]
+  },
 
 ];
 
