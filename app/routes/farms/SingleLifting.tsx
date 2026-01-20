@@ -6,7 +6,7 @@ const SingleLifting = () => {
 
         <>
 
-            <div className="report-container bg-white dark:bg-[#1a2b2e]  dark:border-[#2a3a3d]  rounded-xl overflow-hidden flex flex-col">
+            <div className="report-container px-8 py-6 bg-white dark:bg-[#1a2b2e]  dark:border-[#2a3a3d]  rounded-xl overflow-hidden flex flex-col">
                 <div className="flex flex-col md:flex-row justify-between items-start border-b-4 border-primary pb-8 mb-8 gap-6">
                     <div>
                         <div className="leading-none">
@@ -38,7 +38,7 @@ const SingleLifting = () => {
                     <div className="overflow-x-auto border border-slate-200 rounded-lg">
                         <Table className="w-full ">
                             <TableHeader>
-                                <TableRow className="bg-primary color-table  dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800">
+                                <TableRow className="dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800">
                                     <TableHead className=" rounded-tl-lg">
                                         Date
                                     </TableHead>
@@ -71,7 +71,7 @@ const SingleLifting = () => {
                             </TableHeader>
 
                             <TableBody className="text-xs">
-                                <TableRow className="border-b border-[#dce3e5] dark:border-[#2a3a3d] hover:bg-[#fcfdfd] dark:hover:bg-[#253538] transition-colors">
+                                <TableRow className="border-b border-[#dce3e5] dark:border-[#2a3a3d]  transition-colors">
                                     <TableCell className="">
                                         2023-10-01
                                     </TableCell>
@@ -100,7 +100,7 @@ const SingleLifting = () => {
                                         2,875.50
                                     </TableCell>
                                 </TableRow>
-                                <TableRow className="border-b border-[#dce3e5] dark:border-[#2a3a3d] hover:bg-[#fcfdfd] dark:hover:bg-[#253538] transition-colors">
+                                <TableRow className="border-b border-[#dce3e5] dark:border-[#2a3a3d] transition-colors">
                                     <TableCell className="">
                                         2023-10-01
                                     </TableCell>

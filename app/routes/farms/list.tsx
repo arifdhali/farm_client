@@ -59,6 +59,7 @@ import {
 
 import type { DateRange } from "react-day-picker";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 
 const List = () => {
   const [openAlert, setOpenAlert] = useState<boolean>(false);
@@ -263,49 +264,31 @@ const List = () => {
               <p className="text-sm text-slate-500 dark:text-slate-400">
                 Showing 1 to 5 of 42 entries
               </p>
-              <div className="flex items-center gap-1">
-                <a
-                  className="flex size-9 items-center justify-center rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors text-slate-400"
-                  href="#"
-                >
-                  <span className="text-[20px]">
-                    <ChevronLeft />
-                  </span>
-                </a>
-                <a
-                  className="text-xs font-bold flex size-9 items-center justify-center text-white rounded-lg bg-primary shadow-sm"
-                  href="#"
-                >
-                  1
-                </a>
-                <a
-                  className="text-xs font-medium flex size-9 items-center justify-center text-slate-600 dark:text-slate-400 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
-                  href="#"
-                >
-                  2
-                </a>
-                <a
-                  className="text-xs font-medium flex size-9 items-center justify-center text-slate-600 dark:text-slate-400 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
-                  href="#"
-                >
-                  3
-                </a>
-                <span className="text-slate-400 px-1">...</span>
-                <a
-                  className="text-xs font-medium flex size-9 items-center justify-center text-slate-600 dark:text-slate-400 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
-                  href="#"
-                >
-                  9
-                </a>
-                <a
-                  className="flex size-9 items-center justify-center rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors text-slate-400"
-                  href="#"
-                >
-                  <span className="text-[20px]">
-                    <ChevronRight />
-                  </span>
-                </a>
-              </div>
+             <Pagination>
+                                <PaginationContent>
+                                    <PaginationItem >
+                                        <PaginationPrevious href="#" className="bg-primary " />
+                                    </PaginationItem>
+                                    <PaginationItem>
+                                        <PaginationLink href="#">1</PaginationLink>
+                                    </PaginationItem>
+                                    <PaginationItem>
+                                        <PaginationLink className="bg-primary text-white"
+                                         href="#" isActive>
+                                            2
+                                        </PaginationLink>
+                                    </PaginationItem>
+                                    <PaginationItem>
+                                        <PaginationLink href="#">3</PaginationLink>
+                                    </PaginationItem>
+                                    <PaginationItem>
+                                        <PaginationEllipsis />
+                                    </PaginationItem>
+                                    <PaginationItem>
+                                        <PaginationNext href="#" />
+                                    </PaginationItem>
+                                </PaginationContent>
+                            </Pagination>
             </div>
           </div>
         </div>

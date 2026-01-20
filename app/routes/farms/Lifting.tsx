@@ -41,6 +41,7 @@ import {
 } from "@/components/ui/select";
 
 import {
+    CheckIcon,
     ChevronDown,
     ChevronLeft,
     ChevronRight,
@@ -106,7 +107,7 @@ const Lifting = () => {
                             <PopoverTrigger asChild>
                                 <Button
                                     variant="outline"
-                                    className="w-44 h-11 justify-between shadow-none font-normal border border-light"
+                                    className="w-44 h-11 justify-between shadow-none font-normal border border-slate-200"
                                 >
                                     From date
                                     <ChevronDown className="h-4 w-4 opacity-50" />
@@ -124,7 +125,7 @@ const Lifting = () => {
                             <PopoverTrigger asChild>
                                 <Button
                                     variant="outline"
-                                    className="w-44 h-11 justify-between font-normal border border-light shadow-none"
+                                    className="w-44 h-11 justify-between font-normal border  border-slate-200 shadow-none"
                                 >
                                     To date
                                     <ChevronDown className="h-4 w-4 opacity-50" />
@@ -142,12 +143,12 @@ const Lifting = () => {
                         <Select defaultValue="10">
                             <SelectTrigger
                                 size={"default"}
-                                className="w-36 h-[44px] bg-white border border-light shadow-none"
+                                className="w-36  hover:bg-accent border border-slate-200 shadow-none"
                             >
                                 <SelectValue placeholder="Per page" />
                             </SelectTrigger>
 
-                            <SelectContent className="bg-white border-0">
+                            <SelectContent className=" border border-slate-200 ">
                                 <SelectItem value="10">10</SelectItem>
                                 <SelectItem value="20">20</SelectItem>
                                 <SelectItem value="50">50</SelectItem>
@@ -238,9 +239,9 @@ const Lifting = () => {
                                                         <TooltipTrigger asChild>
                                                             <button
                                                                 onClick={() => handleDelete(1)}
-                                                                className="p-1.5 rounded-lg text-slate-500 hover:bg-slate-100"
+                                                                className="cursor-pointer p-1.5 rounded-lg text-slate-500 hover:bg-slate-100"
                                                             >
-                                                                <Edit className="size-5" />
+                                                                <CheckIcon className="text-green-500" />
                                                             </button>
                                                         </TooltipTrigger>
                                                         <TooltipContent>Make Complete</TooltipContent>

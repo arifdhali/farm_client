@@ -1,3 +1,4 @@
+/* Tailwind v4 entry */
 @import "tailwindcss";
 
 /* ---------------------------------------------
@@ -6,153 +7,111 @@
 @custom-variant dark (&:is(.dark *));
 
 /* ---------------------------------------------
-   Theme tokens (brand only)
+   DESIGN TOKENS (OKLCH)
 --------------------------------------------- */
-@theme {
+@layer base {
+  :root {
+    /* ---------- Brand colors (from your HEX) ---------- */
+    /* #4b2bee */
+    --brand-primary: 0.57 0.25 265;
+    /* #f6f6f8 */
+    --brand-secondary: 0.97 0.01 280;
+    /* #08070f */
+    --brand-black: 0.12 0.03 280;
+    /* #8984a3 */
+    --brand-gray: 0.62 0.05 275;
+    /* #f1f0f4 */
+    --brand-light: 0.95 0.01 280;
+    /* #ede9fd */
+    --brand-active: 0.93 0.06 275;
+
+    /* ---------- Core shadcn tokens ---------- */
+    --background: var(--brand-light);
+    --foreground: var(--brand-black);
+
+    --card: 1 0 0;
+    --card-foreground: var(--brand-black);
+
+    --popover: 1 0 0;
+    --popover-foreground: var(--brand-black);
+
+    --primary: var(--brand-primary);
+    --primary-foreground: 1 0 0;
+
+    --secondary: var(--brand-secondary);
+    --secondary-foreground: var(--brand-black);
+
+    --muted: var(--brand-secondary);
+    --muted-foreground: var(--brand-gray);
+
+    --accent: var(--brand-active);
+    --accent-foreground: var(--brand-primary);
+
+    --destructive: 0.62 0.25 25;
+    --destructive-foreground: 1 0 0;
+
+    --border: 0.9 0.01 280;
+    --input: 0.9 0.01 280;
+    --ring: var(--brand-primary);
+
+    --radius: 0.5rem;
+  }
+}
+
+/* ---------------------------------------------
+   TAILWIND v4 → SHADCN BRIDGE (OKLCH)
+--------------------------------------------- */
+@theme inline {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 
-  --color-primary: #4b2bee;
-  --color-secondary: #f6f6f8;
-  --color-black: #08070f;
-  --color-gray: #8984a3;
-  --color-light: #f1f0f4;
+  --color-background: oklch(var(--background));
+  --color-foreground: oklch(var(--foreground));
 
-  --active-bg: #ede9fd;
-}
+  --color-card: oklch(var(--card));
+  --color-card-foreground: oklch(var(--card-foreground));
 
-/* ---------------------------------------------
-   Global reset
---------------------------------------------- */
-* {
-  box-sizing: border-box;
-}
+  --color-popover: oklch(var(--popover));
+  --color-popover-foreground: oklch(var(--popover-foreground));
 
-/* ---------------------------------------------
-   CORE DESIGN TOKENS (DO NOT BREAK THESE)
---------------------------------------------- */
+  --color-primary: oklch(var(--primary));
+  --color-primary-foreground: oklch(var(--primary-foreground));
 
-/* ---------------------------------------------
-   Map tokens to Tailwind colors
---------------------------------------------- */
-@theme inline {
-  --color-background:var(--primary);
-  --color-foreground:black;
-  --color-border: hsl(var(--border));
-  --color-ring: hsl(var(--ring));
+  --color-secondary: oklch(var(--secondary));
+  --color-secondary-foreground: oklch(var(--secondary-foreground));
 
-  --color-sidebar: hsl(var(--sidebar));
-  --color-sidebar-foreground: hsl(var(--sidebar-foreground));
-  --color-sidebar-primary: hsl(var(--sidebar-primary));
-  --color-sidebar-primary-foreground: hsl(var(--sidebar-primary-foreground));
-  --color-sidebar-accent: hsl(var(--sidebar-accent));
-  --color-sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground));
-  --color-sidebar-border: hsl(var(--sidebar-border));
-  --color-sidebar-ring: hsl(var(--sidebar-ring));
+  --color-muted: oklch(var(--muted));
+  --color-muted-foreground: oklch(var(--muted-foreground));
+
+  --color-accent: oklch(var(--accent));
+  --color-accent-foreground: oklch(var(--accent-foreground));
+
+  --color-destructive: oklch(var(--destructive));
+  --color-destructive-foreground: oklch(var(--destructive-foreground));
+
+  --color-border: oklch(var(--border));
+  --color-input: oklch(var(--input));
+  --color-ring: oklch(var(--ring));
+
+  --radius-sm: calc(var(--radius) - 2px);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 2px);
 }
 
 /* ---------------------------------------------
-   Global body styles (IMPORTANT)
+   BASE STYLES
 --------------------------------------------- */
-html,
-body {
-  @apply bg-background text-foreground;
+@layer base {
+  html,
+  body {
+    background-color: oklch(var(--background));
+    color: oklch(var(--foreground));
+    font-family: var(--font-sans);
+  }
 }
 
-/* ---------------------------------------------
-   Inputs
---------------------------------------------- */
-input {
-  box-shadow: none;
-  border-color: var(--color-light);
-  color: var(--color-black);
-}
 
-input:focus {
-  box-shadow: none;
-  outline: 1px solid hsl(var(--ring));
-}
 
-/* ---------------------------------------------
-   Tables
---------------------------------------------- */
-table {
-  color: #003355;
-}
-
-th {
-  color: #485d79;
-  padding: 10px 20px;
-}
-
-td {
-  padding: 10px 20px;
-}
-
-/* ---------------------------------------------
-   Buttons
---------------------------------------------- */
-button {
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-/* ---------------------------------------------
-   Pagination
---------------------------------------------- */
-.paginations button {
-  transition: all 0.3s ease;
-  overflow: hidden;
-  border-radius: 4px;
-  border-color: white;
-}
-
-/* ---------------------------------------------
-   Sidebar icons
---------------------------------------------- */
-.sidbar-collapse svg {
-  height: 25px;
-  width: 35px;
-}
-.calender th{
-  font-weight: 600;
-  color: black;
-}
-
-.calender th,.calender td{
-	padding: 0;
-transition: var(--default-transition-duration);
-}
-.calender td:hover{
-  background-color: #ede9ff;
-}
-.calender button{
-  border: 0;
-  box-shadow: none;
-  transition: var(--default-transition-duration);
-
-}
-.calender td button{
-  font-size: 12px;
-}
-.rdp-nav button{
-    background-color: #ede9ff;
-
-}
-.rdp-range_start button{
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0; 
-  color: white;
-}
-.rdp-range_end button{
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0; 
-  color: white;
-}
-.rdp-range_middle{
-  background-color: #ede9ff;
-}
-
-.color-table th{
-  color:white !important;
+input:focus{
+  outline: 1px solid var(--brand-light);
 }

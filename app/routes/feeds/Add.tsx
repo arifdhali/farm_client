@@ -11,10 +11,10 @@ const Add = () => {
         <div className="flex flex-wrap justify-between items-end gap-3">
           <div className="flex flex-col ">
             <h2 className="text-zinc-900 dark:text-zinc-100 text-3xl font-black leading-tight tracking-[-0.033em]">
-              Make Delivery
+              Add Feed
             </h2>
             <p className="text-zinc-500 dark:text-zinc-400 text-base font-normal leading-normal">
-              Register a new farmer and their livestock capacity to the system.
+              Add a new feed to the system.
             </p>
           </div>
           <Link
@@ -31,7 +31,7 @@ const Add = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
             <div className="flex flex-col col-span-2 md:col-span-1">
               <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
-                Farmer Name
+                Feed Type
               </label>
               <input
                 className="w-full rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-4 py-3 text-base"
@@ -143,7 +143,7 @@ const Add = () => {
               className="bg-primary hover:bg-primary/90 text-white px-8 py-3 rounded-lg text-sm font-bold shadow-lg shadow-primary/20 transition-all"
               type="submit"
             >
-              Make Delivery
+              Add Feed
             </button>
           </div>
         </form>
