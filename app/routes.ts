@@ -21,6 +21,10 @@ export default [
             route("lifting", "routes/farms/Lifting.tsx"),
             route("lifting/:id", "routes/farms/SingleLifting.tsx"),
         ]),
+        ...prefix("cash", [
+            route("list", "routes/cash/List.tsx"),
+            route("add", "routes/cash/Add.tsx"),
+        ]),
         ...prefix("mortality", [
             route("list", "routes/mortality/List.tsx"),
             route("add", "routes/mortality/Add.tsx"),

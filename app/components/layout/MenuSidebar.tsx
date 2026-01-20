@@ -64,7 +64,8 @@ const menuItems = [
     icon: IndianRupee,
     url: "/cash",
     children: [
-      { title: "Expenses", url: "/cash/expenses" },
+      { title: "Expense List", url: "/cash/list" },
+      { title: "Expense Add", url: "/cash/add" },
       { title: "Collections", url: "/cash/collection" },
     ],
   },
