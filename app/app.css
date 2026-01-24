@@ -1,6 +1,6 @@
 /* Tailwind v4 entry */
 @import "tailwindcss";
-
+@plugin "tailwindcss-animate";
 /* ---------------------------------------------
    Dark variant
 --------------------------------------------- */
@@ -108,10 +108,40 @@
     color: oklch(var(--foreground));
     font-family: var(--font-sans);
   }
+
+  
+  @keyframes accordion-down {
+    from {
+      height: 0;
+    }
+    to {
+      height: var(--radix-accordion-content-height);
+    }
+  }
+
+  @keyframes accordion-up {
+    from {
+      height: var(--radix-accordion-content-height);
+    }
+    to {
+      height: 0;
+    }
+  }
 }
 
 
 
-input:focus{
+@utility animate-accordion-down {
+  animation: accordion-down 0.2s ease-out;
+}
+
+@utility animate-accordion-up {
+  animation: accordion-up 0.2s ease-out;
+}
+input:focus,textarea:focus{
   outline: 1px solid var(--brand-light);
+}
+
+button{
+  cursor: pointer;
 }
