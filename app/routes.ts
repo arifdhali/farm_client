@@ -8,7 +8,7 @@ export default [
     ]
     ),
     layout("components/layout/AdminLayout.tsx", [
-
+        route("settings", "routes/Settings.tsx"),
         index("routes/home.tsx"),
         ...prefix("chicks", [
             route("list", "routes/chicks/List.tsx"),

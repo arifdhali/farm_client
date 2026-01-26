@@ -1,9 +1,25 @@
+import { useCreateFarmerMutation } from "@/query/Farm.queries";
 import { ArrowLeftIcon, ArrowLeftToLineIcon } from "lucide-react";
-import React, { useState } from "react";
+import React, { useState, type FormEvent } from "react";
 import { Link } from "react-router";
 
 const Add = () => {
   const [FarmsStatus, setFarmsStatus] = useState<"free" | "occupied">("free");
+
+  const { mutate, isPending } = useCreateFarmerMutation();
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    mutate({
+      name: "Ramesh Kumar",
+      mobile: "9876543210",
+      address: "Village Road, Andhra Pradesh",
+      capacity: 5000,
+      rate: 12,
+      status: FarmsStatus,
+    })
+  }
+
 
   return (
     <div className="flex-1 overflow-y-auto bg-background-light dark:bg-background-dark">
@@ -27,7 +43,7 @@ const Add = () => {
         </div>
       </div>
       <div className="bg-white dark:bg-zinc-900 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-800 overflow-hidden">
-        <form className="p-8">
+        <form className="p-8" onSubmit={handleSubmit}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
             <div className="flex flex-col col-span-2 md:col-span-1">
               <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
@@ -84,11 +100,10 @@ const Add = () => {
                   type="button"
                   onClick={() => setFarmsStatus("free")}
                   className={`relative z-10 flex-1 py-2 text-sm font-bold transition-colors
-            ${
-              FarmsStatus === "free"
-                ? "text-primary"
-                : "text-zinc-500 dark:text-zinc-400"
-            }`}
+            ${FarmsStatus === "free"
+                      ? "text-primary"
+                      : "text-zinc-500 dark:text-zinc-400"
+                    }`}
                 >
                   Free
                 </button>
@@ -98,11 +113,10 @@ const Add = () => {
                   type="button"
                   onClick={() => setFarmsStatus("occupied")}
                   className={`relative z-10 flex-1 py-2 text-sm font-bold transition-colors
-            ${
-              FarmsStatus === "occupied"
-                ? "text-primary"
-                : "text-zinc-500 dark:text-zinc-400"
-            }`}
+            ${FarmsStatus === "occupied"
+                      ? "text-primary"
+                      : "text-zinc-500 dark:text-zinc-400"
+                    }`}
                 >
                   Occupied
                 </button>

@@ -2,6 +2,7 @@ import React from 'react'
 import { Input } from '../ui/input'
 import { BellIcon, Hamburger, MenuSquareIcon, Settings } from 'lucide-react'
 import { SidebarTrigger } from '../ui/sidebar'
+import { Link } from 'react-router'
 
 const Header = () => {
   return (
@@ -15,9 +16,9 @@ const Header = () => {
         <button className="size-10 flex items-center justify-center rounded-lg bg-light dark:bg-white/5 text-[#121118] dark:text-white hover:bg-gray-200 dark:hover:bg-white/10">
           <BellIcon />
         </button>
-        <button className="size-10 flex items-center justify-center rounded-lg bg-light dark:bg-white/5 text-[#121118] dark:text-white hover:bg-gray-200 dark:hover:bg-white/10">
+        <Link to="/settings" className="size-10 flex items-center justify-center rounded-lg bg-light dark:bg-white/5 text-[#121118] dark:text-white hover:bg-gray-200 dark:hover:bg-white/10">
           <Settings />
-        </button>
+        </Link>
         <div className="h-8 w-px bg-[#dddbe6] dark:bg-white/10 mx-2"></div>
         <div className="flex items-center gap-3 cursor-pointer">
           <div className="text-right">
