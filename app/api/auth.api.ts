@@ -4,6 +4,13 @@ import type { AxiosError } from "axios";
 import type { BackendError } from "@/types/AxiosErrors.type";
 
 
+export const getMe = async () => {
+    console.log('calling me');
+    let res = await HTTP.get("/auth/me");
+    console.log(res);
+    return res.data;
+}
+
 
 export const Login = async (payload: LoginRequest) => {
     try {
@@ -21,7 +28,7 @@ export const Login = async (payload: LoginRequest) => {
                     return acc;
                 },
                 {}
-            ),
+            ) ?? {},
             status: error.response?.data?.status,
             statusCode: error.response?.status,
         };

@@ -60,6 +60,7 @@ import {
 import type { DateRange } from "react-day-picker";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
+import { getFarmersList } from "@/query/Farm.queries";
 
 const List = () => {
   const [openAlert, setOpenAlert] = useState<boolean>(false);
@@ -72,6 +73,13 @@ const List = () => {
     from: new Date(2025, 5, 12),
     to: new Date(2025, 6, 15),
   });
+  const { data, isError, isLoading } = getFarmersList();
+
+
+  console.log(data?.data?.farms);
+
+
+
   return (
     <>
       <div className=" rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-8 py-6">
@@ -190,70 +198,82 @@ const List = () => {
                   </TableHeader>
 
                   <TableBody className="divide-y divide-slate-100 dark:divide-slate-800">
-                    {/* ROW */}
-                    <TableRow className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
-                      <TableCell className="px-6 py-4">
-                        <div className="flex items-center gap-3">
-                          <div
-                            className="size-10 rounded-full bg-cover bg-center"
-                            style={{
-                              backgroundImage:
-                                "url('https://lh3.googleusercontent.com/aida-public/AB6AXuB9NG1Kb7xNEXdiDP4alp3ILUnFLgQqDDlgXErXBuOCYtf3Mk2B9vdq8ImXv8JZT0H8wKfNMmqTXEUWMdIXWgWtrfbcESOyYZ3NRtHgAiDJhylsJU2ZqmyaEEgDwQBB1qWpmW5XiSBAtMEd2F0s3wMZfr3VAy5opTKAjlMC8z1UOxob6h-1s8f7gZk9BIEtqjmaYjaTcrf_RDzIX-ITM0-pVi-61xgH1sTdmQkc1ZbwRiuDxRC0PAkPl8jsj71noHlgCzvn0jmPXDW0')",
-                            }}
-                          />
-                          <span className="font-semibold text-sm">Samuel Green</span>
-                        </div>
-                      </TableCell>
 
-                      <TableCell className="px-6 py-4 text-sm hidden md:table-cell">
-                        123 North Valley, Highland St.
-                      </TableCell>
+                    {
+                      data?.data?.farms.map((farm: any) => (
+                        <TableRow key={farm.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
+                          <TableCell className="px-6 py-4">
+                            <div className="flex items-center gap-3">
+                              <div
+                                className="size-10 rounded-full bg-cover bg-center"
+                                style={{
+                                  backgroundImage:
+                                    "url('https://lh3.googleusercontent.com/aida-public/AB6AXuB9NG1Kb7xNEXdiDP4alp3ILUnFLgQqDDlgXErXBuOCYtf3Mk2B9vdq8ImXv8JZT0H8wKfNMmqTXEUWMdIXWgWtrfbcESOyYZ3NRtHgAiDJhylsJU2ZqmyaEEgDwQBB1qWpmW5XiSBAtMEd2F0s3wMZfr3VAy5opTKAjlMC8z1UOxob6h-1s8f7gZk9BIEtqjmaYjaTcrf_RDzIX-ITM0-pVi-61xgH1sTdmQkc1ZbwRiuDxRC0PAkPl8jsj71noHlgCzvn0jmPXDW0')",
+                                }}
+                              />
+                              <span className="font-semibold text-sm">{farm?.name}</span>
+                            </div>
+                          </TableCell>
 
-                      <TableCell className="px-6 py-4 text-sm font-medium">
-                        +1 555-0101
-                      </TableCell>
+                          <TableCell className="px-6 py-4 text-sm hidden md:table-cell">
+                            {farm?.location}
+                          </TableCell>
 
-                      <TableCell className="px-6 py-4 text-sm font-medium">
-                        5,000 birds
-                      </TableCell>
+                          <TableCell className="px-6 py-4 text-sm font-medium">
+                            {farm?.mobile_number}
+                          </TableCell>
 
-                      <TableCell className="px-6 py-4">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
-                          <span className="w-1 h-1 rounded-full bg-emerald-500 mr-1.5" />
-                          Free
-                        </span>
-                      </TableCell>
+                          <TableCell className="px-6 py-4 text-sm font-medium text-center">
+                            {farm?.capacity}
+                          </TableCell>
 
-                      <TableCell className="px-6 py-4 text-right">
-                        <div className="flex items-center justify-end gap-1.5">
+                          <TableCell className="px-6 py-4">
+                            {
+                              farm?.availablity_status === 'free' ? (
+                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
+                                  <span className="w-1 h-1 rounded-full bg-emerald-500 mr-1.5" ></span>
+                                  Available
+                                </span>
+                              ) : (
+                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400">
+                                  <span className="w-1 h-1 rounded-full bg-yellow-500 mr-1.5" ></span>
+                                  Occupied
+                                </span>
+                              )
+                            }
+                          </TableCell>
 
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Link
-                                to="/farms/1/edit"
-                                className="p-1.5 rounded-lg text-slate-500 hover:text-primary hover:bg-primary/10"
-                              >
-                                <Edit className="size-5" />
-                              </Link>
-                            </TooltipTrigger>
-                            <TooltipContent>Edit</TooltipContent>
-                          </Tooltip>
+                          <TableCell className="px-6 py-4 text-right">
+                            <div className="flex items-center justify-end gap-1.5">
 
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <button
-                                onClick={() => handleDelete(1)}
-                                className="p-1.5 rounded-lg text-red-500 hover:bg-red-100"
-                              >
-                                <Trash className="size-5" />
-                              </button>
-                            </TooltipTrigger>
-                            <TooltipContent>Delete</TooltipContent>
-                          </Tooltip>
-                        </div>
-                      </TableCell>
-                    </TableRow>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Link
+                                    to={`/farms/${farm?.id}/edit`}
+                                    className="p-1.5 rounded-lg text-slate-500 hover:text-primary hover:bg-primary/10"
+                                  >
+                                    <Edit className="size-5" />
+                                  </Link>
+                                </TooltipTrigger>
+                                <TooltipContent>Edit</TooltipContent>
+                              </Tooltip>
 
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <button
+                                    onClick={() => handleDelete(farm?.id)}
+                                    className="p-1.5 rounded-lg text-red-500 hover:bg-red-100"
+                                  >
+                                    <Trash className="size-5" />
+                                  </button>
+                                </TooltipTrigger>
+                                <TooltipContent>Delete</TooltipContent>
+                              </Tooltip>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    }
                     {/* Repeat rows as-is */}
                   </TableBody>
                 </Table>
@@ -264,31 +284,31 @@ const List = () => {
               <p className="text-sm text-slate-500 dark:text-slate-400">
                 Showing 1 to 5 of 42 entries
               </p>
-             <Pagination>
-                                <PaginationContent>
-                                    <PaginationItem >
-                                        <PaginationPrevious href="#" className="bg-primary " />
-                                    </PaginationItem>
-                                    <PaginationItem>
-                                        <PaginationLink href="#">1</PaginationLink>
-                                    </PaginationItem>
-                                    <PaginationItem>
-                                        <PaginationLink className="bg-primary text-white"
-                                         href="#" isActive>
-                                            2
-                                        </PaginationLink>
-                                    </PaginationItem>
-                                    <PaginationItem>
-                                        <PaginationLink href="#">3</PaginationLink>
-                                    </PaginationItem>
-                                    <PaginationItem>
-                                        <PaginationEllipsis />
-                                    </PaginationItem>
-                                    <PaginationItem>
-                                        <PaginationNext href="#" />
-                                    </PaginationItem>
-                                </PaginationContent>
-                            </Pagination>
+              <Pagination>
+                <PaginationContent>
+                  <PaginationItem >
+                    <PaginationPrevious href="#" className="bg-primary " />
+                  </PaginationItem>
+                  <PaginationItem>
+                    <PaginationLink href="#">1</PaginationLink>
+                  </PaginationItem>
+                  <PaginationItem>
+                    <PaginationLink className="bg-primary text-white"
+                      href="#" isActive>
+                      2
+                    </PaginationLink>
+                  </PaginationItem>
+                  <PaginationItem>
+                    <PaginationLink href="#">3</PaginationLink>
+                  </PaginationItem>
+                  <PaginationItem>
+                    <PaginationEllipsis />
+                  </PaginationItem>
+                  <PaginationItem>
+                    <PaginationNext href="#" />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
             </div>
           </div>
         </div>

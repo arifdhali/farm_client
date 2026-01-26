@@ -1,5 +1,18 @@
+import { getMeQuery } from '@/query/Auth.queries';
+import queryClient from '@/query/client';
 import React from 'react'
-import { Outlet } from 'react-router'
+import { Outlet, redirect } from 'react-router'
+
+
+export async function first() {
+    try {
+        await queryClient.fetchQuery(getMeQuery());
+        throw redirect("/");
+    } catch {
+        return null;
+    }
+}
+
 
 const AuthLayout = () => {
     return (

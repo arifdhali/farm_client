@@ -12,11 +12,9 @@ const Add = () => {
     e.preventDefault();
     mutate({
       name: "Ramesh Kumar",
-      mobile: "9876543210",
-      address: "Village Road, Andhra Pradesh",
-      capacity: 5000,
-      rate: 12,
-      status: FarmsStatus,
+      mobile_number: "9876513210",
+      location: "Village Road, Andhra Pradesh",
+      capacity: 5000
     })
   }
 

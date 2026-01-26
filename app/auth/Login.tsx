@@ -22,7 +22,6 @@ const Login = () => {
 
   const handleSubmit = () => {
     loginMutation.mutate(loginFormik.values);
-    console.log();
   };
   let loginFormik = useFormik({
     initialValues: {
@@ -47,7 +46,7 @@ const Login = () => {
   useEffect(() => {
     if (!loginMutation.isError) return;
     const error: any = loginMutation.error;
-    loginFormik.setErrors(error.fieldErrors);
+    loginFormik.setErrors(error.fieldErrors ?? "");
   }, [loginMutation.isError])
 
 
@@ -60,7 +59,7 @@ const Login = () => {
     }),
     onSubmit: (values) => {
       console.log("Reset password data:", values);
-      // TODO: call reset password API
+
     },
   })
 
@@ -166,10 +165,11 @@ const Login = () => {
 
 
               <button
+
                 type="submit"
                 className="cursor-pointer w-full bg-primary text-white font-bold py-3 rounded-lg hover:bg-primary/80"
               >
-                Log In →
+               {loginMutation.isPending ? "Logging in..." : "Log In →"}
               </button>
             </form>
             <form onSubmit={handleSubmit} className="space-y-5 min-w-full" >

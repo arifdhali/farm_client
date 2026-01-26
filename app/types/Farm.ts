@@ -1,8 +1,6 @@
 export interface CreateFarmer {
     name: string;
-    mobile: string;
-    address: string;
+    mobile_number: string;
+    location: string;
     capacity: number;
-    rate: number;
-    status: "free" | "occupied";
 }
