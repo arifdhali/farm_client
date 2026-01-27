@@ -4,12 +4,28 @@ import type { AxiosError } from "axios";
 import type { BackendError } from "@/types/AxiosErrors.type";
 
 
-export const getMe = async () => {
-    console.log('calling me');
-    let res = await HTTP.get("/auth/me");
-    console.log(res);
-    return res.data;
-}
+import axios from "axios";
+
+export const getMe = async (cookies?: string) => {
+    try {
+        const res = await HTTP.get("/auth/me", {
+            headers: cookies ? { cookie: cookies } : undefined,
+        });
+        console.log(res, "getMe response");
+        if (res.data.status) {
+            return res.data.data;
+        }
+        throw new Error("getMe failed: status not success");
+    } catch (err) {
+        if (axios.isAxiosError(err)) {
+            if (err.response?.status === 401) {
+                return null;
+            }
+        }
+        console.error("getMe failed:", err);
+        throw err;
+    }
+};
 
 
 export const Login = async (payload: LoginRequest) => {
@@ -34,3 +50,7 @@ export const Login = async (payload: LoginRequest) => {
         };
     }
 }
+
+export const logout = async () => {
+    await HTTP.post("/auth/logout");
+};

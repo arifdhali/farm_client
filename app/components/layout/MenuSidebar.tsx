@@ -14,6 +14,8 @@ import {
   ChevronDown,
   NotebookIcon,
   PenLineIcon,
+  TrashIcon,
+  LogOutIcon,
 } from "lucide-react";
 
 import {
@@ -26,6 +28,8 @@ import {
   SidebarMenuButton,
 } from "@/components/ui/sidebar";
 import { Link, useLocation } from "react-router";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "../ui/alert-dialog";
+import { useLogoutMutation } from "@/query/Auth.queries";
 
 const menuItems = [
   { title: "Dashboard", icon: LayoutDashboard, url: "/" },
@@ -90,6 +94,7 @@ const menuItems = [
 ];
 
 export default function MenuSidebar() {
+  const { mutate: logoutUser, isPending } = useLogoutMutation();
   const location = useLocation();
   const isActive = (path: string) =>
     location.pathname === path || location.pathname.startsWith(path + "/");
@@ -103,7 +108,11 @@ export default function MenuSidebar() {
       }
     });
   }, [location.pathname]);
+  const [openAlert, setOpenAlert] = useState<boolean>(false);
 
+  const handleDelete = () => {
+    setOpenAlert(!openAlert);
+  };
   return (
     <Sidebar className="border-r border-r-[#dddbe6] bg-white dark:bg-slate-900">
       {/* Header */}
@@ -198,11 +207,36 @@ export default function MenuSidebar() {
               Administrator
             </p>
           </div>
-          <button className="ml-auto text-muted-foreground hover:text-foreground">
+          <button onClick={handleDelete} className="ml-auto text-muted-foreground hover:text-foreground">
             <LogOut size={16} />
           </button>
         </div>
       </SidebarFooter>
+
+      <AlertDialog open={openAlert} onOpenChange={setOpenAlert}>
+        <AlertDialogContent className="p-8 w-110 border-0 items-center">
+          <div className="mx-auto p-4 w-fit flex items-center justify-center bg-red-600 rounded-full">
+            <LogOutIcon className="text-white" />
+          </div>
+          <AlertDialogHeader className="mb-8 mt-4 items-center">
+            <AlertDialogTitle className="text-2xl font-bold text-[#181111] dark:text-white leading-tight">
+              Confirmation
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-[#896161] text-sm leading-relaxed mt-3 text-center">
+              Are you sure you want to Logout?
+
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="grid grid-cols-2 gap-4">
+            <AlertDialogAction onClick={() => logoutUser()} className={`flex items-center justify-center rounded-lg h-12 bg-red-600 text-white text-sm font-bold hover:bg-primary/90  shadow-lg shadow-primary/20 ${isPending ? "cursor-not-allowed bg-[#896161]" : ""}`}>
+              {isPending ? "Processing..." : "Yes"}
+            </AlertDialogAction>
+            <AlertDialogCancel className="flex items-center justify-center rounded-lg h-12 bg-gray-200 dark:bg-[#3a1d1d] text-[#181111] dark:text-white hover:text-white border-0 text-sm font-bold  hover:bg-primary/90 dark:hover:bg-[#4d2727] ">
+              No
+            </AlertDialogCancel>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Sidebar>
   );
 }

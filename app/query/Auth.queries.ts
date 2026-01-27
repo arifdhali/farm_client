@@ -1,33 +1,46 @@
-import { getMe, Login } from "@/api/auth.api";
+import { getMe, Login, logout } from "@/api/auth.api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router";
+import queryClient from "./client";
 
 
-export const getMeQuery = () => ({
+export const getMeQuery = (cookies?: string | undefined) => ({
     queryKey: ["me"],
-    queryFn: getMe,
+    queryFn: () => getMe(cookies),
     retry: false,
-    staleTime: 1000 * 60 * 5,
+    staleTime: 5 * 60 * 1000,
 })
 
 
 
 export const useLoginMutation = () => {
     const navigate = useNavigate();
-    const qc = useQueryClient();
     return useMutation({
         mutationFn: Login,
         onSuccess: async (e) => {
-            await qc.invalidateQueries({ queryKey: ["me"] });
+            await queryClient.invalidateQueries({ queryKey: ["me"] });
             toast.success(e.message);
             navigate("/", { replace: true });
         },
         onError: (err) => {
             const error: any = err;
-            if (!error.fieldErrors ||Object.keys(error.fieldErrors).length <= 0) {
+            if (!error.fieldErrors || Object.keys(error.fieldErrors).length <= 0) {
                 toast.error(error.message);
             }
         }
+    })
+}
+
+
+export const useLogoutMutation = () => {
+    const navigate = useNavigate();
+    return useMutation({
+        mutationFn: logout,
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({ queryKey: ["me"] });
+            toast.success("Logout Successful");
+            navigate("/auth/login", { replace: true });
+        },
     })
 }

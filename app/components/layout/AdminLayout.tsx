@@ -9,13 +9,18 @@ import queryClient from "@/query/client"
 import { getMeQuery } from "@/query/Auth.queries"
 
 
-export async function first() {
-
+export async function loader({ request }: { request: Request }) {
+    const cookie = request.headers.get("cookie") ?? undefined;
     try {
-        await queryClient.fetchQuery(getMeQuery());
+        let user = await queryClient.ensureQueryData(getMeQuery(cookie));
+        if (!user) {
+            throw redirect("/auth/login");
+        }
         return null;
-    } catch {
-        throw redirect("/auth/login");
+    } catch (err) {
+        if (err instanceof Response) {
+            throw err;
+        }
     }
 }
 
@@ -47,5 +52,4 @@ const AdminLayout = () => {
         </>
     )
 }
-
 export default AdminLayout

@@ -4,12 +4,18 @@ import React from 'react'
 import { Outlet, redirect } from 'react-router'
 
 
-export async function first() {
+export async function loader({ request }: { request: Request }) {
+    const cookie = request.headers.get("cookie") ?? undefined;
     try {
-        await queryClient.fetchQuery(getMeQuery());
-        throw redirect("/");
-    } catch {
+        let user = await queryClient.ensureQueryData(getMeQuery(cookie));
+        if (user) {
+            throw redirect("/");
+        }
         return null;
+    } catch (err) {
+        if (err instanceof Response) {
+            throw err;
+        }
     }
 }
 

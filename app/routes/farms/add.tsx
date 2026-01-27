@@ -11,8 +11,8 @@ const Add = () => {
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     mutate({
-      name: "Ramesh Kumar",
-      mobile_number: "9876513210",
+      name: "1 Ramesh Kumar",
+      mobile_number: "9176513210",
       location: "Village Road, Andhra Pradesh",
       capacity: 5000
     })
