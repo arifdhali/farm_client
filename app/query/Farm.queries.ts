@@ -1,15 +1,15 @@
 import { createFarmer, getFarmers } from "@/api/farm.api";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
+import queryClient from "./client";
 
 
 
 export const useCreateFarmerMutation = () => {
-    const qc = useQueryClient();
     return useMutation({
         mutationFn: createFarmer,
         onSuccess: (data) => {
-            qc.invalidateQueries({ queryKey: ["farmers"] });
+            queryClient.invalidateQueries({ queryKey: ["farmers"] });
             toast.success(data?.message);
         },
     })

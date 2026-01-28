@@ -2,31 +2,21 @@ import HTTP from "@/api/client";
 import type { LoginRequest } from "@/types/Auth.type";
 import type { AxiosError } from "axios";
 import type { BackendError } from "@/types/AxiosErrors.type";
-
-
 import axios from "axios";
+
 
 export const getMe = async (cookies?: string) => {
     try {
         const res = await HTTP.get("/auth/me", {
             headers: cookies ? { cookie: cookies } : undefined,
         });
-        console.log(res, "getMe response");
-        if (res.data.status) {
-            return res.data.data;
-        }
-        throw new Error("getMe failed: status not success");
+
+        return res.data.data;
     } catch (err) {
-        if (axios.isAxiosError(err)) {
-            if (err.response?.status === 401) {
-                return null;
-            }
-        }
-        console.error("getMe failed:", err);
-        throw err;
+        const error = err as AxiosError<BackendError>;
+        throw error;
     }
 };
-
 
 export const Login = async (payload: LoginRequest) => {
     try {

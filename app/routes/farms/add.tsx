@@ -1,22 +1,55 @@
 import { useCreateFarmerMutation } from "@/query/Farm.queries";
+import { useFormik } from "formik";
 import { ArrowLeftIcon, ArrowLeftToLineIcon } from "lucide-react";
-import React, { useState, type FormEvent } from "react";
+import React, { useEffect, useRef, useState, type FormEvent } from "react";
 import { Link } from "react-router";
+import * as Yup from "yup";
+
+const addSchema = Yup.object({
+  name: Yup.string().required("Name is required"),
+  mobile_number: Yup.string().required("Mobile number is required"),
+  location: Yup.string().required("Location is required"),
+  capacity: Yup.number().required("Capacity is required").min(0, "Capacity must be positive"),
+  farm_status: Yup.string().required("Farm status is required"),
+  farmer_rate: Yup.number().required("Farmer rate is required").min(0, "Farmer rate must be positive"),
+  commision_rate: Yup.number().required("Commission rate is required").min(0, "Commission rate must be positive"),
+});
 
 const Add = () => {
   const [FarmsStatus, setFarmsStatus] = useState<"free" | "occupied">("free");
+  const inputRef = useRef<Record<string, HTMLInputElement | null>>({});
 
   const { mutate, isPending } = useCreateFarmerMutation();
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = (e: any) => {
     e.preventDefault();
-    mutate({
-      name: "1 Ramesh Kumar",
-      mobile_number: "9176513210",
-      location: "Village Road, Andhra Pradesh",
-      capacity: 5000
-    })
+
+
   }
+
+  const addFarm = useFormik({
+    initialValues: {
+      name: "",
+      mobile_number: "",
+      location: "",
+      capacity: 0,
+      farm_status: FarmsStatus,
+      farmer_rate: 0,
+      commision_rate: 0,
+    },
+    validationSchema: addSchema,
+    validateOnBlur: false,
+    validateOnChange: false,
+    onSubmit: handleSubmit
+  })
+
+  useEffect(() => {
+    if (!addFarm.isSubmitting) return;
+    let firstElement = Object.keys(addFarm.errors)[0]
+    firstElement && inputRef.current?.[firstElement]?.focus();
+    console.log(addFarm.errors);
+  }, [addFarm.errors, addFarm.isSubmitting]);
+
 
 
   return (
@@ -41,17 +74,24 @@ const Add = () => {
         </div>
       </div>
       <div className="bg-white dark:bg-zinc-900 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-800 overflow-hidden">
-        <form className="p-8" onSubmit={handleSubmit}>
+        <form className="p-8" onSubmit={addFarm.handleSubmit}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
             <div className="flex flex-col col-span-2 md:col-span-1">
               <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
                 Farmer Name
               </label>
               <input
+                ref={(el) => { el && (inputRef.current["name"] = el) }}
                 className="w-full rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-4 py-3 text-base"
                 placeholder="Enter full name"
                 type="text"
+                name="name"
+                value={addFarm.values.name}
+                onChange={addFarm.handleChange}
               />
+              {addFarm.touched.name && addFarm.errors.name ? (
+                <span className="text-red-500 text-sm">{addFarm.errors.name}</span>
+              ) : null}
             </div>
             <div className="flex flex-col col-span-2 md:col-span-1">
               <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
@@ -61,6 +101,9 @@ const Add = () => {
                 className="w-full rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-4 py-3 text-base"
                 placeholder="+1 234 567 890"
                 type="tel"
+                name="mobile_number"
+                value={addFarm.values.mobile_number}
+                onChange={addFarm.handleChange}
               />
             </div>
             <div className="flex flex-col col-span-2">

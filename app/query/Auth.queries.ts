@@ -12,8 +12,6 @@ export const getMeQuery = (cookies?: string | undefined) => ({
     staleTime: 5 * 60 * 1000,
 })
 
-
-
 export const useLoginMutation = () => {
     const navigate = useNavigate();
     return useMutation({
@@ -38,7 +36,7 @@ export const useLogoutMutation = () => {
     return useMutation({
         mutationFn: logout,
         onSuccess: async () => {
-            await queryClient.invalidateQueries({ queryKey: ["me"] });
+            queryClient.removeQueries({ queryKey: ["me"] });
             toast.success("Logout Successful");
             navigate("/auth/login", { replace: true });
         },
