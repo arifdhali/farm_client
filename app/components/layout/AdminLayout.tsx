@@ -22,9 +22,9 @@ export async function loader({ request }: { request: Request }) {
         return null;
     } catch (err) {
         const error = err as AxiosError<BackendError>;
-        if (error.status === 401) {
-            throw redirect("/auth/login");
-        }
+        // if (error.status === 401) {
+        //     throw redirect("/auth/login");
+        // }
     }
 }
 

@@ -18,6 +18,7 @@ export async function loader({ request }: { request: Request }) {
     } catch (err) {
         const error = err as AxiosError<BackendError>;
         if (error.status === 401) {
+            return null;
             throw redirect("/auth/login");
         }
     }
