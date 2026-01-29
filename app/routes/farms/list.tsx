@@ -60,28 +60,39 @@ import {
 import type { DateRange } from "react-day-picker";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
-import { getFarmersList } from "@/query/Farm.queries";
+import { useDeleteFarmMutation, getFarmersListList } from "@/query/Farm.queries";
+import Loading from "@/components/ui/Loading";
 
 const List = () => {
-  const [openAlert, setOpenAlert] = useState<boolean>(false);
-
-  const handleDelete = (id: number): void => {
-    setOpenAlert(!openAlert);
-  };
   const [open, setOpen] = useState(false);
   const [dateRange, setDateRange] = useState<DateRange | undefined>({
     from: new Date(2025, 5, 12),
     to: new Date(2025, 6, 15),
   });
-  const { data, isError, isLoading } = getFarmersList();
 
+  const { data, isLoading } = getFarmersListList();
+  const [openAlert, setOpenAlert] = useState<boolean>(false);
+  const [farm, setfarm] = useState<any>({});
 
-  console.log(data?.data?.farms);
+  const deleteMutaion = useDeleteFarmMutation();
 
+  const handleDeleteModal = (id: number): void => {
+    let farmName = data?.data?.farms.filter((farm: any) => id == farm.id);
+    setfarm({
+      id: id,
+      name: farmName[0].name
+    })
+    setOpenAlert(!openAlert);
+  };
+
+  const handleDeleteFarm = () => {
+    deleteMutaion.mutate(farm.id);
+  }
 
 
   return (
     <>
+
       <div className=" rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-8 py-6">
         <div className="flex flex-wrap justify-between items-center gap-4">
           <div>
@@ -200,7 +211,7 @@ const List = () => {
                   <TableBody className="divide-y divide-slate-100 dark:divide-slate-800">
 
                     {
-                      data?.data?.farms.map((farm: any) => (
+                      data?.data?.farms.length >= 1 ? (data?.data?.farms.map((farm: any) => (
                         <TableRow key={farm.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
                           <TableCell className="px-6 py-4">
                             <div className="flex items-center gap-3">
@@ -229,17 +240,10 @@ const List = () => {
 
                           <TableCell className="px-6 py-4">
                             {
-                              farm?.availablity_status === 'free' ? (
-                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
-                                  <span className="w-1 h-1 rounded-full bg-emerald-500 mr-1.5" ></span>
-                                  Available
-                                </span>
-                              ) : (
-                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400">
-                                  <span className="w-1 h-1 rounded-full bg-yellow-500 mr-1.5" ></span>
-                                  Occupied
-                                </span>
-                              )
+                              <span className={`flex w-fit items-center px-2.5 py-1 rounded-full text-xs font-bold ${farm?.availablity_status === 'free' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'}`}>
+                                <span className={`w-2 h-2  animate-pulse rounded-full ${farm?.availablity_status === 'free' ? 'bg-emerald-500' : 'bg-yellow-500'} mr-1.5`} ></span>
+                                {farm?.availablity_status === 'free' ? 'Available' : 'Occupied'}
+                              </span>
                             }
                           </TableCell>
 
@@ -261,7 +265,7 @@ const List = () => {
                               <Tooltip>
                                 <TooltipTrigger asChild>
                                   <button
-                                    onClick={() => handleDelete(farm?.id)}
+                                    onClick={() => handleDeleteModal(farm?.id)}
                                     className="p-1.5 rounded-lg text-red-500 hover:bg-red-100"
                                   >
                                     <Trash className="size-5" />
@@ -272,7 +276,13 @@ const List = () => {
                             </div>
                           </TableCell>
                         </TableRow>
-                      ))
+                      ))) : (
+                        <TableRow  className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
+                          <TableCell colSpan={6} className="px-6 py-4 text-center">
+                            No records
+                          </TableCell>
+                        </TableRow>
+                      )
                     }
                     {/* Repeat rows as-is */}
                   </TableBody>
@@ -325,7 +335,7 @@ const List = () => {
             </AlertDialogTitle>
             <AlertDialogDescription className="text-[#896161] text-sm leading-relaxed mt-3 text-center">
               Are you sure you want to delete{" "}
-              <strong className="font-semibold text-black">Jane Smith</strong>?
+              <strong className="font-semibold text-black">{farm && farm.name}</strong>?
               This action cannot be undone and all associated records will be
               lost.
             </AlertDialogDescription>
@@ -334,8 +344,8 @@ const List = () => {
             <AlertDialogCancel className="flex items-center justify-center rounded-lg h-12 bg-gray-200 dark:bg-[#3a1d1d] text-[#181111] dark:text-white hover:text-white border-0 text-sm font-bold  hover:bg-primary/90 dark:hover:bg-[#4d2727] ">
               Cancel
             </AlertDialogCancel>
-            <AlertDialogAction className="flex items-center justify-center rounded-lg h-12 bg-red-600 text-white text-sm font-bold hover:bg-primary/90  shadow-lg shadow-primary/20">
-              Continue
+            <AlertDialogAction disabled={deleteMutaion.isPending} onClick={handleDeleteFarm} className="flex items-center justify-center rounded-lg h-12 bg-red-600 text-white text-sm font-bold hover:bg-primary/90  shadow-lg shadow-primary/20">
+              {deleteMutaion.isPending ? "Processing" : "Confirm"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

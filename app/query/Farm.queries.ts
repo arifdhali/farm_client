@@ -1,23 +1,46 @@
-import { createFarmer, getFarmers } from "@/api/farm.api";
+import { createFarmer, deleteFarms, getFarmersList } from "@/api/farm.api";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import queryClient from "./client";
 
 
 
+
 export const useCreateFarmerMutation = () => {
     return useMutation({
         mutationFn: createFarmer,
-        onSuccess: (data) => {
-            queryClient.invalidateQueries({ queryKey: ["farmers"] });
-            toast.success(data?.message);
+        onSuccess: async (data) => {
+            await queryClient.invalidateQueries({ queryKey: ["farmers"] });
+            toast.success(data.message)
         },
+        onError: (err) => {
+            console.log(err);
+            const error: any = err;
+            if (!error.fieldErrors || Object.keys(error.fieldErrors).length <= 0) {
+                toast.error(error.response.data.message);
+            }
+        }
     })
 }
 
-export const getFarmersList = () => {
+export const getFarmersListList = () => {
     return useQuery({
         queryKey: ["farmers"],
-        queryFn: getFarmers,
+        queryFn: getFarmersList,
+    })
+}
+
+
+export const useDeleteFarmMutation = () => {
+    return useMutation({
+        mutationFn: deleteFarms,
+        onSuccess: async (data) => {
+            await queryClient.invalidateQueries({ queryKey: ["farmers"] });
+            console.log(data);
+        },
+        onError: (error) => {
+            console.log(error);
+        }
+
     })
 }

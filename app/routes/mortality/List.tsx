@@ -74,7 +74,7 @@ const List = () => {
                             <div className="w-[3%] bg-primary/20 rounded-t-sm h-[25%]"></div>
                         </div>
                         <svg className="absolute inset-0 w-full h-full" preserveAspectRatio="none">
-                            <path d="M 0 150 Q 50 140, 100 130 T 200 100 T 300 40 T 400 90 T 500 120 T 600 130 T 700 145" fill="none" stroke="#2b5bee" stroke-width="3"></path>
+                            <path d="M 0 150 Q 50 140, 100 130 T 200 100 T 300 40 T 400 90 T 500 120 T 600 130 T 700 145" fill="none" stroke="#2b5bee" strokeWidth="3"></path>
                         </svg>
                     </div>
                     <div className="flex justify-between mt-4 text-[10px] text-gray-400 font-bold uppercase tracking-widest px-2">

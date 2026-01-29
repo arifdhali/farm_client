@@ -5,21 +5,42 @@ const FARMER_API_URL = "/farm";
 
 export const createFarmer = async (payload: CreateFarmer) => {
     try {
-        const response = await HTTP.post(`${FARMER_API_URL}/create`, payload);
-        console.log(response);
-        return response.data;
 
+
+        const response = await HTTP.post(`${FARMER_API_URL}/create`, payload);
+        if (response.data.status) {
+            return response.data;
+        }
+        return null;
+
+    } catch (error) {
+        throw error;
+    }
+}
+
+
+export const getFarmersList = async () => {
+    try {
+        const response = await HTTP.get(`${FARMER_API_URL}/list`);
+        return response.data;
     } catch (error) {
         console.log(error);
     }
 }
 
 
-export const getFarmers = async () => {
+export const deleteFarms = async (farmid: number) => {
     try {
-        const response = await HTTP.get(`${FARMER_API_URL}/list`);
-        return response.data;
+        let response = await HTTP.delete(`${FARMER_API_URL}`, {
+            params: {
+                id: farmid
+            }
+        });
+        if (response.data.status) {
+            return response.data;
+        }
+        return null;
     } catch (error) {
-        console.log(error);
+        throw error;
     }
 }

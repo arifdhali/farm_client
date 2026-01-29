@@ -1,32 +1,33 @@
 import { Button } from "@/components/ui/button";
 import { useCreateFarmerMutation } from "@/query/Farm.queries";
 import { useFormik } from "formik";
-import { ArrowLeftIcon, ArrowLeftToLineIcon } from "lucide-react";
-import React, { useEffect, useRef, useState, type FormEvent } from "react";
+import { ArrowLeftIcon } from "lucide-react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Link } from "react-router";
 import * as Yup from "yup";
 
 const addSchema = Yup.object({
   name: Yup.string().required("Name is required"),
-  mobile_number: Yup.string().required("Mobile number is required"),
+  mobile_number: Yup.string().required("Mobile number is required").matches(/^[0-9]+$/, "Mobile number must contain only numbers"),
   location: Yup.string().required("Location is required"),
   capacity: Yup.number()
     .required("Capacity is required")
     .positive("Capacity must be a positive number"),
-  farm_status: Yup.string().required("Farm status is required"),
-  farmer_rate: Yup.number()
-    .required("Farmer rate is required")
-    .positive("Farmer rate must be a positive number"),
-  commision_rate: Yup.number()
-    .required("Commission rate is required")
-    .positive("Commission rate must be a positive number"),
+  rate: Yup.number()
+    .required("Rate is required")
+    .positive("Rate must be a positive number"),
+  commission_percentage: Yup.number()
+    .min(0, "Commission percentage must be at least 0")
+    .max(100, "Commission percentage must be at most 100")
+    .required("Commission percentage is required")
+    .positive("Commission percentage must be a positive number"),
 });
 
 const Add = () => {
   const [FarmsStatus, setFarmsStatus] = useState<"free" | "occupied">("free");
   const inputRef = useRef<Record<string, HTMLInputElement | HTMLTextAreaElement | null>>({});
 
-  const { mutate, isPending } = useCreateFarmerMutation();
+  const { mutate, isPending, isError, error, isSuccess } = useCreateFarmerMutation();
 
   const handleSubmit = (values: any) => {
     mutate(values);
@@ -38,9 +39,8 @@ const Add = () => {
       mobile_number: "",
       location: "",
       capacity: 0,
-      farm_status: FarmsStatus,
-      farmer_rate: 0,
-      commision_rate: 0,
+      rate: 0,
+      commission_percentage: 0,
     },
     validationSchema: addSchema,
     validateOnBlur: false,
@@ -54,6 +54,10 @@ const Add = () => {
     firstElement && inputRef.current?.[firstElement]?.focus();
 
   }, [addFarm.errors, addFarm.isSubmitting]);
+
+  useEffect(() => {
+    isSuccess && addFarm.resetForm();
+  }, [isSuccess]);
 
   return (
     <div className="flex-1 overflow-y-auto bg-background-light dark:bg-background-dark">
@@ -106,8 +110,12 @@ const Add = () => {
               </label>
               <input
                 className="w-full rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-4 py-3 text-base"
-                placeholder="+1 234 567 890"
+                placeholder="9839236789"
+                ref={(el) => {
+                  el && (inputRef.current["mobile_number"] = el);
+                }}
                 type="tel"
+                maxLength={10}
                 name="mobile_number"
                 value={addFarm.values.mobile_number}
                 onChange={addFarm.handleChange}
@@ -143,6 +151,9 @@ const Add = () => {
                 Farm Capacity
               </label>
               <input
+                ref={(el) => {
+                  el && (inputRef.current["capacity"] = el);
+                }}
                 name="capacity"
                 value={addFarm.values.capacity}
                 onChange={addFarm.handleChange}
@@ -158,9 +169,57 @@ const Add = () => {
                 ) : null
               }
             </div>
+
+            <div className="flex flex-col col-span-2 md:col-span-1 ">
+              <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
+                Rate
+              </label>
+              <input
+                ref={(el) => {
+                  el && (inputRef.current["rate"] = el);
+                }}
+                name="rate"
+                value={addFarm.values.rate}
+                onChange={addFarm.handleChange}
+                className="w-full rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-4 py-3 text-base"
+                placeholder="Fixed price"
+                type="number"
+              />
+              {
+                addFarm.touched.rate && addFarm.errors.rate ? (
+                  <span className="text-red-500 text-sm">
+                    {addFarm.errors.rate}
+                  </span>
+                ) : null
+              }
+            </div>
+            <div className="flex flex-col col-span-2 md:col-span-1 ">
+              <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
+                Commision Percentage (%)
+              </label>
+              <input
+                ref={(el) => {
+                  el && (inputRef.current["commision_rate"] = el);
+                }}
+                name="commission_percentage"
+                value={addFarm.values.commission_percentage}
+                onChange={addFarm.handleChange}
+                className="w-full rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-4 py-3 text-base"
+                placeholder="10.2%"
+                type="number"
+              />
+              {
+                addFarm.touched.commission_percentage && addFarm.errors.commission_percentage ? (
+                  <span className="text-red-500 text-sm">
+                    {addFarm.errors.commission_percentage}
+                  </span>
+                ) : null
+              }
+
+            </div>
             <div className="flex flex-col col-span-2 md:col-span-1">
               <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
-                Farm Status
+                Farm Status <span className="text-gray-500 font-normal text-xs">(Don't change unless necessary)</span>
               </label>
               <div className="relative flex bg-zinc-100 dark:bg-zinc-800 p-1 rounded-lg w-full max-w-xs">
                 {/* Sliding Active Indicator */}
@@ -196,55 +255,11 @@ const Add = () => {
                 </button>
               </div>
             </div>
-            <div className="col-span-1 ">
-              <div className="flex justify-between gap-x-8">
-                <div className="flex flex-col w-1/2 ">
-                  <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
-                    Farmer Rate
-                  </label>
-                  <input
-                    name="farmer_rate"
-                    value={addFarm.values.farmer_rate}
-                    onChange={addFarm.handleChange}
-                    className="w-full rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-4 py-3 text-base"
-                    placeholder="Fixed price"
-                    type="number"
-                  />
-                  {
-                    addFarm.touched.farmer_rate && addFarm.errors.farmer_rate ? (
-                      <span className="text-red-500 text-sm">
-                        {addFarm.errors.farmer_rate}
-                      </span>
-                    ) : null
-                  }
-                </div>
-                <div className="flex flex-col w-1/2 ">
-                  <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
-                    Commision Percentage (%)
-                  </label>
-                  <input
-                    name="commision_rate"
-                    value={addFarm.values.commision_rate}
-                    onChange={addFarm.handleChange}
-                    className="w-full rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-4 py-3 text-base"
-                    placeholder="10.2%"
-                    type="number"
-                  />
-                  {
-                    addFarm.touched.commision_rate && addFarm.errors.commision_rate ? (
-                      <span className="text-red-500 text-sm">
-                        {addFarm.errors.commision_rate}
-                      </span>
-                    ) : null
-                  }
-
-                </div>
-              </div>
-            </div>
           </div>
 
           <div className="mt-10 flex items-center justify-end gap-4">
             <button
+            onClick={()=> addFarm.resetForm()}
               className="px-6 py-3 rounded-lg text-sm font-bold bg-red-600 text-white dark:text-zinc-400 hover:bg-red-400 dark:hover:bg-zinc-800 transition-colors"
               type="button"
             >
@@ -252,7 +267,7 @@ const Add = () => {
             </button>
             <Button
               spinner={isPending}
-              className="bg-primary hover:bg-primary/90 text-white px-8 py-3 rounded-lg text-sm font-bold shadow-lg shadow-primary/20 transition-all"
+              className="bg-primary h-[44px] hover:bg-primary/90 text-white px-8 py-3 rounded-lg text-sm font-bold shadow-lg shadow-primary/20 transition-all"
               type="submit"
             >
               Add Farmer
