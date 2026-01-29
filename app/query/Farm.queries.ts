@@ -1,4 +1,4 @@
-import { createFarmer, deleteFarms, getFarmersList } from "@/api/farm.api";
+import { createFarmer, deleteFarms, getFarmersList, getSingleFarm } from "@/api/farm.api";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import queryClient from "./client";
@@ -29,6 +29,18 @@ export const getFarmersListList = () => {
         queryFn: getFarmersList,
     })
 }
+
+export const useGetSingleFarm = (farmId: number) => {
+
+    return useQuery({
+        queryKey: ["farmers", farmId],
+        queryFn: () => getSingleFarm(farmId),
+        enabled: !!farmId
+    })
+
+}
+
+export const useUpdateFarmMutation = () => { }
 
 
 export const useDeleteFarmMutation = () => {

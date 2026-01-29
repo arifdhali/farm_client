@@ -28,6 +28,18 @@ export const getFarmersList = async () => {
     }
 }
 
+export const getSingleFarm = async (id: number) => {
+    try {
+        const response = await HTTP.get(`${FARMER_API_URL}/${id}`);
+        console.log();
+        if (response.data.status) {
+            return response.data.data.farm;
+        }
+    } catch (error) {
+        throw error;
+    }
+}
+
 
 export const deleteFarms = async (farmid: number) => {
     try {

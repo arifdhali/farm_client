@@ -1,11 +1,13 @@
+import { useGetSingleFarm } from "@/query/Farm.queries";
 import { ArrowLeftIcon, ArrowLeftToLineIcon } from "lucide-react";
 import React, { useState } from "react";
 import { Link, useParams } from "react-router";
 
 const Add = () => {
   const [FarmsStatus, setFarmsStatus] = useState<"free" | "occupied">("free");
-  const id = useParams();
-  console.log(id);
+  const { id } = useParams();
+
+  const { data, isLoading } = useGetSingleFarm(Number(id));
 
   return (
     <div className="flex-1 overflow-y-auto bg-background-light dark:bg-background-dark">
@@ -40,6 +42,7 @@ const Add = () => {
                 className="w-full rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-4 py-3 text-base"
                 placeholder="Enter full name"
                 type="text"
+                value={data?.name}
               />
             </div>
             <div className="flex flex-col col-span-2 md:col-span-1">
@@ -87,11 +90,10 @@ const Add = () => {
                   type="button"
                   onClick={() => setFarmsStatus("free")}
                   className={`relative z-10 flex-1 py-2 text-sm font-bold transition-colors
-            ${
-              FarmsStatus === "free"
-                ? "text-primary"
-                : "text-zinc-500 dark:text-zinc-400"
-            }`}
+            ${FarmsStatus === "free"
+                      ? "text-primary"
+                      : "text-zinc-500 dark:text-zinc-400"
+                    }`}
                 >
                   Free
                 </button>
@@ -101,11 +103,10 @@ const Add = () => {
                   type="button"
                   onClick={() => setFarmsStatus("occupied")}
                   className={`relative z-10 flex-1 py-2 text-sm font-bold transition-colors
-            ${
-              FarmsStatus === "occupied"
-                ? "text-primary"
-                : "text-zinc-500 dark:text-zinc-400"
-            }`}
+            ${FarmsStatus === "occupied"
+                      ? "text-primary"
+                      : "text-zinc-500 dark:text-zinc-400"
+                    }`}
                 >
                   Occupied
                 </button>
