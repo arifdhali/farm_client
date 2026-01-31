@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useCreateFarmerMutation } from "@/query/Farm.queries";
+import type { CreateFarmer } from "@/types/Farm";
 import { useFormik } from "formik";
 import { ArrowLeftIcon } from "lucide-react";
 import { useEffect, useRef, useState, type FormEvent } from "react";
@@ -8,7 +9,9 @@ import * as Yup from "yup";
 
 const addSchema = Yup.object({
   name: Yup.string().required("Name is required"),
-  mobile_number: Yup.string().required("Mobile number is required").matches(/^[0-9]+$/, "Mobile number must contain only numbers"),
+  mobile_number: Yup.string()
+    .required("Mobile number is required")
+    .matches(/^[0-9]+$/, "Mobile number must contain only numbers"),
   location: Yup.string().required("Location is required"),
   capacity: Yup.number()
     .required("Capacity is required")
@@ -25,15 +28,18 @@ const addSchema = Yup.object({
 
 const Add = () => {
   const [FarmsStatus, setFarmsStatus] = useState<"free" | "occupied">("free");
-  const inputRef = useRef<Record<string, HTMLInputElement | HTMLTextAreaElement | null>>({});
+  const inputRef = useRef<
+    Record<string, HTMLInputElement | HTMLTextAreaElement | null>
+  >({});
 
-  const { mutate, isPending, isError, error, isSuccess } = useCreateFarmerMutation();
+  const { mutate, isPending, isError, error, isSuccess } =
+    useCreateFarmerMutation();
 
   const handleSubmit = (values: any) => {
     mutate(values);
   };
 
-  const addFarm = useFormik({
+  const addFarm = useFormik<CreateFarmer>({
     initialValues: {
       name: "",
       mobile_number: "",
@@ -52,7 +58,6 @@ const Add = () => {
     if (!addFarm.isSubmitting) return;
     let firstElement = Object.keys(addFarm.errors)[0];
     firstElement && inputRef.current?.[firstElement]?.focus();
-
   }, [addFarm.errors, addFarm.isSubmitting]);
 
   useEffect(() => {
@@ -161,13 +166,11 @@ const Add = () => {
                 placeholder="e.g. 5000 birds"
                 type="number"
               />
-              {
-                addFarm.touched.capacity && addFarm.errors.capacity ? (
-                  <span className="text-red-500 text-sm">
-                    {addFarm.errors.capacity}
-                  </span>
-                ) : null
-              }
+              {addFarm.touched.capacity && addFarm.errors.capacity ? (
+                <span className="text-red-500 text-sm">
+                  {addFarm.errors.capacity}
+                </span>
+              ) : null}
             </div>
 
             <div className="flex flex-col col-span-2 md:col-span-1 ">
@@ -185,13 +188,11 @@ const Add = () => {
                 placeholder="Fixed price"
                 type="number"
               />
-              {
-                addFarm.touched.rate && addFarm.errors.rate ? (
-                  <span className="text-red-500 text-sm">
-                    {addFarm.errors.rate}
-                  </span>
-                ) : null
-              }
+              {addFarm.touched.rate && addFarm.errors.rate ? (
+                <span className="text-red-500 text-sm">
+                  {addFarm.errors.rate}
+                </span>
+              ) : null}
             </div>
             <div className="flex flex-col col-span-2 md:col-span-1 ">
               <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
@@ -208,48 +209,48 @@ const Add = () => {
                 placeholder="10.2%"
                 type="number"
               />
-              {
-                addFarm.touched.commission_percentage && addFarm.errors.commission_percentage ? (
-                  <span className="text-red-500 text-sm">
-                    {addFarm.errors.commission_percentage}
-                  </span>
-                ) : null
-              }
-
+              {addFarm.touched.commission_percentage &&
+              addFarm.errors.commission_percentage ? (
+                <span className="text-red-500 text-sm">
+                  {addFarm.errors.commission_percentage}
+                </span>
+              ) : null}
             </div>
             <div className="flex flex-col col-span-2 md:col-span-1">
               <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
-                Farm Status <span className="text-gray-500 font-normal text-xs">(Don't change unless necessary)</span>
+                Farm Status{" "}
+                <span className="text-gray-500 font-normal text-xs">
+                  (Don't change unless necessary)
+                </span>
               </label>
               <div className="relative flex bg-zinc-100 dark:bg-zinc-800 p-1 rounded-lg w-full max-w-xs">
-                {/* Sliding Active Indicator */}
                 <span
                   className={`absolute top-1 left-1 h-[calc(100%-0.5rem)] w-1/2 rounded-md bg-white dark:bg-zinc-700 shadow-sm border border-zinc-200 dark:border-zinc-600 transition-transform duration-300 ease-in-out
           ${FarmsStatus === "occupied" ? "translate-x-full" : ""}`}
                 />
 
-                {/* Free */}
                 <button
                   type="button"
                   onClick={() => setFarmsStatus("free")}
                   className={`relative z-10 flex-1 py-2 text-sm font-bold transition-colors
-            ${FarmsStatus === "free"
-                      ? "text-primary"
-                      : "text-zinc-500 dark:text-zinc-400"
-                    }`}
+            ${
+              FarmsStatus === "free"
+                ? "text-primary"
+                : "text-zinc-500 dark:text-zinc-400"
+            }`}
                 >
-                  Free
+                  Available
                 </button>
 
-                {/* Occupied */}
                 <button
                   type="button"
                   onClick={() => setFarmsStatus("occupied")}
                   className={`relative z-10 flex-1 py-2 text-sm font-bold transition-colors
-            ${FarmsStatus === "occupied"
-                      ? "text-primary"
-                      : "text-zinc-500 dark:text-zinc-400"
-                    }`}
+            ${
+              FarmsStatus === "occupied"
+                ? "text-primary"
+                : "text-zinc-500 dark:text-zinc-400"
+            }`}
                 >
                   Occupied
                 </button>
@@ -259,7 +260,7 @@ const Add = () => {
 
           <div className="mt-10 flex items-center justify-end gap-4">
             <button
-            onClick={()=> addFarm.resetForm()}
+              onClick={() => addFarm.resetForm()}
               className="px-6 py-3 rounded-lg text-sm font-bold bg-red-600 text-white dark:text-zinc-400 hover:bg-red-400 dark:hover:bg-zinc-800 transition-colors"
               type="button"
             >
@@ -267,7 +268,7 @@ const Add = () => {
             </button>
             <Button
               spinner={isPending}
-              className="bg-primary h-[44px] hover:bg-primary/90 text-white px-8 py-3 rounded-lg text-sm font-bold shadow-lg shadow-primary/20 transition-all"
+              className="bg-primary h-11 hover:bg-primary/90 text-white px-8 py-3 rounded-lg text-sm font-bold shadow-lg shadow-primary/20 transition-all"
               type="submit"
             >
               Add Farmer

@@ -1,9 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router";
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-
 import {
   Table,
   TableBody,
@@ -24,52 +21,30 @@ import {
   AlertDialogHeader,
 } from "@/components/ui/alert-dialog";
 
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-
-import { Calendar } from "@/components/ui/calendar";
-
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-
-import {
-  ChevronDown,
-  ChevronLeft,
-  ChevronRight,
-  Download,
-  DownloadCloudIcon,
-  Edit,
-  Eye,
-  Filter,
-  Pencil,
-  Plus,
-  PlusIcon,
-  Search,
-  Trash,
-  TrashIcon,
-} from "lucide-react";
+import { Edit, PlusIcon, Trash, TrashIcon } from "lucide-react";
 
 import type { DateRange } from "react-day-picker";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
-import { useDeleteFarmMutation, getFarmersListList } from "@/query/Farm.queries";
-import Loading from "@/components/ui/Loading";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+import {
+  useDeleteFarmMutation,
+  getFarmersListList,
+} from "@/query/Farm.queries";
+import HeaderFilter from "@/components/ui/headerFilter";
 
 const List = () => {
-  const [open, setOpen] = useState(false);
-  const [dateRange, setDateRange] = useState<DateRange | undefined>({
-    from: new Date(2025, 5, 12),
-    to: new Date(2025, 6, 15),
-  });
-
   const { data, isLoading } = getFarmersListList();
   const [openAlert, setOpenAlert] = useState<boolean>(false);
   const [farm, setfarm] = useState<any>({});
@@ -80,19 +55,17 @@ const List = () => {
     let farmName = data?.data?.farms.filter((farm: any) => id == farm.id);
     setfarm({
       id: id,
-      name: farmName[0].name
-    })
+      name: farmName[0].name,
+    });
     setOpenAlert(!openAlert);
   };
 
   const handleDeleteFarm = () => {
     deleteMutaion.mutate(farm.id);
-  }
-
+  };
 
   return (
     <>
-
       <div className=" rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-8 py-6">
         <div className="flex flex-wrap justify-between items-center gap-4">
           <div>
@@ -116,71 +89,8 @@ const List = () => {
 
       <div className="flex-1 overflow-y-auto pb-8 pt-4 bg-background-light dark:bg-background-dark">
         <div className="space-y-6">
-          <div className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-col lg:flex-row gap-4">
-            {/* Search */}
-            <div className="relative flex-1">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-              <Input
-                placeholder="Search by farmer name, address or mobile..."
-                className="pl-11 h-11"
-              />
-            </div>
+          <HeaderFilter />
 
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className="w-44 h-11 justify-between shadow-none font-normal border border-light"
-                >
-                  From date
-                  <ChevronDown className="h-4 w-4 opacity-50" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent
-                align="end"
-                className="w-75 bg-white p-0 border-0 "
-              >
-                <Calendar mode="single" className="w-full calender" />
-              </PopoverContent>
-
-            </Popover>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className="w-44 h-11 justify-between font-normal border border-light shadow-none"
-                >
-                  To date
-                  <ChevronDown className="h-4 w-4 opacity-50" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent
-                align="end"
-                className="w-75 bg-white p-0 border-0"
-              >
-                <Calendar mode="single" className="w-full calender" />
-              </PopoverContent>
-
-            </Popover>
-
-            <Select defaultValue="10">
-              <SelectTrigger
-                size={"default"}
-                className="w-36 h-[44px] bg-white border border-light shadow-none"
-              >
-                <SelectValue placeholder="Per page" />
-              </SelectTrigger>
-
-              <SelectContent className="bg-white border-0">
-                <SelectItem value="10">10</SelectItem>
-                <SelectItem value="20">20</SelectItem>
-                <SelectItem value="50">50</SelectItem>
-                <SelectItem value="100">100</SelectItem>
-              </SelectContent>
-            </Select>
-
-
-          </div>
           <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
             <div className="overflow-x-auto @container">
               <div className="overflow-x-auto @container">
@@ -209,10 +119,12 @@ const List = () => {
                   </TableHeader>
 
                   <TableBody className="divide-y divide-slate-100 dark:divide-slate-800">
-
-                    {
-                      data?.data?.farms.length >= 1 ? (data?.data?.farms.map((farm: any) => (
-                        <TableRow key={farm.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
+                    {data?.data?.farms.length >= 1 ? (
+                      data?.data?.farms.map((farm: any) => (
+                        <TableRow
+                          key={farm.id}
+                          className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors"
+                        >
                           <TableCell className="px-6 py-4">
                             <div className="flex items-center gap-3">
                               <div
@@ -222,7 +134,9 @@ const List = () => {
                                     "url('https://lh3.googleusercontent.com/aida-public/AB6AXuB9NG1Kb7xNEXdiDP4alp3ILUnFLgQqDDlgXErXBuOCYtf3Mk2B9vdq8ImXv8JZT0H8wKfNMmqTXEUWMdIXWgWtrfbcESOyYZ3NRtHgAiDJhylsJU2ZqmyaEEgDwQBB1qWpmW5XiSBAtMEd2F0s3wMZfr3VAy5opTKAjlMC8z1UOxob6h-1s8f7gZk9BIEtqjmaYjaTcrf_RDzIX-ITM0-pVi-61xgH1sTdmQkc1ZbwRiuDxRC0PAkPl8jsj71noHlgCzvn0jmPXDW0')",
                                 }}
                               />
-                              <span className="font-semibold text-sm">{farm?.name}</span>
+                              <span className="font-semibold text-sm">
+                                {farm?.name}
+                              </span>
                             </div>
                           </TableCell>
 
@@ -240,16 +154,21 @@ const List = () => {
 
                           <TableCell className="px-6 py-4">
                             {
-                              <span className={`flex w-fit items-center px-2.5 py-1 rounded-full text-xs font-bold ${farm?.availablity_status === 'free' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'}`}>
-                                <span className={`w-2 h-2  animate-pulse rounded-full ${farm?.availablity_status === 'free' ? 'bg-emerald-500' : 'bg-yellow-500'} mr-1.5`} ></span>
-                                {farm?.availablity_status === 'free' ? 'Available' : 'Occupied'}
+                              <span
+                                className={`flex w-fit items-center px-2.5 py-1 rounded-full text-xs font-bold ${farm?.availablity_status === "free" ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400" : "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400"}`}
+                              >
+                                <span
+                                  className={`w-2 h-2  animate-pulse rounded-full ${farm?.availablity_status === "free" ? "bg-emerald-500" : "bg-yellow-500"} mr-1.5`}
+                                ></span>
+                                {farm?.availablity_status === "free"
+                                  ? "Available"
+                                  : "Occupied"}
                               </span>
                             }
                           </TableCell>
 
                           <TableCell className="px-6 py-4 text-right">
                             <div className="flex items-center justify-end gap-1.5">
-
                               <Tooltip>
                                 <TooltipTrigger asChild>
                                   <Link
@@ -276,35 +195,44 @@ const List = () => {
                             </div>
                           </TableCell>
                         </TableRow>
-                      ))) : (
-                        <TableRow  className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
-                          <TableCell colSpan={6} className="px-6 py-4 text-center">
-                            No records
-                          </TableCell>
-                        </TableRow>
-                      )
-                    }
+                      ))
+                    ) : (
+                      <TableRow className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
+                        <TableCell
+                          colSpan={6}
+                          className="px-6 py-4 text-center"
+                        >
+                          No records
+                        </TableCell>
+                      </TableRow>
+                    )}
                     {/* Repeat rows as-is */}
                   </TableBody>
                 </Table>
               </div>
-
             </div>
             <div className="px-6 py-4 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between">
               <p className="text-sm text-slate-500 dark:text-slate-400">
                 Showing 1 to 5 of 42 entries
               </p>
-              <Pagination>
+
+              <Pagination className="w-fit" style={{ marginRight: 0 }}>
                 <PaginationContent>
-                  <PaginationItem >
-                    <PaginationPrevious href="#" className="bg-primary " />
+                  <PaginationItem>
+                    <PaginationPrevious
+                      href="#"
+                      className="bg-primary text-white "
+                    />
                   </PaginationItem>
                   <PaginationItem>
                     <PaginationLink href="#">1</PaginationLink>
                   </PaginationItem>
                   <PaginationItem>
-                    <PaginationLink className="bg-primary text-white"
-                      href="#" isActive>
+                    <PaginationLink
+                      className="bg-primary text-white"
+                      href="#"
+                      isActive
+                    >
                       2
                     </PaginationLink>
                   </PaginationItem>
@@ -335,8 +263,10 @@ const List = () => {
             </AlertDialogTitle>
             <AlertDialogDescription className="text-[#896161] text-sm leading-relaxed mt-3 text-center">
               Are you sure you want to delete{" "}
-              <strong className="font-semibold text-black">{farm && farm.name}</strong>?
-              This action cannot be undone and all associated records will be
+              <strong className="font-semibold text-black">
+                {farm && farm.name}
+              </strong>
+              ? This action cannot be undone and all associated records will be
               lost.
             </AlertDialogDescription>
           </AlertDialogHeader>
@@ -344,7 +274,11 @@ const List = () => {
             <AlertDialogCancel className="flex items-center justify-center rounded-lg h-12 bg-gray-200 dark:bg-[#3a1d1d] text-[#181111] dark:text-white hover:text-white border-0 text-sm font-bold  hover:bg-primary/90 dark:hover:bg-[#4d2727] ">
               Cancel
             </AlertDialogCancel>
-            <AlertDialogAction disabled={deleteMutaion.isPending} onClick={handleDeleteFarm} className="flex items-center justify-center rounded-lg h-12 bg-red-600 text-white text-sm font-bold hover:bg-primary/90  shadow-lg shadow-primary/20">
+            <AlertDialogAction
+              disabled={deleteMutaion.isPending}
+              onClick={handleDeleteFarm}
+              className="flex items-center justify-center rounded-lg h-12 bg-red-600 text-white text-sm font-bold hover:bg-primary/90  shadow-lg shadow-primary/20"
+            >
               {deleteMutaion.isPending ? "Processing" : "Confirm"}
             </AlertDialogAction>
           </AlertDialogFooter>

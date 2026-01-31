@@ -40,7 +40,7 @@ export const useGetSingleFarm = (farmId: number) => {
 
 }
 
-export const useUpdateFarmMutation = () => { }
+export const useUpdateFarmerMutation = () => { }
 
 
 export const useDeleteFarmMutation = () => {
