@@ -1,37 +1,69 @@
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { ArrowLeftIcon, ArrowLeftToLineIcon, Check, ChevronsUpDown } from "lucide-react";
-import React, { useState } from "react";
+import { useGetFarmersList } from "@/query/Farm.queries";
+import type { DeliveryFormValues } from "@/types/Chicks";
+import { useFormik } from "formik";
+import { ArrowLeftIcon, Check, ChevronsUpDown } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
+import * as yup from "yup";
+import { format } from "date-fns";
+import { useChickDeliveryMutation } from "@/query/Chicks.queries";
 
+const chicksDeliverySchema = yup.object().shape({
+  delivery_date: yup.date().required("Delivery date is required").min(
+    new Date(new Date().setHours(0, 0, 0, 0)),
+    "Delivery date cannot be in the past"
+  ),
+  farm_id: yup.number().typeError("Farm must be a number").required("Farm is required"),
+  quantity: yup.number().typeError("Quantity must be a number")
+    .required("Quantity is required").positive("Quantity must be a positive number"),
+  chicks_rate: yup.number().typeError("Chicks rate must be a number")
+    .required("Chicks rate is required").positive("Chicks must be a positive number"),
+
+});
 const Delivery = () => {
-  const [FarmsStatus, setFarmsStatus] = useState<"free" | "occupied">("free");
-  const [open, setOpen] = useState<boolean>(false);
-  const [value, setValue] = React.useState("")
-  const frameworks = [
-    {
-      value: "next.js",
-      label: "Next.js",
+  const inputRef = useRef<Record<string, HTMLInputElement | HTMLTextAreaElement | null>>({});
+  const [open, setOpen] = useState<any>({
+    select_farmer: false,
+    select_date: false,
+  });
+
+  const { data } = useGetFarmersList();
+  const makeDelivery = useChickDeliveryMutation();
+
+  const devliveryForm = useFormik<DeliveryFormValues>({
+    initialValues: {
+      delivery_date: new Date(),
+      farm_id: null,
+      quantity: 0,
+      chicks_rate: 0,
     },
-    {
-      value: "sveltekit",
-      label: "SvelteKit",
-    },
-    {
-      value: "nuxt.js",
-      label: "Nuxt.js",
-    },
-    {
-      value: "remix",
-      label: "Remix",
-    },
-    {
-      value: "astro",
-      label: "Astro",
-    },
-  ] 
+    validationSchema: chicksDeliverySchema,
+    validateOnBlur: false,
+    validateOnChange: false,
+    onSubmit: (values) => {
+      let payload = {
+        ...values,
+        delivery_date: format(values.delivery_date, "yyyy-MM-dd"),
+      }
+      makeDelivery.mutate(payload);
+      if (makeDelivery.isSuccess) {
+        devliveryForm.resetForm();
+      }
+    }
+  });
+
+  const selectedFarm = data?.data?.farms.find((farm: any) => Number(farm.id) == devliveryForm.values.farm_id);
+  useEffect(() => {
+    if (!devliveryForm.isSubmitting) return;
+    let firstElement = Object.keys(devliveryForm.errors)[0];
+    firstElement && inputRef.current?.[firstElement]?.focus();
+  }, [devliveryForm.errors, devliveryForm.isSubmitting]);
+
   return (
     <div className="flex-1 overflow-y-auto bg-background-light dark:bg-background-dark">
       <div className="mb-8 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-8 py-6">
@@ -45,7 +77,7 @@ const Delivery = () => {
             </p>
           </div>
           <Link
-            to={"/farms/list"}
+            to={"/chicks/list"}
             className="bg-white hover:text-primary dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2"
           >
             <ArrowLeftIcon />
@@ -54,111 +86,169 @@ const Delivery = () => {
         </div>
       </div>
       <div className="bg-white dark:bg-zinc-900 w-150 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-800 overflow-hidden">
-        <form className="p-8">
+        <form onSubmit={devliveryForm.handleSubmit} className="p-8">
           <div className="grid grid-cols-1 md:grid-cols-1 gap-x-8 gap-y-6">
             <div className="flex flex-col col-span-1 md:col-span-1">
               <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
                 Farmer Name
               </label>
-              <Popover  open={open} onOpenChange={setOpen}>
-                <PopoverTrigger  className="border-slate-200 h-[44px]"  asChild>
-                  <Button
-                    variant="outline"
-                    role="combobox"
-                    aria-expanded={open}
-                    className="w-full justify-between bg-white shadow-none"
+              <Popover open={open.select_farmer} onOpenChange={setOpen}>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" role="combobox" aria-expanded={open.select_farmer}
+                    className="w-full border-slate-200 h-12 justify-between bg-white shadow-none"
                   >
-                    {value
-                      ? frameworks.find((framework) => framework.value === value)?.label
-                      : "Select framework..."}
-                    <ChevronsUpDown  />
+                    {devliveryForm.values.farm_id
+                      ? selectedFarm?.name
+                      : "Select farm..."}
+                    <ChevronsUpDown />
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className=" p-0 border border-slate-200" align="start">
                   <Command className="border-0">
-                    <CommandInput placeholder="Search framework..." className="h-9 border-0" />
+                    <CommandInput placeholder="Search farm..." className="border-0" />
                     <CommandList>
-                      <CommandEmpty>No framework found.</CommandEmpty>
+                      <CommandEmpty>No farm found.</CommandEmpty>
                       <CommandGroup>
-                        {frameworks.map((framework) => (
-                          <CommandItem
-                            key={framework.value}
-                            value={framework.value}
-                            onSelect={(currentValue) => {
-                              setValue(currentValue === value ? "" : currentValue)
-                              setOpen(false)
-                            }}
-                          >
-                            {framework.label}
-                            <Check
-                              className={cn(
-                                "ml-auto",
-                                value === framework.value ? "opacity-100" : "opacity-0"
-                              )}
-                            />
-                          </CommandItem>
-                        ))}
+                        {data?.data?.farms.length > 0 && (
+                          data?.data?.farms.map((farm: any) => (
+                            <CommandItem
+                              key={String(farm.id)}
+                              value={String(farm.id)}
+                              onSelect={(currentValue) => {
+                                devliveryForm.setFieldValue("farm_id", currentValue)
+                                setOpen({
+                                  select_farmer: false
+                                })
+                              }}
+                            >
+                              {farm.name}
+                              <Check
+                                className={cn(
+                                  "ml-auto",
+                                  devliveryForm.values.farm_id === Number(farm.id) ? "opacity-100" : "opacity-0"
+                                )}
+                              />
+                            </CommandItem>
+                          ))
+                        )}
                       </CommandGroup>
                     </CommandList>
                   </Command>
                 </PopoverContent>
               </Popover>
+              {devliveryForm.touched.farm_id && devliveryForm.errors.farm_id ? (
+                <span className="text-red-500 text-sm">
+                  {devliveryForm.errors.farm_id}
+                </span>
+              ) : null}
             </div>
 
             <div className="flex flex-col col-span-2 md:col-span-1">
               <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
-               Quantity
+                Select Date
+              </label>
+
+              <Popover open={open.select_date} onOpenChange={setOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={`w-full h-12 rounded-lg border border-zinc-200 dark:border-zinc-700 shadow-none justify-start font-normal bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-4 py-3 text-base`}
+                  >
+                    {devliveryForm.values.delivery_date
+                      ? format(devliveryForm.values.delivery_date, "dd/MM/yyyy")
+                      : "Select date"}
+                  </Button>
+                </PopoverTrigger >
+                <PopoverContent className="w-full rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 p-0 text-base" align="start">
+                  <Calendar
+                    className="w-75"
+                    mode="single"
+                    buttonVariant="outline"
+                    selected={devliveryForm.values.delivery_date}
+                    disabled={{ before: new Date() }}
+                    onSelect={(date) => {
+                      if (!date) return;
+                      setOpen({
+                        select_date: false
+                      })
+                      devliveryForm.setFieldValue("delivery_date", date)
+                    }}
+                  />
+                </PopoverContent>
+              </Popover>
+              {devliveryForm.touched.delivery_date && devliveryForm.errors.delivery_date ? (
+                <span className="text-red-500 text-sm">
+                  {devliveryForm.errors.delivery_date}
+                </span>
+              ) : null}
+            </div>
+            <div className="flex flex-col col-span-2 md:col-span-1">
+              <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
+                Quantity
               </label>
               <input
-                className="w-full rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-4 py-3 text-base"
+                className="w-full h-12 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-4 py-3 text-base"
                 placeholder="200"
-                type="tel"
+                type="number"
+                name="quantity"
+                ref={(el) => {
+                  el && (inputRef.current["quantity"] = el);
+                }}
+                onChange={devliveryForm.handleChange}
+                onBlur={devliveryForm.handleBlur}
+                value={devliveryForm.values.quantity}
               />
+              {devliveryForm.touched.quantity && devliveryForm.errors.quantity ? (
+                <span className="text-red-500 text-sm">
+                  {devliveryForm.errors.quantity}
+                </span>
+              ) : null}
             </div>
-             
-            <div className="col-span-1 ">
-              <div className="flex justify-between gap-x-8">
-                <div className="flex flex-col w-1/2 ">
-                  <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
-                    Farmer Rate
-                  </label>
-                  <input
-                    className="w-full rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-4 py-3 text-base"
-                    placeholder="Fixed price"
-                    type="number"
-                  />
-                </div>
-                <div className="flex flex-col w-1/2 ">
-                  <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
-                    Commision Percentage (%)
-                  </label>
-                  <input
-                    className="w-full rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-4 py-3 text-base"
-                    placeholder="10.2%"
-                    type="number"
-                  />
-                </div>
-              </div>
+
+            <div className="flex flex-col col-span-2 md:col-span-1">
+              <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
+                Chicks Rate
+              </label>
+              <input
+
+                className="w-full h-12 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-4 py-3 text-base"
+                placeholder="Fixed price"
+                type="number"
+                name="chicks_rate"
+                ref={(el) => {
+                  el && (inputRef.current["chicks_rate"] = el);
+                }}
+                onChange={devliveryForm.handleChange}
+                onBlur={devliveryForm.handleBlur}
+                value={devliveryForm.values.chicks_rate}
+              />
+              {devliveryForm.touched.chicks_rate && devliveryForm.errors.chicks_rate ? (
+                <span className="text-red-500 text-sm">
+                  {devliveryForm.errors.chicks_rate}
+                </span>
+              ) : null}
             </div>
           </div>
 
           <div className="mt-10 flex items-center justify-end gap-4">
             <button
+              onClick={() => devliveryForm.resetForm()}
               className="px-6 py-3 rounded-lg text-sm font-bold bg-red-600 text-white dark:text-zinc-400 hover:bg-red-400 dark:hover:bg-zinc-800 transition-colors"
               type="button"
             >
               Cancel
             </button>
-            <button
-              className="bg-primary hover:bg-primary/90 text-white px-8 py-3 rounded-lg text-sm font-bold shadow-lg shadow-primary/20 transition-all"
+            <Button
+              spinner={makeDelivery.isPending}
+              className="bg-primary h-11 hover:bg-primary/90 text-white px-8 py-3 rounded-lg text-sm font-bold shadow-lg shadow-primary/20 transition-all"
               type="submit"
             >
-              Add Farmer
-            </button>
+              Make Delivery
+            </Button>
           </div>
         </form>
       </div>
-      
+
     </div>
   );
 };

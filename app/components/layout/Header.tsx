@@ -23,7 +23,7 @@ const Header = () => {
           <Settings />
         </Link>
         <div className="h-8 w-px bg-[#dddbe6] dark:bg-white/10 mx-2"></div>
-        <div className="flex items-center gap-3 cursor-pointer">
+        <div className="flex items-center gap-3">
           <div className="text-right">
             <p className="text-sm font-bold leading-none text-black">{user?.name}</p>
             <p className="text-xs text-[#686189] mt-1 capitalize">{user?.role?.name}</p>

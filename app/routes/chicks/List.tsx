@@ -1,9 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router";
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-
 import {
     Table,
     TableBody,
@@ -25,43 +22,31 @@ import {
 } from "@/components/ui/alert-dialog";
 
 import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/components/ui/popover";
-
-import { Calendar } from "@/components/ui/calendar";
-
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
-
-import {
-    ChevronDown,
-    ChevronLeft,
-    ChevronRight,
-    Download,
-    DownloadCloudIcon,
-    Edit,
-    Eye,
-    EyeIcon,
-    Filter,
-    Pencil,
-    Plus,
+    IndianRupee,
     PlusIcon,
-    Search,
     Trash,
     TrashIcon,
-    View,
 } from "lucide-react";
 
-import type { DateRange } from "react-day-picker";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
+    Pagination,
+    PaginationContent,
+    PaginationEllipsis,
+    PaginationItem,
+    PaginationLink,
+    PaginationNext,
+    PaginationPrevious,
+} from "@/components/ui/pagination";
+import { useGetDeliveredListQuery } from "@/query/Chicks.queries";
+import HeaderFilter from "@/components/ui/headerFilter";
+import { format } from "date-fns";
+import { Skeleton } from "@/components/ui/skeleton";
+import CustomPagination from "@/components/ui/CustomPagination";
 
 const List = () => {
     const [openAlert, setOpenAlert] = useState<boolean>(false);
@@ -69,11 +54,9 @@ const List = () => {
     const handleDelete = (id: number): void => {
         setOpenAlert(!openAlert);
     };
-    const [open, setOpen] = useState(false);
-    const [dateRange, setDateRange] = useState<DateRange | undefined>({
-        from: new Date(2025, 5, 12),
-        to: new Date(2025, 6, 15),
-    });
+
+    const { data, isLoading } = useGetDeliveredListQuery();
+    console.log(data);
     return (
         <>
             <div className=" rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-8 py-6">
@@ -83,8 +66,7 @@ const List = () => {
                             Chicks Delivery List
                         </h2>
                         <p className="text-slate-500 dark:text-slate-300 text-sm mt-1">
-                            Manage and monitor all chicks delivered across
-                            locations.
+                            Manage and monitor all chicks delivered across locations.
                         </p>
                     </div>
                     <Link
@@ -92,78 +74,15 @@ const List = () => {
                         className=" flex items-center gap-2 px-5 py-2.5 bg-primary hover:bg-black text-white text-sm font-bold rounded-lg transition-all shadow-lg shadow-primary/20"
                     >
                         <PlusIcon />
-                        Make  Delivery
+                        Make Delivery
                     </Link>
                 </div>
             </div>
 
             <div className="flex-1 overflow-y-auto pb-8 pt-4 bg-background-light dark:bg-background-dark">
                 <div className="space-y-6">
-                    <div className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-col lg:flex-row gap-4">
-                        {/* Search */}
-                        <div className="relative flex-1">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-                            <Input
-                                placeholder="Search by farmer name, address or mobile..."
-                                className="pl-11 h-11"
-                            />
-                        </div>
 
-                        <Popover>
-                            <PopoverTrigger asChild>
-                                <Button
-                                    variant="outline"
-                                    className="w-44 h-11 justify-between shadow-none font-normal border border-light"
-                                >
-                                    From date
-                                    <ChevronDown className="h-4 w-4 opacity-50" />
-                                </Button>
-                            </PopoverTrigger>
-                            <PopoverContent
-                                align="end"
-                                className="w-75 bg-white p-0 border-0 "
-                            >
-                                <Calendar mode="single" className="w-full calender" />
-                            </PopoverContent>
-
-                        </Popover>
-                        <Popover>
-                            <PopoverTrigger asChild>
-                                <Button
-                                    variant="outline"
-                                    className="w-44 h-11 justify-between font-normal border border-light shadow-none"
-                                >
-                                    To date
-                                    <ChevronDown className="h-4 w-4 opacity-50" />
-                                </Button>
-                            </PopoverTrigger>
-                            <PopoverContent
-                                align="end"
-                                className="w-75 bg-white p-0 border-0"
-                            >
-                                <Calendar mode="single" className="w-full calender" />
-                            </PopoverContent>
-
-                        </Popover>
-
-                        <Select defaultValue="10">
-                            <SelectTrigger
-                                size={"default"}
-                                className="w-36 h-[44px] bg-white border border-light shadow-none"
-                            >
-                                <SelectValue placeholder="Per page" />
-                            </SelectTrigger>
-
-                            <SelectContent className="bg-white border-0">
-                                <SelectItem value="10">10</SelectItem>
-                                <SelectItem value="20">20</SelectItem>
-                                <SelectItem value="50">50</SelectItem>
-                                <SelectItem value="100">100</SelectItem>
-                            </SelectContent>
-                        </Select>
-
-
-                    </div>
+                    <HeaderFilter />
                     <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
                         <div className="overflow-x-auto @container">
                             <div className="overflow-x-auto @container">
@@ -171,108 +90,93 @@ const List = () => {
                                     <TableHeader>
                                         <TableRow className="bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800">
                                             <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider">
-                                                ID
+                                                Delivered ID
+                                            </TableHead>
+                                            <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider">
+                                                Date
                                             </TableHead>
                                             <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider">
                                                 Farmer Name
                                             </TableHead>
-                                            <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider min-w-[200px]">
+                                            <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider min-w-[200px] text-center">
                                                 Quantity
                                             </TableHead>
-                                            <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider">
+                                            <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-center">
                                                 Unit Price
                                             </TableHead>
-                                            <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-right">
+                                            <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-center">
                                                 Actions
                                             </TableHead>
                                         </TableRow>
                                     </TableHeader>
 
                                     <TableBody className="divide-y divide-slate-100 dark:divide-slate-800">
-                                        {/* ROW */}
-                                        <TableRow className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors group">
-                                            <TableCell className="px-6 py-4">
-                                                <div className=" text-primary">
-                                                    SSC-31231232
-                                                </div>
-                                            </TableCell>
+                                        {
+                                            isLoading && (
+                                                <TableRow className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors group">
+                                                    <TableCell className="px-6 py-4 text-center" colSpan={6}>
+                                                        <Skeleton className="w-full h-12" />
+                                                    </TableCell>
+                                                </TableRow>
+                                            )
+                                        }
+                                        {
+                                            data && data.length > 0 ? (
+                                                data?.map((list: any) => (
+                                                    <TableRow className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors group">
+                                                        <TableCell className="px-6 py-4">
+                                                            <div className=" text-primary">{list?.delivery_id}</div>
+                                                        </TableCell>
 
-                                            <TableCell className="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">
-                                                NutriFeed Solutions Ltd
-                                            </TableCell>
-                                            <TableCell className="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 font-medium">
-                                                1000
-                                            </TableCell>
+                                                        <TableCell className="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">
+                                                            {format(list?.delivery_date, "dd/MM/yyyy")}
+                                                        </TableCell>
+                                                        <TableCell className="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">
+                                                            {list?.farm?.name}
+                                                        </TableCell>
+                                                        <TableCell className="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 font-medium text-center">
+                                                            {list?.total_delivered}
+                                                        </TableCell>
 
-                                            <TableCell className="px-6 py-4 text-sm font-medium text-slate-900 dark:text-white">
-                                                $32.50
-                                            </TableCell>
+                                                        <TableCell className="px-6 py-4 text-sm font-medium text-slate-900 dark:text-white text-center">
+                                                            <div className="flex items-center justify-center">
+                                                                <IndianRupee size={14} /> {list?.chicks_rate}
+                                                            </div>
+                                                        </TableCell>
 
-                                            <TableCell className="flex items-center justify-end gap-1.5">
+                                                        <TableCell className="flex items-center justify-center gap-1.5">
 
-                                                <Tooltip>
-                                                    <TooltipTrigger asChild>
-                                                        <Link
-                                                            to="/farms/1/edit"
-                                                            className="p-1.5 rounded-lg text-slate-500 hover:text-primary hover:bg-primary/10"
-                                                        >
-                                                            <Edit className="size-5" />
-                                                        </Link>
-                                                    </TooltipTrigger>
-                                                    <TooltipContent>Edit</TooltipContent>
-                                                </Tooltip>
+                                                            <Tooltip>
+                                                                <TooltipTrigger asChild>
+                                                                    <button
+                                                                        onClick={() => handleDelete(list?.id)}
+                                                                        className="p-1.5 rounded-lg text-red-500 hover:bg-red-100"
+                                                                    >
+                                                                        <Trash className="size-5" />
+                                                                    </button>
+                                                                </TooltipTrigger>
+                                                                <TooltipContent>Delete</TooltipContent>
+                                                            </Tooltip>
+                                                        </TableCell>
+                                                    </TableRow>
 
-                                                <Tooltip>
-                                                    <TooltipTrigger asChild>
-                                                        <button
-                                                            onClick={() => handleDelete(1)}
-                                                            className="p-1.5 rounded-lg text-red-500 hover:bg-red-100"
-                                                        >
-                                                            <Trash className="size-5" />
-                                                        </button>
-                                                    </TooltipTrigger>
-                                                    <TooltipContent>Delete</TooltipContent>
-                                                </Tooltip>
-                                            </TableCell>
-                                        </TableRow>
+                                                ))
+                                            ) : (
+                                                <TableRow className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors group">
+                                                    <TableCell className="px-6 py-4 text-center" colSpan={6}>
+                                                        No data available
+                                                    </TableCell>
+                                                </TableRow>
+                                            )
+                                        }
 
-                                        {/* Repeat rows exactly the same */}
+
                                     </TableBody>
                                 </Table>
                             </div>
+                        </div>
+                        <CustomPagination />
 
-                        </div>
-                        <div className="px-6 py-4 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between">
-                            <p className="text-sm text-slate-500 dark:text-slate-400">
-                                Showing 1 to 5 of 42 entries
-                            </p>
-                   
-                            <Pagination>
-                                <PaginationContent>
-                                    <PaginationItem >
-                                        <PaginationPrevious href="#"  />
-                                    </PaginationItem>
-                                    <PaginationItem>
-                                        <PaginationLink href="#">1</PaginationLink>
-                                    </PaginationItem>
-                                    <PaginationItem>
-                                        <PaginationLink className="bg-primary text-white"
-                                         href="#" isActive>
-                                            2
-                                        </PaginationLink>
-                                    </PaginationItem>
-                                    <PaginationItem>
-                                        <PaginationLink href="#">3</PaginationLink>
-                                    </PaginationItem>
-                                    <PaginationItem>
-                                        <PaginationEllipsis />
-                                    </PaginationItem>
-                                    <PaginationItem>
-                                        <PaginationNext href="#" />
-                                    </PaginationItem>
-                                </PaginationContent>
-                            </Pagination>
-                        </div>
                     </div>
                 </div>
             </div>

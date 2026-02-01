@@ -1,5 +1,5 @@
 import { getMe, Login, logout } from "@/api/auth.api";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router";
 import queryClient from "./client";

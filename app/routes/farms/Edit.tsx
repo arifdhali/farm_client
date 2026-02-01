@@ -54,6 +54,7 @@ const Edit = () => {
     validationSchema: editSchema,
     validateOnBlur: false,
     onSubmit: (values) => {
+      console.log(values);
       // mutate({
       //   ...values,
       //   status: FarmsStatus,
@@ -61,14 +62,12 @@ const Edit = () => {
     },
   });
 
-  /** focus first error — SAME AS ADD */
   useEffect(() => {
     if (!editFarm.isSubmitting) return;
     const firstField = Object.keys(editFarm.errors)[0];
     firstField && inputRef.current[firstField]?.focus();
   }, [editFarm.errors, editFarm.isSubmitting]);
 
-  /** sync status from API */
   useEffect(() => {
     if (data?.status) {
       setFarmsStatus(data.status);

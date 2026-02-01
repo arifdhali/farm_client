@@ -56,3 +56,12 @@ export const deleteFarms = async (farmid: number) => {
         throw error;
     }
 }
+
+export const updateFarm = async ({ updateData, farmID }: { updateData: any, farmID: number }) => {
+    try {
+        let response = await HTTP.patch(`${FARMER_API_URL}/${farmID}/update`);
+        console.log(response);
+    } catch (error) {
+        throw error;
+    }
+}
