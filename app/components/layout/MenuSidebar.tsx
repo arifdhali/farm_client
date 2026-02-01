@@ -78,8 +78,9 @@ const menuItems = [
     icon: Pill,
     url: "/medicine",
     children: [
+      { title: "Add Medicine", url: "/medicine/add" },
       { title: "List", url: "/medicine/list" },
-      { title: "Delivered", url: "/medicine/delivered" },
+      { title: "Delivered", url: "/medicine/delivery" },
     ],
   },
   { title: "Reports", icon: NotebookIcon, url: "/reports" },
@@ -120,9 +121,9 @@ export default function MenuSidebar() {
         <div className="flex items-center gap-3">
           <div className="bg-primary text-white rounded-lg p-2">🌱</div>
           <div>
-            <h1 className="text-sm font-bold">AgroDash</h1>
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
-              Management v1.0
+            <h1 className="text-sm font-bold">SohanaChicken</h1>
+            <p className="text-[12px] text-muted-foreground">
+              Manage your business
             </p>
           </div>
         </div>

@@ -30,6 +30,12 @@ export default [
             route("list", "routes/cash/List.tsx"),
             route("add", "routes/cash/Add.tsx"),
         ]),
+        ...prefix("medicine", [
+            route("Add", "routes/medicine/Add.tsx"),
+            route(":id/edit", "routes/medicine/Edit.tsx"),
+            route("list", "routes/medicine/List.tsx"),
+            route("delivery", "routes/medicine/Delivery.tsx"),
+        ]),
         ...prefix("mortality", [
             route("list", "routes/mortality/List.tsx"),
             route("add", "routes/mortality/Add.tsx"),

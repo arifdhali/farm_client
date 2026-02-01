@@ -12,6 +12,7 @@ import { Link } from "react-router";
 import * as yup from "yup";
 import { format } from "date-fns";
 import { useChickDeliveryMutation } from "@/query/Chicks.queries";
+import { useGetMedicineListQuery } from "@/query/Medicine.queries";
 
 const chicksDeliverySchema = yup.object().shape({
   delivery_date: yup.date().required("Delivery date is required").min(
@@ -28,16 +29,17 @@ const chicksDeliverySchema = yup.object().shape({
 const Delivery = () => {
   const inputRef = useRef<Record<string, HTMLInputElement | HTMLTextAreaElement | null>>({});
   const [open, setOpen] = useState<any>({
-    select_farmer: false,
+    select_farmer: true,
+    select_medicine: true,
     select_date: false,
   });
 
   const { data } = useGetFarmersList();
   const makeDelivery = useChickDeliveryMutation();
 
-  const deliveryForm = useFormik<DeliveryFormValues>({
+  const devliveryForm = useFormik<DeliveryFormValues>({
     initialValues: {
-      delivery_date: new Date(),
+      medicine_id: null,
       farm_id: null,
       quantity: 0,
       chicks_rate: 0,
@@ -52,17 +54,20 @@ const Delivery = () => {
       }
       makeDelivery.mutate(payload);
       if (makeDelivery.isSuccess) {
-        deliveryForm.resetForm();
+        devliveryForm.resetForm();
       }
     }
   });
 
-  const selectedFarm = data?.data?.farms.find((farm: any) => Number(farm.id) == deliveryForm.values.farm_id);
+  const selectedFarm = data?.data?.farms.find((farm: any) => Number(farm.id) == devliveryForm.values.farm_id);
   useEffect(() => {
-    if (!deliveryForm.isSubmitting) return;
-    let firstElement = Object.keys(deliveryForm.errors)[0];
+    if (!devliveryForm.isSubmitting) return;
+    let firstElement = Object.keys(devliveryForm.errors)[0];
     firstElement && inputRef.current?.[firstElement]?.focus();
-  }, [deliveryForm.errors, deliveryForm.isSubmitting]);
+  }, [devliveryForm.errors, devliveryForm.isSubmitting]);
+
+  const { data: medicines, isLoading } = useGetMedicineListQuery();
+  console.log(medicines);
 
   return (
     <div className="flex-1 overflow-y-auto bg-background-light dark:bg-background-dark">
@@ -77,7 +82,7 @@ const Delivery = () => {
             </p>
           </div>
           <Link
-            to={"/chicks/list"}
+            to={"/medicine/list"}
             className="bg-white hover:text-primary dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2"
           >
             <ArrowLeftIcon />
@@ -86,18 +91,72 @@ const Delivery = () => {
         </div>
       </div>
       <div className="bg-white dark:bg-zinc-900 w-150 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-800 overflow-hidden">
-        <form onSubmit={deliveryForm.handleSubmit} className="p-8">
+        <form onSubmit={devliveryForm.handleSubmit} className="p-8">
           <div className="grid grid-cols-1 md:grid-cols-1 gap-x-8 gap-y-6">
             <div className="flex flex-col col-span-1 md:col-span-1">
               <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
-                Farmer Name
+                Select Medicine
+              </label>
+              <Popover open={open.select_medicine} onOpenChange={setOpen}>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" role="combobox" aria-expanded={open.select_medicine}
+                    className="w-full border-slate-200 h-12 justify-between bg-white shadow-none"
+                  >
+                    {devliveryForm.values?.id
+                      ? medicines?.data?.medicines.find((medicine: any) => Number(medicine.id) == devliveryForm.values.medicine_id)?.name
+                      : "Select medicine..."}
+                    <ChevronsUpDown />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className=" p-0 border border-slate-200" align="start">
+                  <Command className="border-0">
+                    <CommandInput placeholder="Search medicine..." className="border-0" />
+                    <CommandList>
+                      <CommandEmpty>No medicine found.</CommandEmpty>
+                      <CommandGroup>
+                        {medicines?.data?.medicines.length > 0 && (
+                          medicines?.data?.medicines.map((medicine: any) => (
+                            <CommandItem
+                              key={String(medicine.id)}
+                              value={String(medicine.id)}
+                              onSelect={(currentValue) => {
+                                devliveryForm.setFieldValue("medicine_id", currentValue)
+                                setOpen({
+                                  select_medicine: false
+                                })
+                              }}
+                            >
+                              {medicine.name}
+                              <Check
+                                className={cn(
+                                  "ml-auto",
+                                  devliveryForm.values.medicine_id === Number(medicine.id) ? "opacity-100" : "opacity-0"
+                                )}
+                              />
+                            </CommandItem>
+                          ))
+                        )}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+              {devliveryForm.touched.farm_id && devliveryForm.errors.farm_id ? (
+                <span className="text-red-500 text-sm">
+                  {devliveryForm.errors.farm_id}
+                </span>
+              ) : null}
+            </div>
+            <div className="flex flex-col col-span-1 md:col-span-1">
+              <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
+                Select Farmer
               </label>
               <Popover open={open.select_farmer} onOpenChange={setOpen}>
                 <PopoverTrigger asChild>
                   <Button variant="outline" role="combobox" aria-expanded={open.select_farmer}
                     className="w-full border-slate-200 h-12 justify-between bg-white shadow-none"
                   >
-                    {deliveryForm.values.farm_id
+                    {devliveryForm.values.farm_id
                       ? selectedFarm?.name
                       : "Select farm..."}
                     <ChevronsUpDown />
@@ -115,7 +174,7 @@ const Delivery = () => {
                               key={String(farm.id)}
                               value={String(farm.id)}
                               onSelect={(currentValue) => {
-                                deliveryForm.setFieldValue("farm_id", currentValue)
+                                devliveryForm.setFieldValue("farm_id", currentValue)
                                 setOpen({
                                   select_farmer: false
                                 })
@@ -125,7 +184,7 @@ const Delivery = () => {
                               <Check
                                 className={cn(
                                   "ml-auto",
-                                  deliveryForm.values.farm_id === Number(farm.id) ? "opacity-100" : "opacity-0"
+                                  devliveryForm.values.farm_id === Number(farm.id) ? "opacity-100" : "opacity-0"
                                 )}
                               />
                             </CommandItem>
@@ -136,13 +195,66 @@ const Delivery = () => {
                   </Command>
                 </PopoverContent>
               </Popover>
-              {deliveryForm.touched.farm_id && deliveryForm.errors.farm_id ? (
+              {devliveryForm.touched.farm_id && devliveryForm.errors.farm_id ? (
                 <span className="text-red-500 text-sm">
-                  {deliveryForm.errors.farm_id}
+                  {devliveryForm.errors.farm_id}
                 </span>
               ) : null}
             </div>
-
+            <div className="flex flex-col col-span-1 md:col-span-1">
+              <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
+                Order For ?
+              </label>
+              <Popover open={open.select_farmer} onOpenChange={setOpen}>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" role="combobox" aria-expanded={open.select_farmer}
+                    className="w-full border-slate-200 h-12 justify-between bg-white shadow-none"
+                  >
+                    {devliveryForm.values.farm_id
+                      ? selectedFarm?.name
+                      : "Select farm..."}
+                    <ChevronsUpDown />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className=" p-0 border border-slate-200" align="start">
+                  <Command className="border-0">
+                    <CommandInput placeholder="Search farm..." className="border-0" />
+                    <CommandList>
+                      <CommandEmpty>No farm found.</CommandEmpty>
+                      <CommandGroup>
+                        {data?.data?.farms.length > 0 && (
+                          data?.data?.farms.map((farm: any) => (
+                            <CommandItem
+                              key={String(farm.id)}
+                              value={String(farm.id)}
+                              onSelect={(currentValue) => {
+                                devliveryForm.setFieldValue("farm_id", currentValue)
+                                setOpen({
+                                  select_farmer: false
+                                })
+                              }}
+                            >
+                              {farm.name}
+                              <Check
+                                className={cn(
+                                  "ml-auto",
+                                  devliveryForm.values.farm_id === Number(farm.id) ? "opacity-100" : "opacity-0"
+                                )}
+                              />
+                            </CommandItem>
+                          ))
+                        )}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+              {devliveryForm.touched.farm_id && devliveryForm.errors.farm_id ? (
+                <span className="text-red-500 text-sm">
+                  {devliveryForm.errors.farm_id}
+                </span>
+              ) : null}
+            </div>
             <div className="flex flex-col col-span-2 md:col-span-1">
               <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
                 Select Date
@@ -154,8 +266,8 @@ const Delivery = () => {
                     variant="outline"
                     className={`w-full h-12 rounded-lg border border-zinc-200 dark:border-zinc-700 shadow-none justify-start font-normal bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-4 py-3 text-base`}
                   >
-                    {deliveryForm.values.delivery_date
-                      ? format(deliveryForm.values.delivery_date, "dd/MM/yyyy")
+                    {devliveryForm.values.delivery_date
+                      ? format(devliveryForm.values.delivery_date, "dd/MM/yyyy")
                       : "Select date"}
                   </Button>
                 </PopoverTrigger >
@@ -164,24 +276,24 @@ const Delivery = () => {
                     className="w-75"
                     mode="single"
                     buttonVariant="outline"
-                    selected={deliveryForm.values.delivery_date}
                     disabled={{ before: new Date() }}
                     onSelect={(date) => {
                       if (!date) return;
                       setOpen({
                         select_date: false
                       })
-                      deliveryForm.setFieldValue("delivery_date", date)
+                      devliveryForm.setFieldValue("delivery_date", date)
                     }}
                   />
                 </PopoverContent>
               </Popover>
-              {deliveryForm.touched.delivery_date && deliveryForm.errors.delivery_date ? (
+              {devliveryForm.touched.delivery_date && devliveryForm.errors.delivery_date ? (
                 <span className="text-red-500 text-sm">
-                  {deliveryForm.errors.delivery_date}
+                  {devliveryForm.errors.delivery_date}
                 </span>
               ) : null}
             </div>
+
             <div className="flex flex-col col-span-2 md:col-span-1">
               <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
                 Quantity
@@ -194,45 +306,22 @@ const Delivery = () => {
                 ref={(el) => {
                   el && (inputRef.current["quantity"] = el);
                 }}
-                onChange={deliveryForm.handleChange}
-                onBlur={deliveryForm.handleBlur}
-                value={deliveryForm.values.quantity}
+                onChange={devliveryForm.handleChange}
+                onBlur={devliveryForm.handleBlur}
+                value={devliveryForm.values.quantity}
               />
-              {deliveryForm.touched.quantity && deliveryForm.errors.quantity ? (
+              {devliveryForm.touched.quantity && devliveryForm.errors.quantity ? (
                 <span className="text-red-500 text-sm">
-                  {deliveryForm.errors.quantity}
+                  {devliveryForm.errors.quantity}
                 </span>
               ) : null}
             </div>
 
-            <div className="flex flex-col col-span-2 md:col-span-1">
-              <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
-                Chicks Rate
-              </label>
-              <input
-
-                className="w-full h-12 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-4 py-3 text-base"
-                placeholder="Fixed price"
-                type="number"
-                name="chicks_rate"
-                ref={(el) => {
-                  el && (inputRef.current["chicks_rate"] = el);
-                }}
-                onChange={deliveryForm.handleChange}
-                onBlur={deliveryForm.handleBlur}
-                value={deliveryForm.values.chicks_rate}
-              />
-              {deliveryForm.touched.chicks_rate && deliveryForm.errors.chicks_rate ? (
-                <span className="text-red-500 text-sm">
-                  {deliveryForm.errors.chicks_rate}
-                </span>
-              ) : null}
-            </div>
           </div>
 
           <div className="mt-10 flex items-center justify-end gap-4">
             <button
-              onClick={() => deliveryForm.resetForm()}
+              onClick={() => devliveryForm.resetForm()}
               className="px-6 py-3 rounded-lg text-sm font-bold bg-red-600 text-white dark:text-zinc-400 hover:bg-red-400 dark:hover:bg-zinc-800 transition-colors"
               type="button"
             >

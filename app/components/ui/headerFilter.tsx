@@ -22,13 +22,13 @@ import { ChevronDown, Search } from "lucide-react";
 const HeaderFilter = () => {
   return (
     <>
-      <div className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-col lg:flex-row gap-4">
+      <div className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200  dark:border-slate-800 flex flex-col lg:flex-row gap-4">
         {/* Search */}
         <div className="relative flex-1">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 " />
           <Input
             placeholder="Search by farmer name, address or mobile..."
-            className="pl-11 h-11"
+            className="pl-11 h-11 shadow-none"
           />
         </div>
 

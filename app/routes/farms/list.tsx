@@ -36,6 +36,7 @@ import {
 } from "@/query/Farm.queries";
 import HeaderFilter from "@/components/ui/headerFilter";
 import CustomPagination from "@/components/ui/CustomPagination";
+import SmallLoading from "@/components/ui/smallLoading";
 
 const List = () => {
   const { data, isLoading } = useGetFarmersList();
@@ -99,20 +100,33 @@ const List = () => {
                       <TableHead className="px-6 py-4 text-xs font-bold uppercase">
                         Mobile Number
                       </TableHead>
-                      <TableHead className="px-6 py-4 text-xs font-bold uppercase">
+                      <TableHead className="px-6 py-4 text-xs font-bold uppercase text-center">
                         Farm Capacity
                       </TableHead>
                       <TableHead className="px-6 py-4 text-xs font-bold uppercase">
-                        Status
+                        Delivery Status
                       </TableHead>
-                      <TableHead className="px-6 py-4 text-xs font-bold uppercase text-right">
+                      <TableHead className="px-6 py-4 text-xs font-bold uppercase text-center">
                         Actions
                       </TableHead>
                     </TableRow>
                   </TableHeader>
 
                   <TableBody className="divide-y divide-slate-100 dark:divide-slate-800">
-                    {data?.data?.farms.length >= 1 ? (
+                    {
+                      isLoading && (
+                        <TableRow className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
+                          <TableCell
+                            colSpan={6}
+                            className="px-6 py-4 text-center"
+                          >
+                            <SmallLoading />
+                          </TableCell>
+                        </TableRow>
+
+                      )
+                    }
+                    {!isLoading && data?.data?.farms.length > 0 && (
                       data?.data?.farms.map((farm: any) => (
                         <TableRow
                           key={farm.id}
@@ -146,13 +160,15 @@ const List = () => {
                           </TableCell>
 
                           <TableCell className="px-6 py-4">
+
                             {
                               <span
-                                className={`flex w-fit items-center px-2.5 py-1 rounded-full text-xs font-bold ${farm?.availablity_status === "free" ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400" : "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400"}`}
+                                className={`flex w-fit items-center px-2.5 py-1 gap-1 rounded-full text-xs font-bold ${farm?.availablity_status === "free" ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400" : "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400"}`}
                               >
-                                <span
-                                  className={`w-2 h-2  animate-pulse rounded-full ${farm?.availablity_status === "free" ? "bg-emerald-500" : "bg-yellow-500"} mr-1.5`}
-                                ></span>
+                                <span className="relative flex size-2">
+                                  <span className={`absolute inline-flex h-full w-full animate-ping rounded-full ${farm?.availablity_status === "free" ? "bg-emerald-500" : "bg-yellow-500"} opacity-75`}></span>
+                                  <span className={`relative inline-flex size-2 rounded-full ${farm?.availablity_status === "free" ? "bg-emerald-500" : "bg-yellow-500"}`}></span>
+                                </span>
                                 {farm?.availablity_status === "free"
                                   ? "Available"
                                   : "Occupied"}
@@ -161,7 +177,7 @@ const List = () => {
                           </TableCell>
 
                           <TableCell className="px-6 py-4 text-right">
-                            <div className="flex items-center justify-end gap-1.5">
+                            <div className="flex items-center justify-center gap-1.5">
                               <Tooltip>
                                 <TooltipTrigger asChild>
                                   <Link
@@ -189,7 +205,8 @@ const List = () => {
                           </TableCell>
                         </TableRow>
                       ))
-                    ) : (
+                    )}
+                    {(!isLoading && data?.data?.farms?.length === 0) && (
                       <TableRow className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
                         <TableCell
                           colSpan={6}
@@ -199,7 +216,6 @@ const List = () => {
                         </TableCell>
                       </TableRow>
                     )}
-                    {/* Repeat rows as-is */}
                   </TableBody>
                 </Table>
               </div>

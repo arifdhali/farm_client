@@ -3,12 +3,13 @@ import queryClient from "./client";
 import { getDeliveredList, makeChicksDelivery } from "@/api/chicks.api";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router";
+import type { DeliveryFormValues } from "@/types/Chicks";
 
 
 export const useChickDeliveryMutation = () => {
     let navigate = useNavigate();
     return useMutation({
-        mutationFn: makeChicksDelivery,
+        mutationFn: (payload: DeliveryFormValues) => makeChicksDelivery(payload),
         onSuccess: async (data) => {
             await queryClient.invalidateQueries({ queryKey: ["chicks"] });
             navigate("/chicks/list", { replace: true });
