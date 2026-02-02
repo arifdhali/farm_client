@@ -40,6 +40,24 @@ export const getSingleFarm = async (id: number) => {
     }
 }
 
+export const getLastOrderID = async (id: number) => {
+    try {
+
+        const response = await HTTP.get(`${FARMER_API_URL}/last-order`, {
+            params: {
+                farm_id: id
+            },
+
+        });
+        if (response.data.status) {
+            return response.data.data;
+        }
+        return null;
+    } catch (err) {
+        throw err;
+    }
+}
+
 
 export const deleteFarms = async (farmid: number) => {
     try {

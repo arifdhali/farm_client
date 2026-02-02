@@ -6,7 +6,7 @@ const API = `/chicks`
 export const getDeliveredList = async () => {
     try {
         let response = await HTTP.get(`${API}/delivered/list`);
-       if(response.data.status){
+        if (response.data.status) {
             return response.data.data;
         }
         return null;

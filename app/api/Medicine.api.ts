@@ -1,4 +1,4 @@
-import type { MedicineFormValues } from "@/types/Medicine";
+import type { MedicineDeliveryFormValues, MedicineFormValues } from "@/types/Medicine";
 import HTTP from "./client";
 import type { AxiosError } from "axios";
 import type { BackendError } from "@/types/AxiosErrors.type";
@@ -22,6 +22,25 @@ export const addMedicine = async (payload: MedicineFormValues) => {
             },
                 {}
             ) ?? {},
+            status: error.response?.data?.status,
+            statusCode: error.response?.status,
+        };
+    }
+}
+
+export const deliveryMedicine = async (payload: MedicineDeliveryFormValues) => {
+    try {
+        const res = await HTTP.post(`${API}/delivered`, payload);
+        return res.data;
+    } catch (err) {
+        const error = err as AxiosError<BackendError>;
+        console.log(error);
+        throw {
+            message: error.response?.data?.message || "Something went wrong",
+            fieldErrors: error.response?.data?.errors?.reduce((acc: Record<string, string>, curr) => {
+                acc[curr.field] = curr.message;
+                return acc;
+            }, {}) ?? {},
             status: error.response?.data?.status,
             statusCode: error.response?.status,
         };

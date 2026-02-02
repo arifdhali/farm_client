@@ -1,4 +1,4 @@
-import { createFarmer, deleteFarms, getFarmersList, getSingleFarm, updateFarm } from "@/api/farm.api";
+import { createFarmer, deleteFarms, getFarmersList, getLastOrderID, getSingleFarm, updateFarm } from "@/api/farm.api";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import queryClient from "./client";
@@ -37,7 +37,14 @@ export const useGetSingleFarm = (farmId: number) => {
         queryFn: () => getSingleFarm(farmId),
         enabled: !!farmId
     })
+}
 
+export const useGetLastOrderID = (farmId: number) => {
+    return useQuery({
+        queryKey: ["last-order-id", farmId],
+        queryFn: () => getLastOrderID(farmId),
+        enabled: !!farmId
+    });
 }
 
 export const useUpdateFarmerMutation = () => {

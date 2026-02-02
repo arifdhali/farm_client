@@ -164,13 +164,13 @@ const Login = () => {
               </div>
 
 
-              <button
-
+              <Button
+                spinner={loginMutation.isPending}
                 type="submit"
-                className="cursor-pointer w-full bg-primary text-white font-bold py-3 rounded-lg hover:bg-primary/80"
+                className="cursor-pointer  h-11 w-full bg-primary text-white font-bold py-3 rounded-lg hover:bg-primary/80"
               >
                {loginMutation.isPending ? "Logging in..." : "Log In →"}
-              </button>
+              </Button>
             </form>
             <form onSubmit={handleSubmit} className="space-y-5 min-w-full" >
               {/* Email */}
