@@ -64,7 +64,7 @@ const List = () => {
                                                 Name
                                             </TableHead>
                                             <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider min-w-50 text-center">
-                                                Stock
+                                                Availble Stock
                                             </TableHead>
                                             <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-center">
                                                 Unit Price
@@ -94,6 +94,9 @@ const List = () => {
                                                         </TableCell>
                                                         <TableCell className="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 font-medium text-center">
                                                             {list?.stock}
+                                                            <div className=" bg-gray-300 relative w-37.5 h-1.25 rounded-full mx-auto mt-1">
+                                                                <span className={`${list?.stock_percentage >= 50 ? 'bg-green-500' : 'bg-red-500'} absolute transition duration-300 ease-in-out start-0 h-full rounded-full`} style={{ width: `${list?.stock_percentage}%` }}></span>
+                                                            </div>
                                                         </TableCell>
 
                                                         <TableCell className="px-6 py-4 text-sm font-medium text-slate-900 dark:text-white text-center">

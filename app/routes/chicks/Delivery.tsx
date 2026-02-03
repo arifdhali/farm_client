@@ -92,7 +92,11 @@ const Delivery = () => {
               <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
                 Farmer Name
               </label>
-              <Popover open={open.select_farmer} onOpenChange={setOpen}>
+              <Popover open={open.select_farmer} onOpenChange={(value) =>
+                setOpen((prev: any) => ({
+                  ...prev,
+                  select_farmer: value,
+                }))}>
                 <PopoverTrigger asChild>
                   <Button variant="outline" role="combobox" aria-expanded={open.select_farmer}
                     className="w-full border-slate-200 h-12 justify-between bg-white shadow-none"
@@ -148,7 +152,11 @@ const Delivery = () => {
                 Select Date
               </label>
 
-              <Popover open={open.select_date} onOpenChange={setOpen}>
+              <Popover open={open.select_date} onOpenChange={(value) =>
+                setOpen((prev: any) => ({
+                  ...prev,
+                  select_date: value,
+                }))}>
                 <PopoverTrigger asChild>
                   <Button
                     variant="outline"
