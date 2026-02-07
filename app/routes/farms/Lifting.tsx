@@ -180,7 +180,7 @@ const Lifting = () => {
                                             <TableHead className="px-6 py-4 text-xs font-bold uppercase text-center">
                                                 Lifting Status
                                             </TableHead>
-                                            <TableHead className="px-6 py-4 text-xs font-bold uppercase text-right">
+                                            <TableHead className="px-6 py-4 text-xs font-bold uppercase text-center">
                                                 Actions
                                             </TableHead>
                                         </TableRow>
@@ -221,8 +221,8 @@ const Lifting = () => {
                                                 </span>
                                             </TableCell>
 
-                                            <TableCell className="px-6 py-4 text-right">
-                                                <div className="flex items-center justify-end gap-1.5">
+                                            <TableCell className="px-6 py-4">
+                                                <div className="flex items-center justify-center gap-1.5">
                                                     <Tooltip>
                                                         <TooltipTrigger asChild>
                                                             <Link

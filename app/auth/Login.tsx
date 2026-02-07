@@ -165,11 +165,12 @@ const Login = () => {
 
 
               <Button
+                disabled={loginMutation.isPending}
                 spinner={loginMutation.isPending}
                 type="submit"
                 className="cursor-pointer  h-11 w-full bg-primary text-white font-bold py-3 rounded-lg hover:bg-primary/80"
               >
-               {loginMutation.isPending ? "Logging in..." : "Log In →"}
+                {loginMutation.isPending ? "Logging in..." : "Log In"}
               </Button>
             </form>
             <form onSubmit={handleSubmit} className="space-y-5 min-w-full" >

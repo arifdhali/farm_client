@@ -79,7 +79,7 @@ export const updateMedicine = async ({ updateData, id }: { updateData: any, id: 
     try {
         let response = await HTTP.patch(`${API}/${id}/edit`, updateData);
         if (response.data.status) {
-            return response.data.data;
+            return response.data;
         }
         return null;
 

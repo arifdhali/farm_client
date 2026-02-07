@@ -59,7 +59,7 @@ const menuItems = [
     children: [
       { title: "Add Feed", url: "/feeds/add" },
       { title: "List", url: "/feeds/list" },
-      { title: "Delivered", url: "/feeds/delivered" },
+      { title: "Delivered", url: "/feeds/delivery" },
     ],
   },
   { title: "Users", icon: Users, url: "/users" },

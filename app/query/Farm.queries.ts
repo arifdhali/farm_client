@@ -73,8 +73,9 @@ export const useDeleteFarmMutation = () => {
             await queryClient.invalidateQueries({ queryKey: ["farmers"] });
             toast.success("Farm deleted successfully");
         },
-        onError: (error) => {
-            console.log(error);
+        onError: (err) => {
+            const error: any = err;
+            toast.error(error.response.data.message);
         }
 
     })

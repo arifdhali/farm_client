@@ -1,77 +1,39 @@
 import { useState } from "react";
 import { Link } from "react-router";
-
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from "@/components/ui/table";
 
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogTitle,
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogTitle,
   AlertDialogFooter,
   AlertDialogHeader,
 } from "@/components/ui/alert-dialog";
 
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-
-import { Calendar } from "@/components/ui/calendar";
-
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-
-import {
-  ChevronDown,
-  ChevronLeft,
-  ChevronRight,
-  CircleSmall,
-  Download,
-  DownloadCloudIcon,
-  Edit,
-  Eye,
-  Filter,
-  Pencil,
-  Plus,
-  PlusIcon,
-  Search,
-  Trash,
-  TrashIcon,
-} from "lucide-react";
-
-import type { DateRange } from "react-day-picker";
+import { Edit, IndianRupee, PlusIcon, Trash, TrashIcon } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { useDeleteFeedMutation, useGetFeedListQuery } from "@/query/Feed.queries";
+import SmallLoading from "@/components/ui/smallLoading";
+import type { totalFeed } from "@/types/Feed.type";
 
 const List = () => {
   const [openAlert, setOpenAlert] = useState<boolean>(false);
+  const { data: feedslist, isLoading } = useGetFeedListQuery();
+  const [feed, setfeed] = useState<any>({});
+  const deleteMutatoin = useDeleteFeedMutation();
 
   const handleDelete = (id: number): void => {
+    let selectFeed = feedslist?.feeds?.find((item: any) => item.id === id)
+    setfeed({
+      id: selectFeed?.id,
+      name: selectFeed?.name,
+    });
     setOpenAlert(!openAlert);
   };
-  const [open, setOpen] = useState(false);
-  const [dateRange, setDateRange] = useState<DateRange | undefined>({
-    from: new Date(2025, 5, 12),
-    to: new Date(2025, 6, 15),
-  });
+
+  const deleteFeed = async () => {
+    await deleteMutatoin.mutateAsync(feed.id);
+    setOpenAlert(!openAlert);
+  }
+
   return (
     <>
       <div className=" rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-8 py-6">
@@ -97,218 +59,146 @@ const List = () => {
 
       <div className="flex-1 overflow-y-auto pb-8 pt-4 bg-background-light dark:bg-background-dark">
         <div className="space-y-6">
-          <div className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-col lg:flex-row gap-4">
-            {/* Search */}
-            <div className="relative flex-1">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-              <Input
-                placeholder="Search by farmer name, address or mobile..."
-                className="pl-11 h-11"
-              />
-            </div>
-
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className="w-44 h-11 justify-between shadow-none font-normal border border-light"
-                >
-                  From date
-                  <ChevronDown className="h-4 w-4 opacity-50" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent
-                align="end"
-                className="w-75 bg-white p-0 border-0 "
-              >
-                <Calendar mode="single" className="w-full calender" />
-              </PopoverContent>
-
-            </Popover>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className="w-44 h-11 justify-between font-normal border border-light shadow-none"
-                >
-                  To date
-                  <ChevronDown className="h-4 w-4 opacity-50" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent
-                align="end"
-                className="w-75 bg-white p-0 border-0"
-              >
-                <Calendar mode="single" className="w-full calender" />
-              </PopoverContent>
-
-            </Popover>
-
-            <Select defaultValue="10">
-              <SelectTrigger
-                size={"default"}
-                className="w-36 h-[44px] bg-white border border-light shadow-none"
-              >
-                <SelectValue placeholder="Per page" />
-              </SelectTrigger>
-
-              <SelectContent className="bg-white border-0">
-                <SelectItem value="10">10</SelectItem>
-                <SelectItem value="20">20</SelectItem>
-                <SelectItem value="50">50</SelectItem>
-                <SelectItem value="100">100</SelectItem>
-              </SelectContent>
-            </Select>
-
-
-          </div>
+          {/* <HeaderFilter /> */}
           <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
+
             <div className="overflow-x-auto @container">
-              <div className="overflow-x-auto @container">
-                <Table className="w-full text-left border-collapse">
-                  <TableHeader>
-                    <TableRow className="bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800">
-                      <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider">
-                        Feed Type
-                      </TableHead>
-                      <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider">
-                        Feed name
-                      </TableHead>
-                      <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider min-w-[200px]">
-                        Stock Level
-                      </TableHead>
-                      <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider">
-                        Unit
-                      </TableHead>
-                      <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider">
-                        Unit Price
-                      </TableHead>
-                      <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-right">
-                        Actions
-                      </TableHead>
-                    </TableRow>
-                  </TableHeader>
+              <Table className="w-full text-left border-collapse">
+                <TableHeader>
+                  <TableRow className="bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800">
+                    <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider">
+                      Feed Type
+                    </TableHead>
+                    <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider">
+                      Feed name
+                    </TableHead>
+                    <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-center   min-w-50">
+                      Quantity
+                    </TableHead>
+                    <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-center ">
+                      Weight
+                    </TableHead>
+                    <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-center">
+                      Unit Price
+                    </TableHead>
+                    <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-center">
+                      Actions
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
 
-                  <TableBody className="divide-y divide-slate-100 dark:divide-slate-800">
-                    {/* ROW */}
-                    <TableRow className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors group">
-                      <TableCell className="px-6 py-4">
-                        <div className="flex items-center ">
+                <TableBody className="divide-y divide-slate-100 dark:divide-slate-800">
 
-                          <CircleSmall className="text-emerald-500" />
-                          <span className="font-semibold text-sm">Small</span>
-                        </div>
-                      </TableCell>
+                  {
+                    isLoading && (
+                      <TableRow className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors group">
+                        <TableCell className="px-6 py-4 text-center" colSpan={6}>
+                          <SmallLoading />
+                        </TableCell>
+                      </TableRow>
+                    )
+                  }
 
-                      <TableCell className="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">
-                        NutriFeed 
-                      </TableCell>
+                  {
+                    !isLoading && feedslist?.feeds?.length > 0 && (
+                      feedslist?.feeds.map((feed: any) => (
+                        <TableRow key={feed.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors group">
+                          <TableCell className="px-6 py-4">
+                            <div className="flex gap-2 items-center ">
 
-                      <TableCell className="px-6 py-4">
-                        <div className="space-y-1.5">
-                          <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-wide">
-                            <span className="text-slate-500">420/500 Bags</span>
-                            <span className="text-emerald-500">84%</span>
-                          </div>
-                          <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-1.5 overflow-hidden">
-                            <div className="bg-emerald-500 h-full rounded-full" style={{ width: "84%" }} />
-                          </div>
-                        </div>
-                      </TableCell>
+                              <span className="size-2 rounded-full bg-emerald-500"></span>
+                              <span className="font-semibold text-sm capitalize">{feed?.feed_type}</span>
+                            </div>
+                          </TableCell>
 
-                      <TableCell className="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 font-medium">
-                        Bags (50kg)
-                      </TableCell>
+                          <TableCell className="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">
+                            {feed?.name}
+                          </TableCell>
 
-                      <TableCell className="px-6 py-4 text-sm font-medium text-slate-900 dark:text-white">
-                        $32.50
-                      </TableCell>
+                          <TableCell className="px-6 py-4 text-center">
+                            {/* <div className="space-y-1.5">
+                              <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-wide">
+                                <span className="text-slate-500">420/500 Bags</span>
+                                <span className="text-emerald-500">84%</span>
+                              </div>
+                              <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-1.5 overflow-hidden">
+                                <div className="bg-emerald-500 h-full rounded-full" style={{ width: "84%" }} />
+                              </div>
+                            </div> */}
+                            {feed?.quantity}
+                          </TableCell>
 
-                      <TableCell className="flex items-center justify-end gap-1.5">
+                          <TableCell className="px-6 text-center py-4 text-sm text-slate-600 dark:text-slate-400 font-medium">
+                            {feed?.weight} <sup className="">Kg</sup>
+                          </TableCell>
 
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Link
-                              to="/farms/1/edit"
-                              className="p-1.5 rounded-lg text-slate-500 hover:text-primary hover:bg-primary/10"
-                            >
-                              <Edit className="size-5" />
-                            </Link>
-                          </TooltipTrigger>
-                          <TooltipContent>Edit</TooltipContent>
-                        </Tooltip>
+                          <TableCell className="px-6 py-4 text-sm text-center font-medium text-slate-900 dark:text-white">
 
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <button
-                              onClick={() => handleDelete(1)}
-                              className="p-1.5 rounded-lg text-red-500 hover:bg-red-100"
-                            >
-                              <Trash className="size-5" />
-                            </button>
-                          </TooltipTrigger>
-                          <TooltipContent>Delete</TooltipContent>
-                        </Tooltip>
-                      </TableCell>
-                    </TableRow>
+                            <div className="flex items-center justify-center">
+                              <IndianRupee size={14} />  {feed?.rate}
+                            </div>
+                          </TableCell>
 
-                    {/* Repeat rows exactly the same */}
-                  </TableBody>
-                </Table>
-              </div>
+                          <TableCell className="flex items-center justify-center gap-1.5">
 
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Link
+                                  to={`/feeds/${feed?.id}/edit`}
+                                  className="p-1.5 rounded-lg text-slate-500 hover:text-primary hover:bg-primary/10"
+                                >
+                                  <Edit className="size-5" />
+                                </Link>
+                              </TooltipTrigger>
+                              <TooltipContent>Edit</TooltipContent>
+                            </Tooltip>
+
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <button
+                                  onClick={() => handleDelete(feed?.id)}
+                                  className="p-1.5 rounded-lg text-red-500 hover:bg-red-100"
+                                >
+                                  <Trash className="size-5" />
+                                </button>
+                              </TooltipTrigger>
+                              <TooltipContent >Delete</TooltipContent>
+                            </Tooltip>
+                          </TableCell>
+                        </TableRow>
+                      )))
+                  }
+
+                  {
+                    !isLoading && feedslist?.feeds?.length == 0 && (
+                      <TableRow className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors group">
+                        <TableCell className="px-6 py-4 text-center" colSpan={6}>
+                          No data available
+                        </TableCell>
+                      </TableRow>
+                    )
+                  }
+                </TableBody>
+              </Table>
             </div>
-            <div className="px-6 py-4 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between">
-              <p className="text-sm text-slate-500 dark:text-slate-400">
-                Showing 1 to 5 of 42 entries
-              </p>
-              <div className="flex items-center gap-1">
-                <a
-                  className="flex size-9 items-center justify-center rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors text-slate-400"
-                  href="#"
-                >
-                  <span className="text-[20px]">
-                    <ChevronLeft />
-                  </span>
-                </a>
-                <a
-                  className="text-xs font-bold flex size-9 items-center justify-center text-white rounded-lg bg-primary shadow-sm"
-                  href="#"
-                >
-                  1
-                </a>
-                <a
-                  className="text-xs font-medium flex size-9 items-center justify-center text-slate-600 dark:text-slate-400 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
-                  href="#"
-                >
-                  2
-                </a>
-                <a
-                  className="text-xs font-medium flex size-9 items-center justify-center text-slate-600 dark:text-slate-400 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
-                  href="#"
-                >
-                  3
-                </a>
-                <span className="text-slate-400 px-1">...</span>
-                <a
-                  className="text-xs font-medium flex size-9 items-center justify-center text-slate-600 dark:text-slate-400 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
-                  href="#"
-                >
-                  9
-                </a>
-                <a
-                  className="flex size-9 items-center justify-center rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors text-slate-400"
-                  href="#"
-                >
-                  <span className="text-[20px]">
-                    <ChevronRight />
-                  </span>
-                </a>
-              </div>
+
+            <div className="grid grid-cols-3 px-5 py-4 bg-primary/20">
+              {
+                feedslist?.total_data?.map((d: totalFeed) => (
+                  <div className="flex flex-col">
+                    <div className="rounded-sm bg-primary px-4 py-2 text-white inline-block uppercase text-sm mb-1">{d.feed_type}</div>
+                    <div>
+                      <strong className="text-sm">Total Quantity:</strong> {d.total_quantity} Qty
+                    </div>
+                    <div>
+                      <strong className="text-sm">Total Weight:</strong> {d.total_weight} Kg
+                    </div>
+                  </div>
+                ))}
             </div>
           </div>
         </div>
-      </div>
+      </div >
 
       <AlertDialog open={openAlert} onOpenChange={setOpenAlert}>
         <AlertDialogContent className="p-8 w-110 border-0 items-center">
@@ -317,11 +207,11 @@ const List = () => {
           </div>
           <AlertDialogHeader className="mb-8 mt-4 items-center">
             <AlertDialogTitle className="text-2xl font-bold text-[#181111] dark:text-white leading-tight">
-              Delete Farmer?
+              Delete Feed?
             </AlertDialogTitle>
             <AlertDialogDescription className="text-[#896161] text-sm leading-relaxed mt-3 text-center">
               Are you sure you want to delete{" "}
-              <strong className="font-semibold text-black">Jane Smith</strong>?
+              <strong className="font-semibold text-black">{feed.name}</strong>?
               This action cannot be undone and all associated records will be
               lost.
             </AlertDialogDescription>
@@ -330,8 +220,8 @@ const List = () => {
             <AlertDialogCancel className="flex items-center justify-center rounded-lg h-12 bg-gray-200 dark:bg-[#3a1d1d] text-[#181111] dark:text-white hover:text-white border-0 text-sm font-bold  hover:bg-primary/90 dark:hover:bg-[#4d2727] ">
               Cancel
             </AlertDialogCancel>
-            <AlertDialogAction className="flex items-center justify-center rounded-lg h-12 bg-red-600 text-white text-sm font-bold hover:bg-primary/90  shadow-lg shadow-primary/20">
-              Continue
+            <AlertDialogAction onClick={deleteFeed} className="flex items-center justify-center rounded-lg h-12 bg-red-600 text-white text-sm font-bold hover:bg-primary/90  shadow-lg shadow-primary/20">
+              Delete
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

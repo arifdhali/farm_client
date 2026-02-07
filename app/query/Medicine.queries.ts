@@ -60,8 +60,8 @@ export const useUpdateMedicineMutation = () => {
         mutationFn: ({ updateData, id }: { updateData: any; id: number; }) => updateMedicine({ updateData, id }),
         onSuccess: async (data) => {
             await queryClient.invalidateQueries({ queryKey: ["medicines"] });
-            console.log(data);
-            toast.success("Medicine updated successfully");
+
+            toast.success(data?.message);
         },
         onError: (err) => {
             const error: any = err;
