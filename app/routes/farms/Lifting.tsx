@@ -45,23 +45,16 @@ import {
     ChevronDown,
     ChevronLeft,
     ChevronRight,
-    Download,
-    DownloadCloudIcon,
-    Edit,
-    Eye,
     EyeIcon,
-    Filter,
-    Pencil,
-    Plus,
     PlusIcon,
     Search,
-    Trash,
     TrashIcon,
-    View,
 } from "lucide-react";
 
 import type { DateRange } from "react-day-picker";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { useGetLiftingList } from "@/query/Farm.queries";
+import SmallLoading from "@/components/ui/smallLoading";
 
 const Lifting = () => {
     const [openAlert, setOpenAlert] = useState<boolean>(false);
@@ -74,6 +67,8 @@ const Lifting = () => {
         from: new Date(2025, 5, 12),
         to: new Date(2025, 6, 15),
     });
+
+    const { data: lifting, isLoading } = useGetLiftingList();
     return (
         <>
             <div className=" rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-8 py-6">
@@ -88,76 +83,21 @@ const Lifting = () => {
                         </p>
                     </div>
 
+                    <Link
+                        to={"/farms/lifting/add"}
+                        className=" flex items-center gap-2 px-5 py-2.5 bg-primary hover:bg-black text-white text-sm font-bold rounded-lg transition-all shadow-lg shadow-primary/20"
+                    >
+                        <PlusIcon />
+                        Make Lifting
+                    </Link>
+
                 </div>
             </div>
 
             <div className="flex-1 overflow-y-auto pb-8 pt-4 bg-background-light dark:bg-background-dark">
                 <div className="space-y-6">
-                    <div className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-col lg:flex-row gap-4">
-                        {/* Search */}
-                        <div className="relative flex-1">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-                            <Input
-                                placeholder="Search by farmer name, address or mobile..."
-                                className="pl-11 h-11"
-                            />
-                        </div>
-
-                        <Popover>
-                            <PopoverTrigger asChild>
-                                <Button
-                                    variant="outline"
-                                    className="w-44 h-11 justify-between shadow-none font-normal border border-slate-200"
-                                >
-                                    From date
-                                    <ChevronDown className="h-4 w-4 opacity-50" />
-                                </Button>
-                            </PopoverTrigger>
-                            <PopoverContent
-                                align="end"
-                                className="w-75 bg-white p-0 border-0 "
-                            >
-                                <Calendar mode="single" className="w-full calender" />
-                            </PopoverContent>
-
-                        </Popover>
-                        <Popover>
-                            <PopoverTrigger asChild>
-                                <Button
-                                    variant="outline"
-                                    className="w-44 h-11 justify-between font-normal border  border-slate-200 shadow-none"
-                                >
-                                    To date
-                                    <ChevronDown className="h-4 w-4 opacity-50" />
-                                </Button>
-                            </PopoverTrigger>
-                            <PopoverContent
-                                align="end"
-                                className="w-75 bg-white p-0 border-0"
-                            >
-                                <Calendar mode="single" className="w-full calender" />
-                            </PopoverContent>
-
-                        </Popover>
-
-                        <Select defaultValue="10">
-                            <SelectTrigger
-                                size={"default"}
-                                className="w-36  hover:bg-accent border border-slate-200 shadow-none"
-                            >
-                                <SelectValue placeholder="Per page" />
-                            </SelectTrigger>
-
-                            <SelectContent className=" border border-slate-200 ">
-                                <SelectItem value="10">10</SelectItem>
-                                <SelectItem value="20">20</SelectItem>
-                                <SelectItem value="50">50</SelectItem>
-                                <SelectItem value="100">100</SelectItem>
-                            </SelectContent>
-                        </Select>
 
 
-                    </div>
                     <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
                         <div className="overflow-x-auto @container">
                             <div className="overflow-x-auto @container">
@@ -187,70 +127,105 @@ const Lifting = () => {
                                     </TableHeader>
 
                                     <TableBody className="divide-y divide-slate-100 dark:divide-slate-800">
-                                        {/* ROW */}
-                                        <TableRow className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
-                                            <TableCell className="px-6 py-4 text-sm font-medium ">
-                                                LIFT-0101921
-                                            </TableCell>
+                                        {
+                                            isLoading && (
+                                                <TableRow className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
+                                                    <TableCell
+                                                        colSpan={6}
+                                                        className="px-6 py-4 text-center"
+                                                    >
+                                                        <SmallLoading />
+                                                    </TableCell>
+                                                </TableRow>
 
-                                            <TableCell className="px-6 py-4">
-                                                <div className="flex items-center gap-3">
-                                                    <div
-                                                        className="size-10 rounded-full bg-cover bg-center"
-                                                        style={{
-                                                            backgroundImage:
-                                                                "url('https://lh3.googleusercontent.com/aida-public/AB6AXuB9NG1Kb7xNEXdiDP4alp3ILUnFLgQqDDlgXErXBuOCYtf3Mk2B9vdq8ImXv8JZT0H8wKfNMmqTXEUWMdIXWgWtrfbcESOyYZ3NRtHgAiDJhylsJU2ZqmyaEEgDwQBB1qWpmW5XiSBAtMEd2F0s3wMZfr3VAy5opTKAjlMC8z1UOxob6h-1s8f7gZk9BIEtqjmaYjaTcrf_RDzIX-ITM0-pVi-61xgH1sTdmQkc1ZbwRiuDxRC0PAkPl8jsj71noHlgCzvn0jmPXDW0')",
-                                                        }}
-                                                    />
-                                                    <span className="font-semibold text-sm">Samuel Green</span>
-                                                </div>
-                                            </TableCell>
+                                            )
+                                        }
+                                        {!isLoading && lifting?.data?.length > 0 && (
+                                            lifting?.data?.map((lift: any) => (
+                                                <TableRow key={lift?.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
+                                                    <TableCell className="px-6 py-4 text-sm font-medium ">
+                                                        {lift?.active_delivery_id}
+                                                    </TableCell>
 
-                                            <TableCell className="px-6 py-4 text-sm font-medium ">
-                                                +1 555-0101
-                                            </TableCell>
+                                                    <TableCell className="px-6 py-4">
+                                                        <div className="flex items-center gap-3">
+                                                            <div
+                                                                className="size-10 rounded-full bg-cover bg-center"
+                                                                style={{
+                                                                    backgroundImage:
+                                                                        "url('https://lh3.googleusercontent.com/aida-public/AB6AXuB9NG1Kb7xNEXdiDP4alp3ILUnFLgQqDDlgXErXBuOCYtf3Mk2B9vdq8ImXv8JZT0H8wKfNMmqTXEUWMdIXWgWtrfbcESOyYZ3NRtHgAiDJhylsJU2ZqmyaEEgDwQBB1qWpmW5XiSBAtMEd2F0s3wMZfr3VAy5opTKAjlMC8z1UOxob6h-1s8f7gZk9BIEtqjmaYjaTcrf_RDzIX-ITM0-pVi-61xgH1sTdmQkc1ZbwRiuDxRC0PAkPl8jsj71noHlgCzvn0jmPXDW0')",
+                                                                }}
+                                                            />
+                                                            <span className="font-semibold text-sm">{lift?.name}</span>
+                                                        </div>
+                                                    </TableCell>
 
-                                            <TableCell className="px-6 py-4 text-sm font-medium text-center">
-                                                5,000 birds
-                                            </TableCell>
+                                                    <TableCell className="px-6 py-4 text-sm font-medium ">
+                                                        +1 555-0101
+                                                    </TableCell>
 
-                                            <TableCell className="px-6 py-4 text-center">
-                                                <span className="inline-flex justify-center items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400">
-                                                    <span className="w-1 h-1 rounded-full bg-yellow-500 mr-1.5" />
-                                                    Started
-                                                </span>
-                                            </TableCell>
+                                                    <TableCell className="px-6 py-4 text-sm font-medium text-center">
+                                                        {lift?.available_chicks} birds
+                                                    </TableCell>
 
-                                            <TableCell className="px-6 py-4">
-                                                <div className="flex items-center justify-center gap-1.5">
-                                                    <Tooltip>
-                                                        <TooltipTrigger asChild>
-                                                            <Link
-                                                                to={`/farms/lifting/${1}`}
-                                                                className="p-1.5 rounded-lg text-slate-500 hover:text-primary hover:bg-primary/10"
-                                                            >
-                                                                <EyeIcon className="size-5" />
-                                                            </Link>
-                                                        </TooltipTrigger>
-                                                        <TooltipContent>View</TooltipContent>
-                                                    </Tooltip>
+                                                    <TableCell className="px-6 py-4 text-center">
+                                                        <span
+                                                            className={`inline-flex justify-center items-center px-2.5 py-0.5 rounded-full text-xs font-bold
+                                                                  ${lift?.lifting_status === "started"
+                                                                    ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400"
+                                                                    : "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400"
+                                                                }`}
+                                                        >
+                                                            <span
+                                                                className={`w-1 h-1 rounded-full mr-1.5 ${lift?.lifting_status === "started" ? "bg-yellow-500" : "bg-emerald-500"
+                                                                    }`}
+                                                            />
+                                                            {lift?.lifting_status === "started" ? "Started" : "Completed"}
+                                                        </span>
 
-                                                    <Tooltip>
-                                                        <TooltipTrigger asChild>
-                                                            <button
-                                                                onClick={() => handleDelete(1)}
-                                                                className="cursor-pointer p-1.5 rounded-lg text-slate-500 hover:bg-slate-100"
-                                                            >
-                                                                <CheckIcon className="text-green-500" />
-                                                            </button>
-                                                        </TooltipTrigger>
-                                                        <TooltipContent>Make Complete</TooltipContent>
-                                                    </Tooltip>
-                                                </div>
-                                            </TableCell>
-                                        </TableRow>
+                                                    </TableCell>
 
-                                        {/* Repeat rows as-is */}
+                                                    <TableCell className="px-6 py-4">
+                                                        <div className="flex items-center justify-center gap-1.5">
+                                                            <Tooltip>
+                                                                <TooltipTrigger asChild>
+                                                                    <Link
+                                                                        to={`/farms/lifting/${lift?.id}`}
+                                                                        className="p-1.5 rounded-lg text-slate-500 hover:text-primary hover:bg-primary/10"
+                                                                    >
+                                                                        <EyeIcon className="size-5" />
+                                                                    </Link>
+                                                                </TooltipTrigger>
+                                                                <TooltipContent>View</TooltipContent>
+                                                            </Tooltip>
+
+                                                            <Tooltip>
+                                                                <TooltipTrigger asChild>
+                                                                    <button
+                                                                        onClick={() => handleDelete(1)}
+                                                                        className="cursor-pointer p-1.5 rounded-lg text-slate-500 hover:bg-slate-100"
+                                                                    >
+                                                                        <CheckIcon className="text-green-500" />
+                                                                    </button>
+                                                                </TooltipTrigger>
+                                                                <TooltipContent>Make Complete</TooltipContent>
+                                                            </Tooltip>
+                                                        </div>
+                                                    </TableCell>
+                                                </TableRow>
+                                            ))
+                                        )}
+
+                                        {(!isLoading && lifting?.data?.length === 0) && (
+                                            <TableRow className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
+                                                <TableCell
+                                                    colSpan={5}
+                                                    className="px-6 py-4 text-center"
+                                                >
+                                                    No records
+                                                </TableCell>
+                                            </TableRow>
+                                        )}
                                     </TableBody>
                                 </Table>
                             </div>

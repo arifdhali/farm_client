@@ -11,20 +11,19 @@ export async function loader({ request }: { request: Request }) {
     try {
         let user = await queryClient.ensureQueryData(getMeQuery(cookie));
         console.log("Auth layout", user);
-        if (user) {
-            throw redirect("/");
+        if (user?.id) {
+            return redirect("/");
         }
         return null;
     } catch (err) {
         const error = err as AxiosError<BackendError>;
-        console.log(error);
+        console.log("Auth Error", error);
         if (error.status === 401) {
             return null;
             throw redirect("/auth/login");
         }
     }
 }
-
 
 const AuthLayout = () => {
     return (

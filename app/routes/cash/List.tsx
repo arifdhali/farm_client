@@ -1,117 +1,110 @@
-import { useState } from "react";
 import { Link } from "react-router";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from "@/components/ui/table";
+import { PlusIcon } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogTitle,
-  AlertDialogFooter,
-  AlertDialogHeader,
-} from "@/components/ui/alert-dialog";
-
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-
-import { Calendar } from "@/components/ui/calendar";
-
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-
-import {
-  ChevronDown,
-  ChevronLeft,
-  ChevronRight,
-  Download,
-  DownloadCloudIcon,
-  Edit,
-  Eye,
-  Filter,
-  Pencil,
-  Plus,
-  PlusIcon,
-  Search,
-  Trash,
-  TrashIcon,
-} from "lucide-react";
-
-import type { DateRange } from "react-day-picker";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
+import SmallLoading from "@/components/ui/smallLoading";
+import { useGetCashList } from "@/query/Cash.queries";
 
 const List = () => {
-  const [openAlert, setOpenAlert] = useState<boolean>(false);
+  const { data, isLoading } = useGetCashList();
 
-  const handleDelete = (id: number): void => {
-    setOpenAlert(!openAlert);
-  };
-  const [open, setOpen] = useState(false);
-  const [dateRange, setDateRange] = useState<DateRange | undefined>({
-    from: new Date(2025, 5, 12),
-    to: new Date(2025, 6, 15),
-  });
-  const items = [
-    {
-      value: "item-1",
-      trigger: "How do I reset my password?",
-      content:
-        "Click on 'Forgot Password' on the login page, enter your email address, and we'll send you a link to reset your password. The link will expire in 24 hours.",
-    },
-    {
-      value: "item-2",
-      trigger: "Can I change my subscription plan?",
-      content:
-        "Yes, you can upgrade or downgrade your plan at any time from your account settings. Changes will be reflected in your next billing cycle.",
-    },
-    {
-      value: "item-3",
-      trigger: "What payment methods do you accept?",
-      content:
-        "We accept all major credit cards, PayPal, and bank transfers. All payments are processed securely through our payment partners.",
-    },
-  ]
   return (
     <>
-      <Accordion
-        type="single"
-        collapsible
-        defaultValue="item-1"
-        className="max-w-lg"
-      >
-        {items.map((item) => (
-          <AccordionItem key={item.value} value={item.value}>
-            <AccordionTrigger>{item.trigger}</AccordionTrigger>
-            <AccordionContent>{item.content}</AccordionContent>
-          </AccordionItem>
-        ))}
-      </Accordion>
+      <div className=" rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-8 py-6">
+        <div className="flex flex-wrap justify-between items-center gap-4">
+          <div>
+            <h2 className="text-slate-900 dark:text-white text-3xl font-black leading-tight tracking-tight">
+              Expense Listing
+            </h2>
+            <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
+              Manage and monitor all registered expenses across locations.
+            </p>
+          </div>
+          <Link
+            to={"/cash/add"}
+            className=" flex items-center gap-2 px-5 py-2.5 bg-primary hover:bg-black text-white text-sm font-bold rounded-lg transition-all shadow-lg shadow-primary/20"
+          >
+            <PlusIcon />
+            Add Expense
+          </Link>
+        </div>
+      </div>
+
+      <div className="flex-1 overflow-y-auto pb-8 pt-4 bg-background-light dark:bg-background-dark">
+        <div className="space-y-6">
+
+          <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
+            <div className="overflow-x-auto @container">
+              <div className="overflow-x-auto @container">
+                <Table className="w-full">
+                  <TableHeader>
+                    <TableRow className="bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800">
+                      <TableHead className=" px-6 py-4 text-xs font-bold uppercase">
+                        Date
+                      </TableHead>
+                      <TableHead className=" px-6 py-4 text-xs font-bold uppercase">
+                        Expense Type
+                      </TableHead>
+                      <TableHead className=" px-6 py-4 text-xs font-bold uppercase">
+                        Amount
+                      </TableHead>
+                    </TableRow>
+                  </TableHeader>
+
+                  <TableBody className="divide-y divide-slate-100 dark:divide-slate-800">
+                    {
+                      isLoading && (
+                        <TableRow className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
+                          <TableCell
+                            colSpan={6}
+                            className="px-6 py-4 text-center"
+                          >
+                            <SmallLoading />
+                          </TableCell>
+                        </TableRow>
+
+                      )
+                    }
+                    {!isLoading && data?.expenses?.length > 0 && (
+                      data?.expenses.map((expense: any) => (
+                        <TableRow
+                          key={expense.id}
+                          className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors"
+                        >
+                          <TableCell className="px-6 py-4 text-sm hidden md:table-cell">
+                            {expense?.date}
+                          </TableCell>
+
+                          <TableCell className="px-6 py-4 text-sm font-medium">
+                            {expense?.expenses_type}
+                          </TableCell>
+
+                          <TableCell className="px-6 py-4 text-sm font-medium">
+                            {expense?.amount}
+                          </TableCell>
+
+                        </TableRow>
+                      ))
+                    )}
+                    {(!isLoading && data?.expenses?.length === 0) && (
+                      <TableRow className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
+                        <TableCell
+                          colSpan={6}
+                          className="px-6 py-4 text-center"
+                        >
+                          No records
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </>
   );
 };

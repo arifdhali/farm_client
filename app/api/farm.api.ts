@@ -1,5 +1,7 @@
 import HTTP from "@/api/client";
-import type { CreateFarmer } from "@/types/Farm";
+import type { BackendError } from "@/types/AxiosErrors.type";
+import type { CreateFarmer, makeLifting } from "@/types/Farm";
+import type { AxiosError } from "axios";
 
 const FARMER_API_URL = "/farm";
 
@@ -22,7 +24,10 @@ export const createFarmer = async (payload: CreateFarmer) => {
 export const getFarmersList = async () => {
     try {
         const response = await HTTP.get(`${FARMER_API_URL}/list`);
-        return response.data;
+        if (response.data.status) {
+            return response.data.data;
+        }
+        return [];
     } catch (error) {
         console.log(error);
     }
@@ -81,5 +86,40 @@ export const updateFarm = async ({ updateData, farmID }: { updateData: any, farm
         console.log(response);
     } catch (error) {
         throw error;
+    }
+}
+
+
+export const makeLifiting = async (payload: makeLifting) => {
+    try {
+        let response = await HTTP.post(`${FARMER_API_URL}/lifting/create`, payload);
+        if (response.data.status) {
+            return response.data;
+        }
+        return null;
+
+    } catch (err) {
+        const error = err as AxiosError<BackendError>;
+        throw {
+            message: error.response?.data?.message || "Something went wrong",
+            fieldErrors: error.response?.data?.errors?.reduce((acc: Record<string, string>, curr) => {
+                acc[curr.field] = curr.message;
+                return acc;
+            }, {}) ?? {},
+            status: error.response?.data?.status,
+            statusCode: error.response?.status,
+        };
+    }
+}
+
+export const getLfitingList = async () => {
+    try {
+        let response = await HTTP.get(`${FARMER_API_URL}/lifting`);
+
+        if (response.data.status) {
+            return response.data;
+        }
+    } catch (err) {
+        throw err;
     }
 }

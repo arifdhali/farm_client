@@ -1,61 +1,35 @@
 import { useState } from "react";
 import { Link } from "react-router";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from "@/components/ui/table";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogTitle, AlertDialogFooter, AlertDialogHeader, } from "@/components/ui/alert-dialog";
+import { PlusIcon, Trash, TrashIcon } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipTrigger, } from "@/components/ui/tooltip";
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogTitle,
-  AlertDialogFooter,
-  AlertDialogHeader,
-} from "@/components/ui/alert-dialog";
-
-import { Edit, PlusIcon, Trash, TrashIcon } from "lucide-react";
-
-import type { DateRange } from "react-day-picker";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-
-import {
-  useDeleteFarmMutation,
-  useGetFarmersList,
-} from "@/query/Farm.queries";
+import { useDeleteCustomerMutation } from "@/query/Customers.queries";
 import HeaderFilter from "@/components/ui/headerFilter";
-import CustomPagination from "@/components/ui/CustomPagination";
+
 import SmallLoading from "@/components/ui/smallLoading";
+import { useGetCustomersList } from "@/query/Customers.queries";
 
 const List = () => {
-  const { data, isLoading } = useGetFarmersList();
+  const { data, isLoading } = useGetCustomersList();
   const [openAlert, setOpenAlert] = useState<boolean>(false);
-  const [farm, setfarm] = useState<any>({});
+  const [customer, setCustomer] = useState<any>({});
 
-  const deleteMutaion = useDeleteFarmMutation();
+  const deleteMutaion = useDeleteCustomerMutation();
 
   const handleDeleteModal = (id: number): void => {
-    let farmName = data?.farms.filter((farm: any) => id == farm.id);
-    setfarm({
+    let customerName = data?.customers.filter((customer: any) => id == customer.id);
+    setCustomer({
       id: id,
-      name: farmName[0].name,
+      name: customerName[0].shopname,
     });
     setOpenAlert(!openAlert);
   };
 
-  const handleDeleteFarm = () => {
-    deleteMutaion.mutate(farm.id);
+  const handleDeleteCustomer = () => {
+    deleteMutaion.mutate(customer.id);
+    setOpenAlert(!openAlert);
   };
 
   return (
@@ -64,19 +38,18 @@ const List = () => {
         <div className="flex flex-wrap justify-between items-center gap-4">
           <div>
             <h2 className="text-slate-900 dark:text-white text-3xl font-black leading-tight tracking-tight">
-              Farmer Listing
+              Customer Listing
             </h2>
             <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
-              Manage and monitor all registered poultry farmers across
-              locations.
+              Manage and monitor all registered customers across locations.
             </p>
           </div>
           <Link
-            to={"/farms/add"}
+            to={"/customers/add"}
             className=" flex items-center gap-2 px-5 py-2.5 bg-primary hover:bg-black text-white text-sm font-bold rounded-lg transition-all shadow-lg shadow-primary/20"
           >
             <PlusIcon />
-            Add Farmer
+            Add Customer
           </Link>
         </div>
       </div>
@@ -91,25 +64,22 @@ const List = () => {
                 <Table className="w-full">
                   <TableHeader>
                     <TableRow className="bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800">
-                      <TableHead className="px-6 py-4 text-xs font-bold uppercase">
-                        Farmer Name
+                      <TableHead className=" px-6 py-4 text-xs font-bold uppercase">
+                        Name
                       </TableHead>
-                      <TableHead className="px-6 py-4 text-xs font-bold uppercase hidden md:table-cell">
-                        Address
+                      <TableHead className=" px-6 py-4 text-xs font-bold uppercase">
+                        Shop name
                       </TableHead>
-                      <TableHead className="px-6 py-4 text-xs font-bold uppercase">
+                      <TableHead className=" px-6 py-4 text-xs font-bold uppercase">
+                        Email
+                      </TableHead>
+                      <TableHead className=" px-6 py-4 text-xs font-bold uppercase">
                         Mobile Number
                       </TableHead>
-                      <TableHead className="px-6 py-4 text-xs font-bold uppercase text-center">
-                        Capacity
+                      <TableHead className=" px-6 py-4 text-xs font-bold uppercase text-center">
+                        Address
                       </TableHead>
-                      <TableHead className="px-6 py-4 text-xs font-bold uppercase text-center">
-                        Chicks Count
-                      </TableHead>
-                      <TableHead className="px-6 py-4 text-xs font-bold uppercase text-center">
-                       Availablity Status
-                      </TableHead>
-                      <TableHead className="px-6 py-4 text-xs font-bold uppercase text-center">
+                      <TableHead className=" px-6 py-4 text-xs font-bold uppercase text-center">
                         Actions
                       </TableHead>
                     </TableRow>
@@ -129,10 +99,10 @@ const List = () => {
 
                       )
                     }
-                    {!isLoading && data?.farms.length > 0 && (
-                      data?.farms.map((farm: any) => (
+                    {!isLoading && data?.customers.length > 0 && (
+                      data?.customers.map((customer: any) => (
                         <TableRow
-                          key={farm.id}
+                          key={customer.id}
                           className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors"
                         >
                           <TableCell className="px-6 py-4">
@@ -145,61 +115,33 @@ const List = () => {
                                 }}
                               />
                               <span className="font-semibold text-sm">
-                                {farm?.name}
+                                {customer?.name}
                               </span>
                             </div>
                           </TableCell>
 
                           <TableCell className="px-6 py-4 text-sm hidden md:table-cell">
-                            {farm?.location}
+                            {customer?.shopname}
                           </TableCell>
 
                           <TableCell className="px-6 py-4 text-sm font-medium">
-                            {farm?.mobile_number}
+                            {customer?.email}
+                          </TableCell>
+
+                          <TableCell className="px-6 py-4 text-sm font-medium">
+                            {customer?.phone}
                           </TableCell>
 
                           <TableCell className="px-6 py-4 text-sm font-medium text-center">
-                            {farm?.capacity}
-                          </TableCell>
-                          <TableCell className="px-6 py-4 text-sm font-medium text-center">
-                            {farm?.available_chicks}
-                          </TableCell>
-
-                          <TableCell className="px-6 py-4">
-
-                            {
-                              <span
-                                className={`flex w-fit items-center mx-auto px-2.5 py-1 gap-1 rounded-full text-xs font-bold ${farm?.availablity_status === "free" ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400" : "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400"}`}
-                              >
-                                <span className="relative flex size-2">
-                                  <span className={`absolute inline-flex h-full w-full animate-ping rounded-full ${farm?.availablity_status === "free" ? "bg-emerald-500" : "bg-yellow-500"} opacity-75`}></span>
-                                  <span className={`relative inline-flex size-2 rounded-full ${farm?.availablity_status === "free" ? "bg-emerald-500" : "bg-yellow-500"}`}></span>
-                                </span>
-                                {farm?.availablity_status === "free"
-                                  ? "Available"
-                                  : "Occupied"}
-                              </span>
-                            }
+                            {customer?.address}
                           </TableCell>
 
                           <TableCell className="px-6 py-4 text-right">
                             <div className="flex items-center justify-center gap-1.5">
                               <Tooltip>
                                 <TooltipTrigger asChild>
-                                  <Link
-                                    to={`/farms/${farm?.id}/edit`}
-                                    className="p-1.5 rounded-lg text-slate-500 hover:text-primary hover:bg-primary/10"
-                                  >
-                                    <Edit className="size-5" />
-                                  </Link>
-                                </TooltipTrigger>
-                                <TooltipContent>Edit</TooltipContent>
-                              </Tooltip>
-
-                              <Tooltip>
-                                <TooltipTrigger asChild>
                                   <button
-                                    onClick={() => handleDeleteModal(farm?.id)}
+                                    onClick={() => handleDeleteModal(customer?.id)}
                                     className="p-1.5 rounded-lg text-red-500 hover:bg-red-100"
                                   >
                                     <Trash className="size-5" />
@@ -212,7 +154,7 @@ const List = () => {
                         </TableRow>
                       ))
                     )}
-                    {(!isLoading && data?.farms?.length === 0) && (
+                    {(!isLoading && data?.customers?.length === 0) && (
                       <TableRow className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
                         <TableCell
                           colSpan={6}
@@ -226,9 +168,6 @@ const List = () => {
                 </Table>
               </div>
             </div>
-
-            <CustomPagination />
-
           </div>
         </div>
       </div>
@@ -240,12 +179,12 @@ const List = () => {
           </div>
           <AlertDialogHeader className="mb-8 mt-4 items-center">
             <AlertDialogTitle className="text-2xl font-bold text-[#181111] dark:text-white leading-tight">
-              Delete Farmer?
+              Delete Customer?
             </AlertDialogTitle>
             <AlertDialogDescription className="text-[#896161] text-sm leading-relaxed mt-3 text-center">
               Are you sure you want to delete{" "}
               <strong className="font-semibold text-black">
-                {farm && farm.name}
+                {customer && customer.name}
               </strong>
               ? This action cannot be undone and all associated records will be
               lost.
@@ -257,7 +196,7 @@ const List = () => {
             </AlertDialogCancel>
             <AlertDialogAction
               disabled={deleteMutaion.isPending}
-              onClick={handleDeleteFarm}
+              onClick={handleDeleteCustomer}
               className="flex items-center justify-center rounded-lg h-12 bg-red-600 text-white text-sm font-bold hover:bg-primary/90  shadow-lg shadow-primary/20"
             >
               {deleteMutaion.isPending ? "Processing" : "Confirm"}

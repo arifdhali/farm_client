@@ -3,7 +3,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useGetFarmersList, useGetLastOrderID } from "@/query/Farm.queries";
 import { useFormik } from "formik";
-import { ArrowLeftIcon, Check, ChevronsUpDown } from "lucide-react";
+import { ArrowLeftIcon } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { Link } from "react-router";
 import * as yup from "yup";
@@ -77,6 +77,9 @@ const Delivery = () => {
 
     if (lastOrderID?.order_id) {
       deliveryForm.setFieldValue("order_id", String(lastOrderID.order_id));
+    } else {
+      deliveryForm.setFieldValue("order_id", "");
+
     }
   }, [lastOrderID, deliveryForm.values.farm_id]);
 
@@ -143,7 +146,7 @@ const Delivery = () => {
               <ComboCheckbox
                 ref={farmerRef}
                 label="Farmers"
-                items={data?.data?.farms ?? []}
+                items={data?.farms ?? []}
                 selectedId={deliveryForm.values.farm_id}
                 onSelect={(id) => {
                   deliveryForm.setFieldValue("farm_id", id);

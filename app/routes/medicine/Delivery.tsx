@@ -62,7 +62,7 @@ const Delivery = () => {
 
         },
       });
-    
+
     }
   });
 
@@ -80,6 +80,9 @@ const Delivery = () => {
 
     if (lastOrderID?.order_id) {
       deliveryForm.setFieldValue("order_id", String(lastOrderID.order_id));
+    } else {
+      deliveryForm.setFieldValue("order_id", null);
+
     }
   }, [lastOrderID, deliveryForm.values.farm_id]);
 
@@ -146,7 +149,7 @@ const Delivery = () => {
               <ComboCheckbox
                 ref={farmerRef}
                 label="Farmers"
-                items={data?.data?.farms ?? []}
+                items={data?.farms ?? []}
                 selectedId={deliveryForm.values.farm_id}
                 onSelect={(id) => {
                   deliveryForm.setFieldValue("farm_id", id);

@@ -28,12 +28,9 @@ const addSchema = Yup.object({
 
 const Add = () => {
   const [FarmsStatus, setFarmsStatus] = useState<"free" | "occupied">("free");
-  const inputRef = useRef<
-    Record<string, HTMLInputElement | HTMLTextAreaElement | null>
-  >({});
+  const inputRef = useRef<Record<string, HTMLInputElement | HTMLTextAreaElement | null>>({});
 
-  const { mutate, isPending, isError, error, isSuccess } =
-    useCreateFarmerMutation();
+  const { mutate, isPending, isSuccess } = useCreateFarmerMutation();
 
   const handleSubmit = (values: any) => {
     mutate(values);
@@ -80,6 +77,7 @@ const Add = () => {
             to={"/farms/list"}
             className="bg-white hover:text-primary dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2"
           >
+            
             <ArrowLeftIcon />
             Back to List
           </Link>
@@ -210,7 +208,7 @@ const Add = () => {
                 type="number"
               />
               {addFarm.touched.commission_percentage &&
-              addFarm.errors.commission_percentage ? (
+                addFarm.errors.commission_percentage ? (
                 <span className="text-red-500 text-sm">
                   {addFarm.errors.commission_percentage}
                 </span>
@@ -233,11 +231,10 @@ const Add = () => {
                   type="button"
                   onClick={() => setFarmsStatus("free")}
                   className={`relative z-10 flex-1 py-2 text-sm font-bold transition-colors
-            ${
-              FarmsStatus === "free"
-                ? "text-primary"
-                : "text-zinc-500 dark:text-zinc-400"
-            }`}
+            ${FarmsStatus === "free"
+                      ? "text-primary"
+                      : "text-zinc-500 dark:text-zinc-400"
+                    }`}
                 >
                   Available
                 </button>
@@ -246,11 +243,10 @@ const Add = () => {
                   type="button"
                   onClick={() => setFarmsStatus("occupied")}
                   className={`relative z-10 flex-1 py-2 text-sm font-bold transition-colors
-            ${
-              FarmsStatus === "occupied"
-                ? "text-primary"
-                : "text-zinc-500 dark:text-zinc-400"
-            }`}
+            ${FarmsStatus === "occupied"
+                      ? "text-primary"
+                      : "text-zinc-500 dark:text-zinc-400"
+                    }`}
                 >
                   Occupied
                 </button>

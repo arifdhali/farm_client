@@ -62,7 +62,13 @@ const menuItems = [
       { title: "Delivered", url: "/feeds/delivery" },
     ],
   },
-  { title: "Users", icon: Users, url: "/users" },
+  {
+    title: "Customers", icon: Users, url: "/customers",
+    children: [
+      { title: "List", url: "/customers/list" },
+      { title: "Add Customer", url: "/customers/add" },
+    ]
+  },
   {
     title: "Cash",
     icon: IndianRupee,
@@ -70,7 +76,6 @@ const menuItems = [
     children: [
       { title: "Expense List", url: "/cash/list" },
       { title: "Expense Add", url: "/cash/add" },
-      { title: "Collections", url: "/cash/collection" },
     ],
   },
   {

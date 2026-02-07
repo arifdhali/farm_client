@@ -1,9 +1,58 @@
-import { ArrowLeftIcon, ArrowLeftToLineIcon } from "lucide-react";
-import React, { useState } from "react";
+import { ArrowLeftIcon } from "lucide-react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { useFormik } from "formik";
+import { format } from "date-fns";
+import * as yup from "yup";
+import type { cashType } from "@/types/Cash.type";
+import { useAddCashMutations } from "@/query/Cash.queries";
+
+
+const addExpensesSchema = yup.object().shape({
+  date: yup.date().required("Date is required").min(
+    new Date(new Date().setHours(0, 0, 0, 0)),
+    "Delivery date cannot be in the past"
+  ),
+  expenses_type: yup.string().trim().required("Expenses type is required"),
+  amount: yup.number().typeError("Amount must be a number")
+    .required("Amount is required").positive("Amount must be a positive number"),
+
+});
 
 const Add = () => {
-  const [FarmsStatus, setFarmsStatus] = useState<"free" | "occupied">("free");
+  const [openDate, setOpenDate] = useState<boolean>(false);
+  const { mutate: addCash, isPending, isError, error } = useAddCashMutations();
+  const addExpensesFormik = useFormik<cashType>({
+    initialValues: {
+      date: new Date(),
+      expenses_type: "",
+      amount: 0
+    },
+    validationSchema: addExpensesSchema,
+    validateOnBlur: false,
+    validateOnChange: false,
+    onSubmit: (values) => {
+      let payload = {
+        ...values,
+        date: format(values.date, "yyyy-MM-dd"),
+      }
+      addCash(payload, {
+        onSuccess: (data) => {
+          addExpensesFormik.resetForm();
+        },
+      })
+    }
+  });
+
+  useEffect(() => {
+    if (!isError) return;
+    let err: any = error;
+    addExpensesFormik.setErrors(err.fieldErrors ?? "");
+  }, [isError])
+
 
   return (
     <div className="flex-1 overflow-y-auto bg-background-light dark:bg-background-dark">
@@ -11,14 +60,14 @@ const Add = () => {
         <div className="flex flex-wrap justify-between items-end gap-3">
           <div className="flex flex-col ">
             <h2 className="text-zinc-900 dark:text-zinc-100 text-3xl font-black leading-tight tracking-[-0.033em]">
-              Add Feed
+              Add Expense
             </h2>
             <p className="text-zinc-500 dark:text-zinc-400 text-base font-normal leading-normal">
-              Add a new feed to the system.
+              Add a new expense to the system.
             </p>
           </div>
           <Link
-            to={"/farms/list"}
+            to={"/cash/list"}
             className="bg-white hover:text-primary dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2"
           >
             <ArrowLeftIcon />
@@ -26,125 +75,98 @@ const Add = () => {
           </Link>
         </div>
       </div>
-      <div className="bg-white dark:bg-zinc-900 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-800 overflow-hidden">
-        <form className="p-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-            <div className="flex flex-col col-span-2 md:col-span-1">
+      <div className="bg-white dark:bg-zinc-900 w-150 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-800 overflow-hidden">
+        <form onSubmit={addExpensesFormik.handleSubmit} className="p-8">
+          <div className="flex flex-col gap-y-6">
+            <div className="">
+              <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
+                Select Date
+              </label>
+
+              <Popover open={openDate} onOpenChange={setOpenDate}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={`w-full h-12 rounded-lg border border-zinc-200 dark:border-zinc-700 shadow-none justify-start font-normal bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-4 py-3 text-base`}
+                  >
+                    {addExpensesFormik.values.date
+                      ? format(addExpensesFormik.values.date, "dd/MM/yyyy")
+                      : "Select date"}
+                  </Button>
+                </PopoverTrigger >
+                <PopoverContent className="w-full rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 p-0 text-base" align="start">
+                  <Calendar
+                    className="w-75"
+                    mode="single"
+                    buttonVariant="outline"
+                    disabled={{ before: new Date() }}
+                    onSelect={(date) => {
+                      if (!date) return;
+                      setOpenDate(false);
+                      addExpensesFormik.setFieldValue("date", date)
+                    }}
+                  />
+                </PopoverContent>
+              </Popover>
+              {addExpensesFormik.touched.date && addExpensesFormik.errors.date ? (
+                <span className="text-red-500 text-sm">
+                  {addExpensesFormik.errors.date}
+                </span>
+              ) : null}
+            </div>
+            <div className="">
               <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
                 Expense Type
               </label>
               <input
+                name="expenses_type"
+                value={addExpensesFormik.values.expenses_type}
+                onChange={addExpensesFormik.handleChange}
                 className="w-full rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-4 py-3 text-base"
-                placeholder="Enter full name"
+                placeholder="Enter expense type"
                 type="text"
               />
+              {addExpensesFormik.touched.expenses_type && addExpensesFormik.errors.expenses_type ? (
+                <span className="text-red-500 text-sm">
+                  {addExpensesFormik.errors.expenses_type}
+                </span>
+              ) : null}
             </div>
-            <div className="flex flex-col col-span-2 md:col-span-1">
+            <div className="">
               <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
-                Mobile Number
+                Amount
               </label>
               <input
+                name="amount"
+                value={addExpensesFormik.values.amount}
+                onChange={addExpensesFormik.handleChange}
                 className="w-full rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-4 py-3 text-base"
-                placeholder="+1 234 567 890"
-                type="tel"
-              />
-            </div>
-            <div className="flex flex-col col-span-2">
-              <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
-                Farm Address
-              </label>
-              <textarea
-                className="w-full rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-4 py-3 text-base min-h-25"
-                placeholder="Enter physical farm address"
-              ></textarea>
-            </div>
-            <div className="flex flex-col col-span-2 md:col-span-1">
-              <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
-                Farm Capacity
-              </label>
-              <input
-                className="w-full rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-4 py-3 text-base"
-                placeholder="e.g. 5000 birds"
+                placeholder="Enter amount"
                 type="text"
               />
-            </div>
-            <div className="flex flex-col col-span-2 md:col-span-1">
-              <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
-                Farm Status
-              </label>
-              <div className="relative flex bg-zinc-100 dark:bg-zinc-800 p-1 rounded-lg w-full max-w-xs">
-                {/* Sliding Active Indicator */}
-                <span
-                  className={`absolute top-1 left-1 h-[calc(100%-0.5rem)] w-1/2 rounded-md bg-white dark:bg-zinc-700 shadow-sm border border-zinc-200 dark:border-zinc-600 transition-transform duration-300 ease-in-out
-          ${FarmsStatus === "occupied" ? "translate-x-full" : ""}`}
-                />
-
-                {/* Free */}
-                <button
-                  type="button"
-                  onClick={() => setFarmsStatus("free")}
-                  className={`relative z-10 flex-1 py-2 text-sm font-bold transition-colors
-            ${FarmsStatus === "free"
-                      ? "text-primary"
-                      : "text-zinc-500 dark:text-zinc-400"
-                    }`}
-                >
-                  Free
-                </button>
-
-                {/* Occupied */}
-                <button
-                  type="button"
-                  onClick={() => setFarmsStatus("occupied")}
-                  className={`relative z-10 flex-1 py-2 text-sm font-bold transition-colors
-            ${FarmsStatus === "occupied"
-                      ? "text-primary"
-                      : "text-zinc-500 dark:text-zinc-400"
-                    }`}
-                >
-                  Occupied
-                </button>
-              </div>
-            </div>
-            <div className="col-span-1 ">
-              <div className="flex justify-between gap-x-8">
-                <div className="flex flex-col w-1/2 ">
-                  <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
-                    Farmer Rate
-                  </label>
-                  <input
-                    className="w-full rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-4 py-3 text-base"
-                    placeholder="Fixed price"
-                    type="number"
-                  />
-                </div>
-                <div className="flex flex-col w-1/2 ">
-                  <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
-                    Commision Percentage (%)
-                  </label>
-                  <input
-                    className="w-full rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-4 py-3 text-base"
-                    placeholder="10.2%"
-                    type="number"
-                  />
-                </div>
-              </div>
+              {addExpensesFormik.touched.amount && addExpensesFormik.errors.amount ? (
+                <span className="text-red-500 text-sm">
+                  {addExpensesFormik.errors.amount}
+                </span>
+              ) : null}
             </div>
           </div>
-
           <div className="mt-10 flex items-center justify-end gap-4">
             <button
+              onClick={() => addExpensesFormik.resetForm()}
               className="px-6 py-3 rounded-lg text-sm font-bold bg-red-600 text-white dark:text-zinc-400 hover:bg-red-400 dark:hover:bg-zinc-800 transition-colors"
               type="button"
             >
               Cancel
             </button>
-            <button
-              className="bg-primary hover:bg-primary/90 text-white px-8 py-3 rounded-lg text-sm font-bold shadow-lg shadow-primary/20 transition-all"
+            <Button
+              disabled={isPending}
+              spinner={isPending}
+              className="bg-primary h-11 hover:bg-primary/90 text-white px-8 py-3 rounded-lg text-sm font-bold shadow-lg shadow-primary/20 transition-all"
               type="submit"
             >
-              Add Feed
-            </button>
+              Add Expense
+            </Button>
           </div>
         </form>
       </div>

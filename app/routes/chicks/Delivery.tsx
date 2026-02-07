@@ -57,7 +57,7 @@ const Delivery = () => {
     }
   });
 
-  const selectedFarm = data?.data?.farms.find((farm: any) => Number(farm.id) == deliveryForm.values.farm_id);
+  const selectedFarm = data?.farms.find((farm: any) => Number(farm.id) == deliveryForm.values.farm_id);
   useEffect(() => {
     if (!deliveryForm.isSubmitting) return;
     let firstElement = Object.keys(deliveryForm.errors)[0];
@@ -113,8 +113,8 @@ const Delivery = () => {
                     <CommandList>
                       <CommandEmpty>No farm found.</CommandEmpty>
                       <CommandGroup>
-                        {data?.data?.farms.length > 0 && (
-                          data?.data?.farms.map((farm: any) => (
+                        {data?.farms.length > 0 && (
+                          data?.farms.map((farm: any) => (
                             <CommandItem
                               key={String(farm.id)}
                               value={String(farm.id)}

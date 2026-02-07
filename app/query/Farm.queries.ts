@@ -1,7 +1,8 @@
-import { createFarmer, deleteFarms, getFarmersList, getLastOrderID, getSingleFarm, updateFarm } from "@/api/farm.api";
+import { createFarmer, deleteFarms, getFarmersList, getLastOrderID, getLfitingList, getSingleFarm, makeLifiting, updateFarm } from "@/api/farm.api";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import queryClient from "./client";
+import type { makeLifting } from "@/types/Farm";
 
 
 
@@ -78,5 +79,30 @@ export const useDeleteFarmMutation = () => {
             toast.error(error.response.data.message);
         }
 
+    })
+}
+
+
+export const useGetLiftingList = () => {
+    return useQuery({
+        queryKey:["lifiting"],
+        queryFn:getLfitingList,
+    })
+
+}
+
+export const useLifitingMutations = () => {
+    return useMutation({
+        mutationFn: (payload: makeLifting) => makeLifiting(payload),
+        onSuccess: async (data) => {
+            await queryClient.invalidateQueries({ queryKey: ["lifting"] });
+            toast.success(data?.message);
+        },
+        onError: (err) => {
+            const error: any = err;
+            if (!error.fieldErrors || Object.keys(error.fieldErrors).length <= 0) {
+                toast.error(error.message);
+            }
+        }
     })
 }

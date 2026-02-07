@@ -34,7 +34,6 @@ export const deliveryMedicine = async (payload: MedicineDeliveryFormValues) => {
         return res.data;
     } catch (err) {
         const error = err as AxiosError<BackendError>;
-        console.log(error);
         throw {
             message: error.response?.data?.message || "Something went wrong",
             fieldErrors: error.response?.data?.errors?.reduce((acc: Record<string, string>, curr) => {
