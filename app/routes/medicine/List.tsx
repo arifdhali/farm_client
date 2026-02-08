@@ -64,7 +64,10 @@ const List = () => {
                                                 Name
                                             </TableHead>
                                             <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider min-w-50 text-center">
-                                                Availble Stock
+                                                Stock
+                                            </TableHead>
+                                            <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider min-w-50 text-center">
+                                                Availblity
                                             </TableHead>
                                             <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-center">
                                                 Unit Price
@@ -92,6 +95,10 @@ const List = () => {
                                                         <TableCell className="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">
                                                             {list?.name}
                                                         </TableCell>
+
+                                                        <TableCell className="px-6 py-4 text-sm font-medium text-slate-900 dark:text-white text-center">
+                                                            {list?.stock} <sup>Qty</sup>
+                                                        </TableCell>
                                                         <TableCell className="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 font-medium text-center">
 
                                                             <div className="flex w-fit items-center gap-2 justify-center mx-auto">
@@ -104,7 +111,6 @@ const List = () => {
                                                             </div>
 
                                                         </TableCell>
-
                                                         <TableCell className="px-6 py-4 text-sm font-medium text-slate-900 dark:text-white text-center">
                                                             <div className="flex items-center justify-center">
                                                                 <IndianRupee size={14} /> {list?.price}

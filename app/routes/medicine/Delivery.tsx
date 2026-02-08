@@ -230,7 +230,7 @@ const Delivery = () => {
               <input
                 className="w-full h-12 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-4 py-3 text-base"
                 placeholder="200"
-                type="number"
+                type="text"
                 name="quantity"
                 ref={(el) => {
                   el && (inputRef.current["quantity"] = el);

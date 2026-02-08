@@ -2,6 +2,7 @@ import HTTP from "@/api/client";
 import type { BackendError } from "@/types/AxiosErrors.type";
 import type { CreateFarmer, makeLifting } from "@/types/Farm";
 import type { AxiosError } from "axios";
+import toast from "react-hot-toast";
 
 const FARMER_API_URL = "/farm";
 
@@ -59,6 +60,7 @@ export const getLastOrderID = async (id: number) => {
         }
         return null;
     } catch (err) {
+        // toast.error(err.response.data.message)
         throw err;
     }
 }
@@ -112,14 +114,35 @@ export const makeLifiting = async (payload: makeLifting) => {
     }
 }
 
-export const getLfitingList = async () => {
+export const getLfitingList = async ({ status }: { status: string }) => {
     try {
-        let response = await HTTP.get(`${FARMER_API_URL}/lifting`);
+        let response = await HTTP.get(`${FARMER_API_URL}/lifting`, {
+            params: {
+                status: status
+            }
+        });
 
         if (response.data.status) {
             return response.data;
         }
     } catch (err) {
         throw err;
+    }
+}
+
+export const viewSinglLifting = async ({ farm_id, order_id }: { farm_id: number, order_id: string }) => {
+    try {
+        let response = await HTTP.get(`${FARMER_API_URL}/lifting/${farm_id}`, {
+            params: {
+                order_id: order_id
+            }
+        });
+
+        if (response.data.status) {
+            return response.data.data;
+        }
+    } catch (err) {
+        throw err;
+
     }
 }

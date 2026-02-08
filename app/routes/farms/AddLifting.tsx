@@ -10,7 +10,7 @@ import { format } from "date-fns";
 import type { makeLifting } from "@/types/Farm";
 import ComboCheckbox from "@/components/ui/ComboCheckbox";
 import { useGetCustomersList } from "@/query/Customers.queries";
-import { useGetFarmersList, useGetLastOrderID, useLifitingMutations } from "@/query/Farm.queries";
+import { useGetFarmersList, useGetLastOrderID, useMakeLifitingMutations } from "@/query/Farm.queries";
 
 const settlementSchema = Yup.object({
     lifting_date: Yup.date()
@@ -56,7 +56,7 @@ const settlementSchema = Yup.object({
 
 
 const AddLifting = () => {
-    let lifitingMutation = useLifitingMutations();
+    let lifitingMutation = useMakeLifitingMutations();
     const inputRef = useRef<Record<string, HTMLInputElement | HTMLTextAreaElement | null>>({});
     const [openDate, setOpenDate] = useState<boolean>(false);
     const form = useFormik<makeLifting>({
@@ -133,7 +133,7 @@ const AddLifting = () => {
                         </p>
                     </div>
                     <Link
-                        to={"/farms/list"}
+                        to={"/farms/lifting"}
                         className="bg-white hover:text-primary dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2"
                     >
                         <ArrowLeftIcon />

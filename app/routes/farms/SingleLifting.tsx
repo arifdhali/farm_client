@@ -1,7 +1,18 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { getMeQuery } from "@/query/Auth.queries";
+import { useSingleLiftingQuery } from "@/query/Farm.queries";
+import { useQuery } from "@tanstack/react-query";
+import { format } from "date-fns";
 import { CalendarRange, DollarSignIcon, LucideBriefcaseMedical, LucideInbox, LucideRabbit, LucideWeight, LucideWheat, Shield, ShieldCheck } from "lucide-react";
+import { useParams, useSearchParams } from "react-router";
 
 const SingleLifting = () => {
+
+    let { farm_id } = useParams();
+    const [searchParams] = useSearchParams();
+    const order_id = searchParams.get("order_id");
+    const { data: view } = useSingleLiftingQuery({ farm_id, order_id });
+    const { data: user } = useQuery(getMeQuery());
     return (
 
         <>
@@ -20,18 +31,18 @@ const SingleLifting = () => {
                         <p className="text-sm font-medium text-[#658086] uppercase tracking-tighter mb-4">Report ID: #LIFT-2023-OCT-07-COMP</p>
                         <div className="inline-flex flex-col bg-background-light dark:bg-[#2a3a3d] p-3 rounded-lg border border-[#dce3e5] dark:border-[#3a4a4d]">
                             <span className="text-[10px] font-bold text-[#658086] uppercase">lifting ID</span>
-                            <span className="text-sm font-bold">SSC-FARM-0000001</span>
+                            <span className="text-sm font-bold">{order_id}</span>
                         </div>
                     </div>
                 </div>
                 <div className="flex flex-wrap justify-between gap-4 mb-8 bg-[#f8fafa] dark:bg-[#203033] p-4 rounded-lg border border-[#dce3e5] dark:border-[#2a3a3d]">
                     <div className="flex items-center gap-2">
                         <CalendarRange className="text-primary text-[20px]" />
-                        <span className="text-sm font-medium">Generated on: <span className="font-bold">Oct 08, 2023 09:45 AM</span></span>
+                        <span className="text-sm font-medium">Generated on: <span className="font-bold">{format(new Date(), "MMM dd, yyyy hh:mm a")}</span></span>
                     </div>
                     <div className="flex items-center gap-2">
                         <ShieldCheck className="text-primary text-[20px]" />
-                        <span className="text-sm font-medium">Authorized by: <span className="font-bold">Sohel Haque</span></span>
+                        <span className="text-sm font-medium">Authorized by: <span className="font-bold">{user?.name}</span></span>
                     </div>
                 </div>
                 <div className="grow">
@@ -49,10 +60,10 @@ const SingleLifting = () => {
                                         Customer
                                     </TableHead>
                                     <TableHead className="text-center">
-                                        Chicks Qt
+                                        Chicks
                                     </TableHead>
                                     <TableHead className=" text-center">
-                                        Weight (kg)
+                                        Weight
                                     </TableHead>
                                     <TableHead className="text-center">
                                         Rate
@@ -71,64 +82,38 @@ const SingleLifting = () => {
                             </TableHeader>
 
                             <TableBody className="text-xs">
-                                <TableRow className="border-b border-[#dce3e5] dark:border-[#2a3a3d]  transition-colors">
-                                    <TableCell className="">
-                                        2023-10-01
-                                    </TableCell>
-                                    <TableCell className="font-bold">
-                                        Green Valley Poultry
-                                    </TableCell>
-                                    <TableCell className="">
-                                        Customer A
-                                    </TableCell>
-                                    <TableCell className="text-center   ">
-                                        100
-                                    </TableCell>
-                                    <TableCell className="text-center   ">
-                                        1500
-                                    </TableCell>
-                                    <TableCell className="text-center   ">
-                                        500
-                                    </TableCell>
-                                    <TableCell className="text-green-600 text-center">
-                                        1200
-                                    </TableCell>
-                                    <TableCell className="text-red-600 text-center">
-                                        1,250
-                                    </TableCell>
-                                    <TableCell className="text-center">
-                                        2,875.50
-                                    </TableCell>
-                                </TableRow>
-                                <TableRow className="border-b border-[#dce3e5] dark:border-[#2a3a3d] transition-colors">
-                                    <TableCell className="">
-                                        2023-10-01
-                                    </TableCell>
-                                    <TableCell className="font-bold">
-                                        Green Valley Poultry
-                                    </TableCell>
-                                    <TableCell className="">
-                                        Customer A
-                                    </TableCell>
-                                    <TableCell className="text-center   ">
-                                        100
-                                    </TableCell>
-                                    <TableCell className="text-center   ">
-                                        1500
-                                    </TableCell>
-                                    <TableCell className="text-center   ">
-                                        500
-                                    </TableCell>
-                                    <TableCell className="text-green-600 text-center">
-                                        1200
-                                    </TableCell>
-                                    <TableCell className="text-red-600 text-center">
-                                        1,250
-                                    </TableCell>
-                                    <TableCell className="text-center">
-                                        2,875.50
-                                    </TableCell>
-                                </TableRow>
+                                {view?.lift?.map((v) => (
+                                    <TableRow className="border-b border-[#dce3e5] dark:border-[#2a3a3d]  transition-colors">
+                                        <TableCell className="">
+                                            2023-10-01
+                                        </TableCell>
+                                        <TableCell className="font-bold">
+                                            {v?.name}
+                                        </TableCell>
+                                        <TableCell className="">
+                                            {v?.liftings?.customer?.name}
+                                        </TableCell>
+                                        <TableCell className="text-center   ">
+                                            {v?.liftings?.chicks_count} <sup>Qty</sup>
+                                        </TableCell>
+                                        <TableCell className="text-center   ">
+                                            {v?.liftings?.chicks_weight} <sup>kg</sup>
+                                        </TableCell>
+                                        <TableCell className="text-center   ">
+                                            {v?.liftings?.rate}
+                                        </TableCell>
+                                        <TableCell className="text-green-600 text-center">
+                                            {v?.liftings?.paid_amount}
+                                        </TableCell>
+                                        <TableCell className="text-red-600 text-center">
+                                            {v?.liftings?.balance_amount}
+                                        </TableCell>
+                                        <TableCell className="text-center">
+                                            {v?.liftings?.total_amount}
+                                        </TableCell>
+                                    </TableRow>
+
+                                ))}
                                 <TableRow className="bg-gray-200 text-primary text-lg font-bold">
                                     <TableCell colSpan={6} className="text-primary">
                                         Total Amount
@@ -153,7 +138,7 @@ const SingleLifting = () => {
                                 <p className="text-[10px] font-bold text-[#658086] uppercase">Total Feed</p>
                             </div>
                             <div className="flex items-baseline gap-1">
-                                <span className="text-2xl font-black">14,300.50</span>
+                                <span className="text-2xl font-black">{view?.totals?.total_feed_weight}</span>
                                 <span className="text-[10px] font-medium text-[#658086]">kg</span>
                             </div>
                         </div>
@@ -183,7 +168,7 @@ const SingleLifting = () => {
                                 <p className="text-[10px] font-bold text-primary uppercase">Total Lifting</p>
                             </div>
                             <div className="flex items-baseline gap-1">
-                                <span className="text-2xl font-black">8,450</span>
+                                <span className="text-2xl font-black">{view?.totals?.total_chicks}</span>
                                 <span className="text-[10px] font-medium text-primary">Birds</span>
                             </div>
                         </div>
