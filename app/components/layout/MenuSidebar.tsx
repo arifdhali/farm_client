@@ -76,6 +76,7 @@ const menuItems = [
     children: [
       { title: "Expense List", url: "/cash/list" },
       { title: "Expense Add", url: "/cash/add" },
+      { title: "Collections", url: "/cash/collection" },
     ],
   },
   {

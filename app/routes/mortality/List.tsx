@@ -1,8 +1,14 @@
+import { useGetMoralityListQuery } from '@/query/mortality.queries'
 import { PlusIcon } from 'lucide-react'
 import React from 'react'
 import { Link } from 'react-router'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from "@/components/ui/table";
+import SmallLoading from '@/components/ui/smallLoading';
 
 const List = () => {
+
+    let { data: mortality, isLoading } = useGetMoralityListQuery();
+
     return (
         <div className="flex flex-col gap-6">
 
@@ -103,101 +109,96 @@ const List = () => {
                         </div>
                     </div>
                 </div>
-                <div className="overflow-x-auto">
-                    <table className="w-full text-left">
-                        <thead className="bg-gray-50 dark:bg-gray-800/50 text-gray-500 dark:text-gray-400 text-xs font-bold uppercase tracking-wider">
-                            <tr>
-                                <th className="px-6 py-4">Farm Name</th>
-                                <th className="px-6 py-4">Date</th>
-                                <th className="px-6 py-4 text-center">Number of Birds</th>
-                                <th className="px-6 py-4">Reason</th>
-                                <th className="px-6 py-4 text-right">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
-                            <tr className="hover:bg-primary/5 transition-colors group">
-                                <td className="px-6 py-4 font-semibold text-sm">North Wing Poultry - Barn A</td>
-                                <td className="px-6 py-4 text-sm text-gray-500">Oct 28, 2023</td>
-                                <td className="px-6 py-4 text-sm text-center font-bold">14</td>
-                                <td className="px-6 py-4">
-                                    <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-orange-100 text-orange-700 uppercase">Heat Stress</span>
-                                </td>
-                                <td className="px-6 py-4 text-right">
-                                    <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <button className="p-1 hover:text-primary transition-colors"><span className="material-symbols-outlined">visibility</span></button>
-                                        <button className="p-1 hover:text-primary transition-colors"><span className="material-symbols-outlined">edit</span></button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr className="hover:bg-primary/5 transition-colors group">
-                                <td className="px-6 py-4 font-semibold text-sm">East Valley Range</td>
-                                <td className="px-6 py-4 text-sm text-gray-500">Oct 27, 2023</td>
-                                <td className="px-6 py-4 text-sm text-center font-bold">42</td>
-                                <td className="px-6 py-4">
-                                    <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-red-100 text-red-700 uppercase">Disease (Viral)</span>
-                                </td>
-                                <td className="px-6 py-4 text-right">
-                                    <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <button className="p-1 hover:text-primary transition-colors"><span className="material-symbols-outlined">visibility</span></button>
-                                        <button className="p-1 hover:text-primary transition-colors"><span className="material-symbols-outlined">edit</span></button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr className="hover:bg-primary/5 transition-colors group">
-                                <td className="px-6 py-4 font-semibold text-sm">Central Hub - Broiler 2</td>
-                                <td className="px-6 py-4 text-sm text-gray-500">Oct 27, 2023</td>
-                                <td className="px-6 py-4 text-sm text-center font-bold">08</td>
-                                <td className="px-6 py-4">
-                                    <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-blue-100 text-blue-700 uppercase">Natural Causes</span>
-                                </td>
-                                <td className="px-6 py-4 text-right">
-                                    <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <button className="p-1 hover:text-primary transition-colors"><span className="material-symbols-outlined">visibility</span></button>
-                                        <button className="p-1 hover:text-primary transition-colors"><span className="material-symbols-outlined">edit</span></button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr className="hover:bg-primary/5 transition-colors group">
-                                <td className="px-6 py-4 font-semibold text-sm">North Wing Poultry - Barn B</td>
-                                <td className="px-6 py-4 text-sm text-gray-500">Oct 26, 2023</td>
-                                <td className="px-6 py-4 text-sm text-center font-bold">12</td>
-                                <td className="px-6 py-4">
-                                    <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-orange-100 text-orange-700 uppercase">Heat Stress</span>
-                                </td>
-                                <td className="px-6 py-4 text-right">
-                                    <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <button className="p-1 hover:text-primary transition-colors"><span className="material-symbols-outlined">visibility</span></button>
-                                        <button className="p-1 hover:text-primary transition-colors"><span className="material-symbols-outlined">edit</span></button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr className="hover:bg-primary/5 transition-colors group">
-                                <td className="px-6 py-4 font-semibold text-sm">Southern Flats Outpost</td>
-                                <td className="px-6 py-4 text-sm text-gray-500">Oct 25, 2023</td>
-                                <td className="px-6 py-4 text-sm text-center font-bold">05</td>
-                                <td className="px-6 py-4">
-                                    <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-blue-100 text-blue-700 uppercase">Natural Causes</span>
-                                </td>
-                                <td className="px-6 py-4 text-right">
-                                    <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <button className="p-1 hover:text-primary transition-colors"><span className="material-symbols-outlined">visibility</span></button>
-                                        <button className="p-1 hover:text-primary transition-colors"><span className="material-symbols-outlined">edit</span></button>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+
+                <div className="overflow-x-auto @container">
+                    <Table className="w-full">
+                        <TableHeader>
+                            <TableRow className="bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800">
+                                <TableHead className=" px-6 py-4 text-xs font-bold uppercase">
+                                    Order id
+                                </TableHead>
+                                <TableHead className=" px-6 py-4 text-xs font-bold uppercase">
+                                    Farm Name
+                                </TableHead>
+                                <TableHead className=" px-6 py-4 text-xs font-bold uppercase">
+                                    Date
+                                </TableHead>
+                                <TableHead className=" px-6 py-4 text-xs font-bold uppercase text-center">
+                                    Number of Birds
+                                </TableHead>
+                                <TableHead className=" px-6 py-4 text-xs font-bold uppercase">
+                                    Reason
+                                </TableHead>
+                            </TableRow>
+                        </TableHeader>
+
+                        <TableBody className="divide-y divide-slate-100 dark:divide-slate-800">
+                            {
+                                isLoading && (
+                                    <TableRow className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
+                                        <TableCell
+                                            colSpan={6}
+                                            className="px-6 py-4 text-center"
+                                        >
+                                            <SmallLoading />
+                                        </TableCell>
+                                    </TableRow>
+
+                                )
+                            }
+                            {!isLoading && mortality?.length > 0 && (
+                                mortality.map((mortal: any) => (
+                                    <TableRow
+                                        key={mortal.id}
+                                        className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors"
+                                    >
+                                        <TableCell className="px-6 py-4 text-sm hidden md:table-cell">
+                                            {mortal?.delivery_id}
+                                        </TableCell>
+
+                                        <TableCell className="px-6 py-4 text-sm font-medium">
+                                            {mortal?.farm?.name}
+                                        </TableCell>
+
+                                        <TableCell className="px-6 py-4 text-sm font-medium">
+                                            {mortal?.incident_date}
+                                        </TableCell>
+                                        <TableCell className="px-6 py-4 text-sm font-medium text-center">
+                                            {mortal?.total_quantity}
+                                        </TableCell>
+                                        <TableCell className="px-6 py-4 text-sm font-medium">
+                                            <span
+                                                className={`px-2.5 py-1 rounded-full text-[11px] font-bold uppercase ${mortal?.total_quantity === 0
+                                                    ? "bg-gray-100 text-gray-600"
+                                                    : mortal?.total_quantity <= 10
+                                                        ? "bg-blue-100 text-blue-700"
+                                                        : mortal?.total_quantity <= 30
+                                                            ? "bg-orange-100 text-orange-700"
+                                                            : "bg-red-100 text-red-700"
+                                                    }`}
+                                            >
+                                                {mortal?.reason}
+                                            </span>
+                                        </TableCell>
+
+
+                                    </TableRow>
+                                ))
+                            )}
+                            {(!isLoading && mortality?.length === 0) && (
+                                <TableRow className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
+                                    <TableCell
+                                        colSpan={6}
+                                        className="px-6 py-4 text-center"
+                                    >
+                                        No records
+                                    </TableCell>
+                                </TableRow>
+                            )}
+                        </TableBody>
+                    </Table>
                 </div>
-                <div className="p-4 bg-gray-50 dark:bg-gray-800/50 flex items-center justify-between border-t border-gray-100 dark:border-gray-800">
-                    <span className="text-xs text-gray-500">Showing 5 of 128 entries</span>
-                    <div className="flex gap-1">
-                        <button className="p-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-xs font-bold disabled:opacity-50">Previous</button>
-                        <button className="p-2 px-3 rounded-lg bg-primary text-white text-xs font-bold">1</button>
-                        <button className="p-2 px-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-xs font-bold">2</button>
-                        <button className="p-2 px-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-xs font-bold">3</button>
-                        <button className="p-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-xs font-bold">Next</button>
-                    </div>
-                </div>
+
             </div>
         </div>
     )

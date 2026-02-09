@@ -1,97 +1,260 @@
-import { ArrowLeftIcon, ArrowLeftToLineIcon } from "lucide-react";
-import React, { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { useGetFarmersList, useGetLastOrderID } from "@/query/Farm.queries";
+import { useFormik } from "formik";
+import { ArrowLeftIcon } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
+import * as yup from "yup";
+import { format } from "date-fns";
+import type { ComboCheckboxRef } from "@/components/ui/ComboCheckbox";
+import ComboCheckbox from "@/components/ui/ComboCheckbox";
+import { useAddMoratlityMutations } from "@/query/mortality.queries";
 
-const Add = () => {
-  const [FarmsStatus, setFarmsStatus] = useState<"free" | "occupied">("free");
+const mortalitySchema = yup.object().shape({
+  farm_id: yup.number().typeError("Farm must be a number").required("Farm is required"),
+  incident_date: yup.date().required("Date is required"),
+  delivery_id: yup.string().required("Order is required"),
+  quantity: yup.number().typeError("Birds must be a number")
+    .required("Bird count is required").positive("Must be positive"),
+  reason: yup.string().required("Reason is required"),
+});
 
+const AddMortality = () => {
+
+  const farmerRef = useRef<ComboCheckboxRef>(null);
+  const [openDate, setOpenDate] = useState<boolean>(false);
+
+  const inputRef = useRef<Record<string, HTMLInputElement | HTMLTextAreaElement | null>>({});
+
+  const { data } = useGetFarmersList();
+  let addMortalityMutations = useAddMoratlityMutations();
+
+  const mortalityForm = useFormik({
+    initialValues: {
+      incident_date: new Date(),
+      farm_id: null,
+      delivery_id: "",
+      quantity: 0,
+      reason: "",
+    },
+    validationSchema: mortalitySchema,
+    validateOnBlur: false,
+    validateOnChange: false,
+    onSubmit: (values) => {
+      let payload = {
+        ...values,
+        incident_date: format(values.incident_date, "yyyy-MM-dd"),
+      };
+      addMortalityMutations.mutate(payload, {
+        onSuccess: () => {
+          mortalityForm.resetForm();
+        }
+      })
+    }
+  });
+
+
+  useEffect(() => {
+    if (!mortalityForm.isSubmitting) return;
+    let firstElement = Object.keys(mortalityForm.errors)[0];
+    firstElement && inputRef.current?.[firstElement]?.focus();
+  }, [mortalityForm.errors, mortalityForm.isSubmitting]);
+
+
+  const { data: lastOrderID } = useGetLastOrderID(Number(mortalityForm.values.farm_id));
+
+  useEffect(() => {
+    if (!mortalityForm.values.farm_id) return;
+
+    if (lastOrderID?.order_id) {
+      mortalityForm.setFieldValue("delivery_id", String(lastOrderID?.order_id));
+    } else {
+      mortalityForm.setFieldValue("delivery_id", "");
+    }
+  }, [lastOrderID, mortalityForm.values.farm_id]);
+  useEffect(() => {
+    if (!addMortalityMutations.isError) return;
+    let err: any = addMortalityMutations.error;
+    mortalityForm.setErrors(err?.fieldErrors ?? {});
+  }, [addMortalityMutations.isError]);
   return (
-    <>
-
-      <div className="mb-8">
-        <h2 className="text-[#141118] dark:text-white text-3xl font-black tracking-tight mb-2">Add Mortality Record</h2>
-        <p className="text-[#756189] dark:text-[#a393b5] text-base">Track and record livestock losses to maintain accurate inventory records and health monitoring.</p>
-      </div>
-      <div className="bg-white dark:bg-[#21172a] rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-[#e0dbe6] dark:border-[#3b2d4a] overflow-hidden">
-        <div className="flex flex-col @xl:flex-row items-center p-6 border-b border-[#f2f0f4] dark:border-[#3b2d4a] bg-gradient-to-r from-primary/5 to-transparent">
-          <div className="w-full @xl:w-48 h-32 bg-center bg-no-repeat bg-cover rounded-lg mb-4 @xl:mb-0 @xl:mr-6 shrink-0 shadow-sm" data-alt="Interior of a modern poultry farm facility"
-            style={{ backgroundImage: "url(https://lh3.googleusercontent.com/aida-public/AB6AXuCeP9oT6Vfv1S0FM-nQ8Gv-O-NJNukVf3jLO0543xCLhq5fWYvkf79pYJI29nV_0vXLIU27zN7XSuUX2eLPaPYG1lWOObE-CX1KYIUyb1mBlcQOEycfLHG9l8oBhCBXmP-b-A0RUjMyZsvdyBs9dVy6W3UqRRhIra1mA-a4m5mp_-xpzOGuQ-SxrE8uFzh7iOysu9jcLiBd8K_6L2PNmUy43NUX5u1j1VY0qZJ0qScZIZtgXogBpphvp1-X1FpHxVx0Q2-0Yvxhvsdx);" }}>
-
+    <div className="flex-1 overflow-y-auto bg-background-light dark:bg-background-dark">
+      <div className="mb-8 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-8 py-6">
+        <div className="flex flex-wrap justify-between items-end gap-3">
+          <div className="flex flex-col ">
+            <h2 className="text-zinc-900 dark:text-zinc-100 text-3xl font-black leading-tight tracking-[-0.033em]">
+              Add Mortality
+            </h2>
+            <p className="text-zinc-500 dark:text-zinc-400 text-base font-normal leading-normal">
+              Record bird mortality for selected farmer.
+            </p>
           </div>
-          <div>
-            <h3 className="text-[#141118] dark:text-white text-lg font-bold">Record Details</h3>
-            <p className="text-[#756189] dark:text-[#a393b5] text-sm mt-1">Please fill out all required fields to document the incident. This data helps in identifying potential disease outbreaks early.</p>
-          </div>
+          <Link
+            to={"/mortality/list"}
+            className="bg-white hover:text-primary dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2"
+          >
+            <ArrowLeftIcon />
+            Back to List
+          </Link>
         </div>
-        <div className="p-8">
-          <form className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="flex flex-col gap-2 md:col-span-2">
-              <label className="text-[#141118] dark:text-white text-sm font-semibold flex items-center gap-1">
-                Farm Location
-                <span className="text-red-500">*</span>
+      </div>
+
+      <div className="bg-white dark:bg-zinc-900 w-150 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-800 overflow-hidden">
+        <form onSubmit={mortalityForm.handleSubmit} className="p-8">
+
+          <div className="grid grid-cols-1 md:grid-cols-1 gap-x-8 gap-y-6">
+
+            {/* FARM */}
+            <div className="flex flex-col">
+              <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold mb-2">
+                Select Farmer
               </label>
-              <div className="relative">
-                <select className="w-full rounded-lg border-[#e0dbe6] dark:border-[#3b2d4a] bg-white dark:bg-[#2a1f38] text-[#141118] dark:text-white focus:border-primary focus:ring-primary/20 h-12 px-4 appearance-none transition-all">
-                  <option value="">Search and select farm location...</option>
-                  <option value="green-valley">Green Valley East - Barn 04</option>
-                  <option value="highlands">Highlands Poultry - Barn 01</option>
-                  <option value="riverbank">Riverbank Farm - Broiler Section</option>
-                </select>
-                <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-[#756189]">search</span>
-              </div>
+
+              <ComboCheckbox
+                ref={farmerRef}
+                label="Farmers"
+                items={data?.farms ?? []}
+                selectedId={mortalityForm.values.farm_id}
+                onSelect={(id) => {
+                  mortalityForm.setFieldValue("farm_id", id);
+                  mortalityForm.setFieldTouched("farm_id", true);
+                }}
+              />
+
+              {mortalityForm.touched.farm_id && mortalityForm.errors.farm_id && (
+                <span className="text-red-500 text-sm">
+                  {mortalityForm.errors.farm_id}
+                </span>
+              )}
             </div>
-            <div className="flex flex-col gap-2">
-              <label className="text-[#141118] dark:text-white text-sm font-semibold flex items-center gap-1">
-                Date of Incident
-                <span className="text-red-500">*</span>
+
+            <div className="flex flex-col">
+              <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold mb-2">
+                Last Order ID
               </label>
-              <div className="relative">
-                <input className="w-full rounded-lg border-[#e0dbe6] dark:border-[#3b2d4a] bg-white dark:bg-[#2a1f38] text-[#141118] dark:text-white focus:border-primary focus:ring-primary/20 h-12 px-4 transition-all" type="date" value="2023-10-27" />
-                <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-[#756189]">calendar_today</span>
-              </div>
+
+              <input
+                className="w-full h-12 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-4"
+                type="text"
+                name="delivery_id"
+                ref={(el) => {
+                  el && (inputRef.current["delivery_id"] = el);
+                }}
+                onChange={mortalityForm.handleChange}
+                onBlur={mortalityForm.handleBlur}
+                value={mortalityForm.values.delivery_id || ""}
+              />
+
+              {mortalityForm.touched.delivery_id && mortalityForm.errors.delivery_id && (
+                <span className="text-red-500 text-sm">
+                  {mortalityForm.errors.delivery_id}
+                </span>
+              )}
             </div>
-            <div className="flex flex-col gap-2">
-              <label className="text-[#141118] dark:text-white text-sm font-semibold flex items-center gap-1">
+
+            {/* DATE */}
+            <div className="">
+              <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold mb-2">
+                Incident Date
+              </label>
+
+              <Popover open={openDate} onOpenChange={setOpenDate}>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" className={`w-full h-12 rounded-lg border border-zinc-200 dark:border-zinc-700 shadow-none justify-start font-normal bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-4 py-3 text-base`}
+                  >
+                    {format(mortalityForm.values.incident_date, "dd/MM/yyyy")}
+                  </Button>
+                </PopoverTrigger>
+
+                <PopoverContent className="w-full rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 p-0 text-base" align="start">
+                  <Calendar
+                    className="w-75"
+                    mode="single"
+                    buttonVariant="outline"
+                    disabled={{ before: new Date() }}
+                    onSelect={(date) => {
+                      if (!date) return;
+                      setOpenDate(false);
+                      mortalityForm.setFieldValue("incident_date", date);
+                    }}
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+
+
+
+            {/* BIRDS */}
+            <div className="flex flex-col">
+              <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold mb-2">
                 Number of Birds
-                <span className="text-red-500">*</span>
               </label>
-              <div className="relative">
-                <input className="w-full rounded-lg border-[#e0dbe6] dark:border-[#3b2d4a] bg-white dark:bg-[#2a1f38] text-[#141118] dark:text-white focus:border-primary focus:ring-primary/20 h-12 px-4 transition-all" placeholder="0" type="number" />
-                <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-[#756189]">numbers</span>
-              </div>
+
+              <input
+                className="w-full h-12 rounded-lg border border-zinc-200 dark:border-zinc-700 px-4"
+                type="number"
+                name="quantity"
+                ref={(el) => {
+                  el && (inputRef.current["quantity"] = el);
+                }}
+                onChange={mortalityForm.handleChange}
+                onBlur={mortalityForm.handleBlur}
+                value={mortalityForm.values.quantity}
+              />
+
+
+              {mortalityForm.touched.quantity && mortalityForm.errors.quantity && (
+                <span className="text-red-500 text-sm">
+                  {mortalityForm.errors.quantity}
+                </span>
+              )}
             </div>
-            <div className="flex flex-col gap-2 md:col-span-2">
-              <label className="text-[#141118] dark:text-white text-sm font-semibold flex items-center gap-1">
-                Primary Reason
-                <span className="text-red-500">*</span>
+
+            {/* REASON */}
+            <div className="flex flex-col">
+              <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold mb-2">
+                Reason
               </label>
-              <select className="w-full rounded-lg border-[#e0dbe6] dark:border-[#3b2d4a] bg-white dark:bg-[#2a1f38] text-[#141118] dark:text-white focus:border-primary focus:ring-primary/20 h-12 px-4 transition-all">
-                <option value="">Select category...</option>
-                <option value="heat">Heat Stress</option>
-                <option value="disease">Suspected Disease</option>
-                <option value="predators">Predators</option>
-                <option value="culling">Intentional Culling (Health reasons)</option>
-                <option value="other">Other / Unknown</option>
-              </select>
+
+              <textarea
+                className="w-full h-28 resize-none rounded-lg border border-zinc-200 dark:border-zinc-700 px-4 py-2"
+                name="reason"
+                onChange={mortalityForm.handleChange}
+                value={mortalityForm.values.reason}
+              />
+
+              {mortalityForm.touched.reason && mortalityForm.errors.reason && (
+                <span className="text-red-500 text-sm">
+                  {mortalityForm.errors.reason}
+                </span>
+              )}
             </div>
-            <div className="flex flex-col gap-2 md:col-span-2">
-              <label className="text-[#141118] dark:text-white text-sm font-semibold">Detailed Notes</label>
-              <textarea className="w-full rounded-lg border-[#e0dbe6] dark:border-[#3b2d4a] bg-white dark:bg-[#2a1f38] text-[#141118] dark:text-white focus:border-primary focus:ring-primary/20 p-4 transition-all resize-none" placeholder="Describe symptoms, environmental factors, or additional context..."></textarea>
-            </div>
-            <div className="flex flex-col sm:flex-row items-center justify-end gap-3 pt-6 md:col-span-2 border-t border-[#f2f0f4] dark:border-[#3b2d4a] mt-2">
-              <button className="w-full sm:w-auto px-6 h-12 rounded-lg text-[#756189] dark:text-[#a393b5] font-bold hover:bg-[#f2f0f4] dark:hover:bg-[#3b2d4a] transition-all" type="button">
-                Cancel
-              </button>
-              <button className="w-full sm:w-auto px-8 h-12 rounded-lg bg-primary text-white font-bold shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all flex items-center justify-center gap-2" type="submit">
-                <span className="material-symbols-outlined text-xl">save</span>
-                Submit Record
-              </button>
-            </div>
-          </form>
-        </div>
+
+          </div>
+
+          <div className="mt-10 flex items-center justify-end gap-4">
+            <button
+              onClick={() => mortalityForm.resetForm()}
+              className="px-6 py-3 rounded-lg text-sm font-bold bg-red-600 text-white dark:text-zinc-400 hover:bg-red-400 dark:hover:bg-zinc-800 transition-colors"
+              type="button"
+            >
+              Cancel
+            </button>
+            <Button
+              // spinner={mortalityForm.isPending}
+              className="bg-primary h-11 hover:bg-primary/90 text-white px-8 py-3 rounded-lg text-sm font-bold shadow-lg shadow-primary/20 transition-all"
+              type="submit"
+            >
+              Save Mortality
+            </Button>
+          </div>
+
+        </form>
       </div>
-    </>
+    </div>
   );
 };
 
-export default Add;
+export default AddMortality;

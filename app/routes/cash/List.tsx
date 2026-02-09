@@ -36,70 +36,68 @@ const List = () => {
 
           <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
             <div className="overflow-x-auto @container">
-              <div className="overflow-x-auto @container">
-                <Table className="w-full">
-                  <TableHeader>
-                    <TableRow className="bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800">
-                      <TableHead className=" px-6 py-4 text-xs font-bold uppercase">
-                        Date
-                      </TableHead>
-                      <TableHead className=" px-6 py-4 text-xs font-bold uppercase">
-                        Expense Type
-                      </TableHead>
-                      <TableHead className=" px-6 py-4 text-xs font-bold uppercase">
-                        Amount
-                      </TableHead>
-                    </TableRow>
-                  </TableHeader>
+              <Table className="w-full">
+                <TableHeader>
+                  <TableRow className="bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800">
+                    <TableHead className=" px-6 py-4 text-xs font-bold uppercase">
+                      Date
+                    </TableHead>
+                    <TableHead className=" px-6 py-4 text-xs font-bold uppercase">
+                      Expense Type
+                    </TableHead>
+                    <TableHead className=" px-6 py-4 text-xs font-bold uppercase">
+                      Amount
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
 
-                  <TableBody className="divide-y divide-slate-100 dark:divide-slate-800">
-                    {
-                      isLoading && (
-                        <TableRow className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
-                          <TableCell
-                            colSpan={6}
-                            className="px-6 py-4 text-center"
-                          >
-                            <SmallLoading />
-                          </TableCell>
-                        </TableRow>
-
-                      )
-                    }
-                    {!isLoading && data?.expenses?.length > 0 && (
-                      data?.expenses.map((expense: any) => (
-                        <TableRow
-                          key={expense.id}
-                          className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors"
-                        >
-                          <TableCell className="px-6 py-4 text-sm hidden md:table-cell">
-                            {expense?.date}
-                          </TableCell>
-
-                          <TableCell className="px-6 py-4 text-sm font-medium">
-                            {expense?.expenses_type}
-                          </TableCell>
-
-                          <TableCell className="px-6 py-4 text-sm font-medium">
-                            {expense?.amount}
-                          </TableCell>
-
-                        </TableRow>
-                      ))
-                    )}
-                    {(!isLoading && data?.expenses?.length === 0) && (
+                <TableBody className="divide-y divide-slate-100 dark:divide-slate-800">
+                  {
+                    isLoading && (
                       <TableRow className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
                         <TableCell
                           colSpan={6}
                           className="px-6 py-4 text-center"
                         >
-                          No records
+                          <SmallLoading />
                         </TableCell>
                       </TableRow>
-                    )}
-                  </TableBody>
-                </Table>
-              </div>
+
+                    )
+                  }
+                  {!isLoading && data?.expenses?.length > 0 && (
+                    data?.expenses.map((expense: any) => (
+                      <TableRow
+                        key={expense.id}
+                        className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors"
+                      >
+                        <TableCell className="px-6 py-4 text-sm hidden md:table-cell">
+                          {expense?.date}
+                        </TableCell>
+
+                        <TableCell className="px-6 py-4 text-sm font-medium">
+                          {expense?.expenses_type}
+                        </TableCell>
+
+                        <TableCell className="px-6 py-4 text-sm font-medium">
+                          {expense?.amount}
+                        </TableCell>
+
+                      </TableRow>
+                    ))
+                  )}
+                  {(!isLoading && data?.expenses?.length === 0) && (
+                    <TableRow className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
+                      <TableCell
+                        colSpan={6}
+                        className="px-6 py-4 text-center"
+                      >
+                        No records
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
             </div>
           </div>
         </div>

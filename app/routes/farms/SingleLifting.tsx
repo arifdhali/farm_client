@@ -119,7 +119,7 @@ const SingleLifting = () => {
                                         Total Amount
                                     </TableCell>
                                     <TableCell colSpan={3} className="text-right pr-1.5" >
-                                        20,0000/-
+                                        {view?.totals?.total_amount ? view?.totals?.total_amount : ""}/-
                                     </TableCell>
                                 </TableRow>
 
@@ -168,7 +168,7 @@ const SingleLifting = () => {
                                 <p className="text-[10px] font-bold text-primary uppercase">Total Lifting</p>
                             </div>
                             <div className="flex items-baseline gap-1">
-                                <span className="text-2xl font-black">{view?.totals?.total_chicks}</span>
+                                <span className="text-2xl font-black">{view?.totals?.total_lift_chicks}</span>
                                 <span className="text-[10px] font-medium text-primary">Birds</span>
                             </div>
                         </div>
