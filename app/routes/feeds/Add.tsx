@@ -6,7 +6,7 @@ import { useAddMutations } from "@/query/Feed.queries";
 import type { addFeed } from "@/types/Feed.type";
 import { useFormik } from "formik";
 import { ArrowLeftIcon, Check, ChevronsUpDown } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router";
 import * as yup from "yup";
 
@@ -34,7 +34,7 @@ const Add = () => {
       name: "",
       feed_type: "",
       weight: 0,
-      rate: 0,
+      rate: 40,
       quantity: 0,
     },
     validateOnBlur: false,
@@ -60,6 +60,13 @@ const Add = () => {
     addFeedFormik.setErrors(error.fieldErrors ?? "");
   }, [addFeedMutation.isError])
 
+  const totalWegiht = useMemo(() => {
+    return (Number(addFeedFormik.values.quantity * 50));
+  }, [addFeedFormik.values.quantity]);
+
+  useEffect(() => {
+    addFeedFormik.setFieldValue("weight", totalWegiht);
+  }, [totalWegiht]);
 
   return (
     <div className="flex-1 overflow-y-auto bg-background-light dark:bg-background-dark">
@@ -161,6 +168,29 @@ const Add = () => {
             </div>
             <div className="flex flex-col col-span-2 md:col-span-1">
               <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
+                Rate
+              </label>
+              <input
+                readOnly
+                className="w-full h-12 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-4 py-3 text-base"
+                placeholder="Rate"
+                type="number"
+                value={addFeedFormik.values.rate}
+                name="rate"
+                ref={(el) => {
+                  el && (inputRef.current["rate"] = el);
+                }}
+                onChange={addFeedFormik.handleChange}
+                onBlur={addFeedFormik.handleBlur}
+              />
+              {addFeedFormik.touched.rate && addFeedFormik.errors.rate ? (
+                <span className="text-red-500 text-sm">
+                  {addFeedFormik.errors.rate}
+                </span>
+              ) : null}
+            </div>
+            <div className="flex flex-col col-span-2 md:col-span-1">
+              <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
                 Quantity
               </label>
               <input
@@ -184,9 +214,10 @@ const Add = () => {
             </div>
             <div className="flex flex-col col-span-2 md:col-span-1">
               <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
-                Weight <span className="font-normal text-sm text-zinc-500">(in kg)</span>
+                Weight <span className="font-normal text-xs text-zinc-500">50kg/bag</span>
               </label>
               <input
+                readOnly
                 className="w-full h-12 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-4 py-3 text-base"
                 placeholder="Weight"
                 type="number"
@@ -204,29 +235,7 @@ const Add = () => {
                 </span>
               ) : null}
             </div>
-            <div className="flex flex-col col-span-2 md:col-span-1">
-              <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
-                Rate
-              </label>
-              <input
 
-                className="w-full h-12 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-4 py-3 text-base"
-                placeholder="Rate"
-                type="number"
-                value={addFeedFormik.values.rate}
-                name="rate"
-                ref={(el) => {
-                  el && (inputRef.current["rate"] = el);
-                }}
-                onChange={addFeedFormik.handleChange}
-                onBlur={addFeedFormik.handleBlur}
-              />
-              {addFeedFormik.touched.rate && addFeedFormik.errors.rate ? (
-                <span className="text-red-500 text-sm">
-                  {addFeedFormik.errors.rate}
-                </span>
-              ) : null}
-            </div>
           </div>
 
           <div className="mt-10 flex items-center justify-end gap-4">

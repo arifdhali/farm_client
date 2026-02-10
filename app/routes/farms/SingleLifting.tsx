@@ -85,7 +85,7 @@ const SingleLifting = () => {
                                 {view?.lift?.map((v) => (
                                     <TableRow className="border-b border-[#dce3e5] dark:border-[#2a3a3d]  transition-colors">
                                         <TableCell className="">
-                                            2023-10-01
+                                            {v?.liftings?.lifting_date}
                                         </TableCell>
                                         <TableCell className="font-bold">
                                             {v?.name}

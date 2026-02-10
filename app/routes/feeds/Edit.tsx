@@ -6,7 +6,7 @@ import { useAddMutations, useEditMutations, useSingleFeedQuery } from "@/query/F
 import type { addFeed, editFeed } from "@/types/Feed.type";
 import { useFormik } from "formik";
 import { ArrowLeftIcon, Check, ChevronsUpDown } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router";
 import * as yup from "yup";
 
@@ -50,6 +50,13 @@ const Edit = () => {
     editFeedFormik.setErrors(error.fieldErrors ?? "");
   }, [updateMutation.isError])
 
+  const totalWegiht = useMemo(() => {
+    return (Number(editFeedFormik.values.quantity * 50));
+  }, [editFeedFormik.values.quantity]);
+
+  useEffect(() => {
+    editFeedFormik.setFieldValue("weight", totalWegiht);
+  }, [totalWegiht]);
 
 
   return (
