@@ -4,7 +4,6 @@ export interface CreateFarmer {
     location: string;
     capacity: number;
     rate: number;
-    commission_percentage: number;
 }
 
 export type makeLifting = {
@@ -13,8 +12,16 @@ export type makeLifting = {
     farm_id: string;
     chicks_count: number;
     chicks_weight: number;
-    order_id:string;
+    order_id: string;
     rate: number;
     total_amount?: number;
     paid_amount: number | string;
+}
+
+
+export interface paginationProp {
+    page: number;
+    per_page: number;
+    total: number;
+    onPageChange: (page: number) => void;
 }

@@ -182,7 +182,7 @@ const List = () => {
               </Table>
             </div>
 
-            <div className="grid grid-cols-3 px-5 py-4 bg-primary/20">
+            {/* <div className="grid grid-cols-3 px-5 py-4 bg-primary/20">
               {
                 feedslist?.total_data?.map((d: totalFeed) => (
                   <div className="flex flex-col">
@@ -195,7 +195,7 @@ const List = () => {
                     </div>
                   </div>
                 ))}
-            </div>
+            </div> */}
           </div>
         </div>
       </div >

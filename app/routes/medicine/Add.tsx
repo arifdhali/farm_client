@@ -11,9 +11,7 @@ import * as yup from "yup";
 const addMedicineSchema = yup.object().shape({
   name: yup.string().required("Name is required"),
   stock: yup.number().typeError("Stock must be a number")
-    .required("Stock is required").positive("Stock must be a positive number"),
-  price: yup.number().typeError("Price must be a number")
-    .required("Price is required").positive("Price must be a positive number"),
+    .required("Stock is required").positive("Stock must be a positive number")
 });
 const Add = () => {
   let navigate = useNavigate();
@@ -24,7 +22,6 @@ const Add = () => {
     initialValues: {
       name: "",
       stock: 0,
-      price: 0,
     },
     validationSchema: addMedicineSchema,
     validateOnBlur: false,
@@ -119,29 +116,6 @@ const Add = () => {
               ) : null}
             </div>
 
-            <div className="flex flex-col col-span-2 md:col-span-1">
-              <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
-                Price
-              </label>
-              <input
-
-                className="w-full h-12 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-4 py-3 text-base"
-                placeholder="Fixed price"
-                type="text"
-                name="price"
-                ref={(el) => {
-                  el && (inputRef.current["price"] = el);
-                }}
-                onChange={medicineForm.handleChange}
-                onBlur={medicineForm.handleBlur}
-                value={medicineForm.values.price}
-              />
-              {medicineForm.touched.price && medicineForm.errors.price ? (
-                <span className="text-red-500 text-sm">
-                  {medicineForm.errors.price}
-                </span>
-              ) : null}
-            </div>
           </div>
 
           <div className="mt-10 flex items-center justify-end gap-4">

@@ -11,6 +11,7 @@ import type { makeLifting } from "@/types/Farm";
 import ComboCheckbox from "@/components/ui/ComboCheckbox";
 import { useGetCustomersList } from "@/query/Customers.queries";
 import { useGetFarmersList, useGetLastOrderID, useMakeLifitingMutations } from "@/query/Farm.queries";
+import { toWords } from "@/hooks/useToWords";
 
 const settlementSchema = Yup.object({
     lifting_date: Yup.date()
@@ -317,7 +318,11 @@ const AddLifting = () => {
                         </div>
                         <div className="text-right">
                             <p className="text-xs uppercase text-gray-400">Total</p>
-                            <p className="text-3xl font-black text-primary">₹ {total.toFixed(2)}</p>
+                            <p className="text-3xl font-black text-primary">₹ {Number(total).toLocaleString("en-IN", {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2,
+                            })}</p>
+                            <p>{total > 0 && toWords.convert(Number(total))}</p>
                         </div>
                     </div>
 

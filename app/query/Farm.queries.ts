@@ -24,10 +24,10 @@ export const useCreateFarmerMutation = () => {
     })
 }
 
-export const useGetFarmersList = () => {
+export const useGetFarmersList = (filter: any) => {
     return useQuery({
-        queryKey: ["farmers"],
-        queryFn: getFarmersList,
+        queryKey: ["farmers", filter],
+        queryFn: () => getFarmersList(filter),
     })
 }
 
@@ -51,10 +51,10 @@ export const useGetLastOrderID = (farmId: number) => {
 export const useUpdateFarmerMutation = () => {
 
     return useMutation({
-        mutationFn: updateFarm,
-        onSuccess: async () => {
+        mutationFn: ({ updateData, farmID }: { updateData: any, farmID: number }) => updateFarm({ updateData, farmID }),
+        onSuccess: async (data) => {
             await queryClient.invalidateQueries({ queryKey: ["farmers",] });
-            // toast.success()
+            toast.success(data?.message)
         },
         onError: (err) => {
             const error: any = err;

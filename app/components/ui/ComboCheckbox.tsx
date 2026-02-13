@@ -2,7 +2,7 @@
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { cn } from "@/lib/utils";
 import {
-    forwardRef, useImperativeHandle, useState
+    forwardRef, useImperativeHandle, useMemo, useState
 } from "react";
 import { ArrowLeftIcon, Check, ChevronsUpDown } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -22,11 +22,18 @@ type ComboCheckboxProps = {
 
 const ComboCheckbox = forwardRef<ComboCheckboxRef, ComboCheckboxProps>(({ label, items, selectedId, onSelect }, ref) => {
     const [open, setOpen] = useState(false);
+    const [search, setSearch] = useState("");
 
     const selectedItem = items.find(
         (i) => Number(i.id) === selectedId
     );
+    const filteredItems = useMemo(() => {
+        if (!search) return items;
 
+        return items.filter((item: any) =>
+            item.name?.toLowerCase().includes(search.toLowerCase())
+        );
+    }, [items, search]);
 
     useImperativeHandle(ref, () => ({
         open: () => setOpen(true),
@@ -50,14 +57,14 @@ const ComboCheckbox = forwardRef<ComboCheckboxRef, ComboCheckboxProps>(({ label,
 
             <PopoverContent className="p-0 border border-slate-200" align="start">
                 <Command className="border-0">
-                    <CommandInput placeholder={`Search ${label}...`} className="border-0" />
+                    <CommandInput placeholder={`Search ${label}...`} value={search} onValueChange={(e) => setSearch(e)} className="border-0" />
                     <CommandList>
                         <CommandEmpty>No data found.</CommandEmpty>
                         <CommandGroup>
-                            {items.map((item: any) => (
+                            {filteredItems.map((item: any) => (
                                 <CommandItem
                                     key={item.id}
-                                    value={String(item.id)}
+                                    value={item.name}
                                     onSelect={() => {
                                         onSelect(Number(item.id));
                                         setOpen(false);

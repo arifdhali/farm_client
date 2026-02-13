@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Link } from "react-router";
 
 import {
@@ -37,11 +37,19 @@ import {
 import HeaderFilter from "@/components/ui/headerFilter";
 import CustomPagination from "@/components/ui/CustomPagination";
 import SmallLoading from "@/components/ui/smallLoading";
+import useDebounce from "@/hooks/useDebounce";
 
 const List = () => {
-  const { data, isLoading } = useGetFarmersList();
   const [openAlert, setOpenAlert] = useState<boolean>(false);
   const [farm, setfarm] = useState<any>({});
+  const [filter, setFilter] = useState({
+    search: "",
+    per_page: 10,
+    page: 0,
+  });
+
+  let deboundSearched = useDebounce(filter.search, 300);
+  const { data, isLoading } = useGetFarmersList({ ...filter, search: deboundSearched });
 
   const deleteMutaion = useDeleteFarmMutation();
 
@@ -57,6 +65,8 @@ const List = () => {
   const handleDeleteFarm = () => {
     deleteMutaion.mutate(farm.id);
   };
+  const hideFilter = useMemo(() => ({ from: true, to: true }), []);
+  const handlePaginationChange = useCallback((newpage: number) => setFilter((prev) => ({ ...prev, page: newpage })), [])
 
   return (
     <>
@@ -83,8 +93,7 @@ const List = () => {
 
       <div className="flex-1 overflow-y-auto pb-8 pt-4 bg-background-light dark:bg-background-dark">
         <div className="space-y-6">
-          <HeaderFilter />
-
+          <HeaderFilter setValue={setFilter} hide={hideFilter} />
           <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
             <div className="overflow-x-auto @container">
               <div className="overflow-x-auto @container">
@@ -107,7 +116,7 @@ const List = () => {
                         Chicks Count
                       </TableHead>
                       <TableHead className="px-6 py-4 text-xs font-bold uppercase text-center">
-                       Availablity Status
+                        Availablity Status
                       </TableHead>
                       <TableHead className="px-6 py-4 text-xs font-bold uppercase text-center">
                         Actions
@@ -169,13 +178,13 @@ const List = () => {
 
                             {
                               <span
-                                className={`flex w-fit items-center mx-auto px-2.5 py-1 gap-1 rounded-full text-xs font-bold ${farm?.availablity_status === "free" ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400" : "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400"}`}
+                                className={`flex w-fit items-center mx-auto px-2.5 py-1 gap-1 rounded-full text-xs font-bold ${farm?.availability_status === "free" ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400" : "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400"}`}
                               >
                                 <span className="relative flex size-2">
-                                  <span className={`absolute inline-flex h-full w-full animate-ping rounded-full ${farm?.availablity_status === "free" ? "bg-emerald-500" : "bg-yellow-500"} opacity-75`}></span>
-                                  <span className={`relative inline-flex size-2 rounded-full ${farm?.availablity_status === "free" ? "bg-emerald-500" : "bg-yellow-500"}`}></span>
+                                  <span className={`absolute inline-flex h-full w-full animate-ping rounded-full ${farm?.availability_status === "free" ? "bg-emerald-500" : "bg-yellow-500"} opacity-75`}></span>
+                                  <span className={`relative inline-flex size-2 rounded-full ${farm?.availability_status === "free" ? "bg-emerald-500" : "bg-yellow-500"}`}></span>
                                 </span>
-                                {farm?.availablity_status === "free"
+                                {farm?.availability_status === "free"
                                   ? "Available"
                                   : "Occupied"}
                               </span>
@@ -227,8 +236,16 @@ const List = () => {
               </div>
             </div>
 
-            <CustomPagination />
-
+            {
+              data?.total_farms > filter.per_page && (
+                <CustomPagination
+                  total={data?.total_farms}
+                  page={filter.page}
+                  per_page={filter.per_page}
+                  onPageChange={handlePaginationChange}
+                />
+              )
+            }
           </div>
         </div>
       </div>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Link } from "react-router";
 
 import {
@@ -33,29 +33,28 @@ import {
     TooltipContent,
     TooltipTrigger,
 } from "@/components/ui/tooltip";
-import {
-    Pagination,
-    PaginationContent,
-    PaginationEllipsis,
-    PaginationItem,
-    PaginationLink,
-    PaginationNext,
-    PaginationPrevious,
-} from "@/components/ui/pagination";
 import { useGetDeliveredListQuery } from "@/query/Chicks.queries";
 import HeaderFilter from "@/components/ui/headerFilter";
 import { format } from "date-fns";
-import { Skeleton } from "@/components/ui/skeleton";
 import CustomPagination from "@/components/ui/CustomPagination";
-import Loading from "@/components/ui/Loading";
+import useDebounce from "@/hooks/useDebounce";
+import SmallLoading from "@/components/ui/smallLoading";
 
 const List = () => {
     const [openAlert, setOpenAlert] = useState<boolean>(false);
-
+    const [filter, setFilter] = useState({
+        search: "",
+        per_page: 10,
+        page: 1,
+    });
     const handleDelete = (id: number): void => {
         setOpenAlert(!openAlert);
     };
-    const { data, isLoading } = useGetDeliveredListQuery();
+    let deboundSearched = useDebounce(filter.search, 300);
+
+    const { data, isLoading } = useGetDeliveredListQuery({ ...filter, search: deboundSearched });
+    const hideFilter = useMemo(() => ({ from: false, to: false }), []);
+    const handlePaginationChange = useCallback((newpage: number) => setFilter((prev) => ({ ...prev, page: newpage })), [])
 
     return (
         <>
@@ -82,7 +81,7 @@ const List = () => {
             <div className="flex-1 overflow-y-auto pb-8 pt-4 bg-background-light dark:bg-background-dark">
                 <div className="space-y-6">
 
-                    <HeaderFilter />
+                    <HeaderFilter setValue={setFilter} hide={hideFilter} />
                     <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
                         <div className="overflow-x-auto @container">
                             <div className="overflow-x-auto @container">
@@ -113,69 +112,79 @@ const List = () => {
                                     <TableBody className="divide-y divide-slate-100 dark:divide-slate-800">
                                         {
                                             isLoading && (
-                                                <TableRow className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors group">
-                                                    <TableCell className="px-6 py-4 text-center" colSpan={6}>
-                                                        {/* <Skeleton className="w-full h-12" /> */}
-
-
+                                                <TableRow className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
+                                                    <TableCell
+                                                        colSpan={6}
+                                                        className="px-6 py-4 text-center"
+                                                    >
+                                                        <SmallLoading />
                                                     </TableCell>
                                                 </TableRow>
                                             )
                                         }
-                                        {
-                                            data && data.length > 0 ? (
-                                                data?.map((list: any) => (
-                                                    <TableRow key={list.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors group">
-                                                        <TableCell className="px-6 py-4">
-                                                            <div className=" text-primary font-semibold">{list?.delivery_id}</div>
-                                                        </TableCell>
+                                        {!isLoading && data?.delivery_list.length > 0 && (
+                                            data?.delivery_list.map((list: any) => (
+                                                <TableRow key={list.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors group">
+                                                    <TableCell className="px-6 py-4">
+                                                        <div className=" text-primary font-semibold">{list?.batch_id}</div>
+                                                    </TableCell>
 
-                                                        <TableCell className="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">
-                                                            {format(list?.delivery_date, "dd/MM/yyyy")}
-                                                        </TableCell>
-                                                        <TableCell className="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">
-                                                            {list?.farm?.name}
-                                                        </TableCell>
-                                                        <TableCell className="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 font-medium text-center">
-                                                            {list?.total_delivered}
-                                                        </TableCell>
+                                                    <TableCell className="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">
+                                                        {format(list?.delivery_date, "dd/MM/yyyy")}
+                                                    </TableCell>
+                                                    <TableCell className="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">
+                                                        {list?.farm?.name}
+                                                    </TableCell>
+                                                    <TableCell className="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 font-medium text-center">
+                                                        {list?.total_delivered}
+                                                    </TableCell>
 
-                                                        <TableCell className="px-6 py-4 text-sm font-medium text-slate-900 dark:text-white text-center">
-                                                            <div className="flex items-center justify-center">
-                                                                <IndianRupee size={14} /> {list?.chicks_rate}
-                                                            </div>
-                                                        </TableCell>
+                                                    <TableCell className="px-6 py-4 text-sm font-medium text-slate-900 dark:text-white text-center">
+                                                        <div className="flex items-center justify-center">
+                                                            <IndianRupee size={14} /> {list?.chicks_rate}
+                                                        </div>
+                                                    </TableCell>
 
-                                                        <TableCell className="flex items-center justify-center gap-1.5">
+                                                    <TableCell className="flex items-center justify-center gap-1.5">
 
-                                                            <Tooltip>
-                                                                <TooltipTrigger asChild>
-                                                                    <button
-                                                                        onClick={() => handleDelete(list?.id)}
-                                                                        className="p-1.5 rounded-lg text-red-500 hover:bg-red-100"
-                                                                    >
-                                                                        <Trash className="size-5" />
-                                                                    </button>
-                                                                </TooltipTrigger>
-                                                                <TooltipContent>Delete</TooltipContent>
-                                                            </Tooltip>
-                                                        </TableCell>
-                                                    </TableRow>
-
-                                                ))
-                                            ) : (
-                                                <TableRow className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors group">
-                                                    <TableCell className="px-6 py-4 text-center" colSpan={6}>
-                                                        No data available
+                                                        <Tooltip>
+                                                            <TooltipTrigger asChild>
+                                                                <button
+                                                                    onClick={() => handleDelete(list?.id)}
+                                                                    className="p-1.5 rounded-lg text-red-500 hover:bg-red-100"
+                                                                >
+                                                                    <Trash className="size-5" />
+                                                                </button>
+                                                            </TooltipTrigger>
+                                                            <TooltipContent>Delete</TooltipContent>
+                                                        </Tooltip>
                                                     </TableCell>
                                                 </TableRow>
-                                            )
-                                        }
+
+                                            ))
+                                        )}
+                                        {(!isLoading && data?.delivery_list.length === 0) && (
+
+                                            <TableRow className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors group">
+                                                <TableCell className="px-6 py-4 text-center" colSpan={6}>
+                                                    No data available
+                                                </TableCell>
+                                            </TableRow>
+                                        )}
                                     </TableBody>
                                 </Table>
                             </div>
                         </div>
-                        <CustomPagination />
+                        {
+                            data?.total_delivery > filter.per_page && (
+                                <CustomPagination
+                                    total={data?.total_delivery}
+                                    page={filter.page}
+                                    per_page={filter.per_page}
+                                    onPageChange={handlePaginationChange}
+                                />
+                            )
+                        }
                     </div>
                 </div>
             </div>

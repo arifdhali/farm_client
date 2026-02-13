@@ -19,11 +19,6 @@ const addSchema = Yup.object({
   rate: Yup.number()
     .required("Rate is required")
     .positive("Rate must be a positive number"),
-  commission_percentage: Yup.number()
-    .min(0, "Commission percentage must be at least 0")
-    .max(100, "Commission percentage must be at most 100")
-    .required("Commission percentage is required")
-    .positive("Commission percentage must be a positive number"),
 });
 
 const Add = () => {
@@ -42,8 +37,7 @@ const Add = () => {
       mobile_number: "",
       location: "",
       capacity: 0,
-      rate: 0,
-      commission_percentage: 0,
+      rate: 85,
     },
     validationSchema: addSchema,
     validateOnBlur: false,
@@ -77,7 +71,7 @@ const Add = () => {
             to={"/farms/list"}
             className="bg-white hover:text-primary dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2"
           >
-            
+
             <ArrowLeftIcon />
             Back to List
           </Link>
@@ -176,12 +170,9 @@ const Add = () => {
                 Rate
               </label>
               <input
-                ref={(el) => {
-                  el && (inputRef.current["rate"] = el);
-                }}
+                readOnly
                 name="rate"
                 value={addFarm.values.rate}
-                onChange={addFarm.handleChange}
                 className="w-full rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-4 py-3 text-base"
                 placeholder="Fixed price"
                 type="number"
@@ -192,28 +183,7 @@ const Add = () => {
                 </span>
               ) : null}
             </div>
-            <div className="flex flex-col col-span-2 md:col-span-1 ">
-              <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
-                Commision Percentage (%)
-              </label>
-              <input
-                ref={(el) => {
-                  el && (inputRef.current["commision_rate"] = el);
-                }}
-                name="commission_percentage"
-                value={addFarm.values.commission_percentage}
-                onChange={addFarm.handleChange}
-                className="w-full rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-4 py-3 text-base"
-                placeholder="10.2%"
-                type="number"
-              />
-              {addFarm.touched.commission_percentage &&
-                addFarm.errors.commission_percentage ? (
-                <span className="text-red-500 text-sm">
-                  {addFarm.errors.commission_percentage}
-                </span>
-              ) : null}
-            </div>
+
             <div className="flex flex-col col-span-2 md:col-span-1">
               <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
                 Farm Status{" "}

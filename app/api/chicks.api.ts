@@ -3,9 +3,11 @@ import HTTP from "./client";
 
 const API = `/chicks`
 
-export const getDeliveredList = async () => {
+export const getDeliveredList = async (filter: any) => {
     try {
-        let response = await HTTP.get(`${API}/delivered/list`);
+        let response = await HTTP.get(`${API}/delivered/list`, {
+            params: filter
+        });
         if (response.data.status) {
             return response.data.data;
         }

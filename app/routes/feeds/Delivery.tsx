@@ -4,7 +4,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { useGetFarmersList, useGetLastOrderID } from "@/query/Farm.queries";
 import { useFormik } from "formik";
 import { ArrowLeftIcon } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { Link } from "react-router";
 import * as yup from "yup";
 import { format } from "date-fns";
@@ -89,7 +89,13 @@ const Delivery = () => {
     deliveryForm.setErrors(error.fieldErrors ?? "");
   }, [makeDelivery.isError])
 
+  const totalWegiht = useMemo(() => {
+    return (Number(deliveryForm.values.quantity * 50));
+  }, [deliveryForm.values.quantity]);
 
+  useEffect(() => {
+    deliveryForm.setFieldValue("weight", totalWegiht);
+  }, [totalWegiht]);
   return (
     <div className="flex-1 overflow-y-auto bg-background-light dark:bg-background-dark">
       <div className="mb-8 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-8 py-6">
@@ -221,28 +227,6 @@ const Delivery = () => {
             </div>
             <div className="flex flex-col col-span-2 md:col-span-1">
               <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
-                Weight (kg)
-              </label>
-              <input
-                className="w-full h-12 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-4 py-3 text-base"
-                placeholder="200"
-                type="text"
-                name="weight"
-                ref={(el) => {
-                  el && (inputRef.current["weight"] = el);
-                }}
-                onChange={deliveryForm.handleChange}
-                onBlur={deliveryForm.handleBlur}
-                value={deliveryForm.values.weight}
-              />
-              {deliveryForm.touched.weight && deliveryForm.errors.weight ? (
-                <span className="text-red-500 text-sm">
-                  {deliveryForm.errors.weight}
-                </span>
-              ) : null}
-            </div>
-            <div className="flex flex-col col-span-2 md:col-span-1">
-              <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
                 Quantity
               </label>
               <input
@@ -263,7 +247,28 @@ const Delivery = () => {
                 </span>
               ) : null}
             </div>
-
+            <div className="flex flex-col col-span-2 md:col-span-1">
+              <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
+                Weight (kg)
+              </label>
+              <input
+                className="w-full h-12 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-4 py-3 text-base"
+                placeholder="200"
+                type="text"
+                name="weight"
+                ref={(el) => {
+                  el && (inputRef.current["weight"] = el);
+                }}
+                onChange={deliveryForm.handleChange}
+                onBlur={deliveryForm.handleBlur}
+                value={deliveryForm.values.weight}
+              />
+              {deliveryForm.touched.weight && deliveryForm.errors.weight ? (
+                <span className="text-red-500 text-sm">
+                  {deliveryForm.errors.weight}
+                </span>
+              ) : null}
+            </div>
           </div>
 
           <div className="mt-10 flex items-center justify-end gap-4">

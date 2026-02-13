@@ -21,11 +21,6 @@ const editSchema = Yup.object({
   rate: Yup.number()
     .required("Rate is required")
     .positive("Rate must be a positive number"),
-  commission_percentage: Yup.number()
-    .min(0, "Commission percentage must be at least 0")
-    .max(100, "Commission percentage must be at most 100")
-    .required("Commission percentage is required")
-    .positive("Commission percentage must be a positive number"),
 });
 
 const Edit = () => {
@@ -38,8 +33,7 @@ const Edit = () => {
   >({});
 
   const { data, isLoading } = useGetSingleFarm(Number(id));
-  // const { mutate, isPending, isSuccess } =
-  // useUpdateFarmerMutation(Number(id));
+  const { mutate, isPending, isSuccess } = useUpdateFarmerMutation();
 
   const editFarm = useFormik<CreateFarmer>({
     enableReinitialize: true,
@@ -49,16 +43,15 @@ const Edit = () => {
       location: data?.location ?? "",
       capacity: data?.capacity ?? 0,
       rate: data?.farmer_rate ?? 0,
-      commission_percentage: data?.commission_percentage ?? 0,
     },
     validationSchema: editSchema,
     validateOnBlur: false,
     onSubmit: (values) => {
-      console.log(values);
-      // mutate({
-      //   ...values,
-      //   status: FarmsStatus,
-      // });
+      if (!editFarm.dirty) return;
+      mutate({
+        updateData: values,
+        farmID: Number(id)
+      });
     },
   });
 
@@ -188,13 +181,10 @@ const Edit = () => {
                 Rate
               </label>
               <input
-                ref={(el) => {
-                  inputRef.current.rate = el;
-                }}
+                readOnly
                 name="rate"
                 type="number"
                 value={editFarm.values.rate}
-                onChange={editFarm.handleChange}
                 className="w-full rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-4 py-3"
               />
               {editFarm.errors.rate && (
@@ -204,31 +194,12 @@ const Edit = () => {
               )}
             </div>
 
-            <div className="flex flex-col col-span-2 md:col-span-1">
-              <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold mb-2">
-                Commision Percentage (%)
-              </label>
-              <input
-                ref={(el) => {
-                  inputRef.current.commission_percentage = el;
-                }}
-                name="commission_percentage"
-                type="number"
-                value={editFarm.values.commission_percentage}
-                onChange={editFarm.handleChange}
-                className="w-full rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-4 py-3"
-              />
-              {editFarm.errors.commission_percentage && (
-                <span className="text-red-500 text-sm">
-                  {editFarm.errors.commission_percentage}
-                </span>
-              )}
-            </div>
           </div>
 
           <div className="mt-10">
             <Button
-            
+              disabled={isPending}
+              spinner={isPending}
               className="bg-primary h-11 hover:bg-primary/90 text-white px-8 py-3 rounded-lg text-sm font-bold shadow-lg shadow-primary/20 transition-all"
               type="submit"
             >

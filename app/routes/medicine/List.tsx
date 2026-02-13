@@ -69,9 +69,7 @@ const List = () => {
                                             <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider min-w-50 text-center">
                                                 Availblity
                                             </TableHead>
-                                            <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-center">
-                                                Unit Price
-                                            </TableHead>
+
                                             <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-center">
                                                 Actions
                                             </TableHead>
@@ -111,12 +109,6 @@ const List = () => {
                                                             </div>
 
                                                         </TableCell>
-                                                        <TableCell className="px-6 py-4 text-sm font-medium text-slate-900 dark:text-white text-center">
-                                                            <div className="flex items-center justify-center">
-                                                                <IndianRupee size={14} /> {list?.price}
-                                                            </div>
-                                                        </TableCell>
-
                                                         <TableCell className="flex items-center justify-center gap-1.5">
                                                             <Tooltip>
                                                                 <TooltipTrigger asChild>

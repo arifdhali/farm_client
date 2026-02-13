@@ -26,9 +26,9 @@ export const useChickDeliveryMutation = () => {
     })
 }
 
-export const useGetDeliveredListQuery = () => {
+export const useGetDeliveredListQuery = (filter: any) => {
     return useQuery({
-        queryKey: ["chicks", "delivered"],
-        queryFn: getDeliveredList,
+        queryKey: ["delivered-list", filter],
+        queryFn: () => getDeliveredList(filter),
     })
 }

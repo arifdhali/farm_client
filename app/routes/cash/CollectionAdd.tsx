@@ -53,7 +53,7 @@ const CollectionAdd = () => {
         submitted_by: user?.name,
 
       }
-    
+
       addCashCollection(payload, {
         onSuccess: () => {
           addCollectionFormik.resetForm();
@@ -259,7 +259,84 @@ const CollectionAdd = () => {
                 </span>
               )}
             </div>
+            <div className="">
+              <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
+                Farmer name
+              </label>
 
+              <Popover
+                open={open.customer_id}
+                onOpenChange={(value) =>
+                  setOpen((prev: any) => ({ ...prev, customer_id: value }))
+                }
+              >
+                <PopoverTrigger asChild>
+                  <Button variant="outline" role="combobox"
+                    aria-expanded={open.customer_id}
+                    className="w-full border-slate-200 h-12 justify-between bg-white shadow-none"
+                  >
+                    {selectShop?.shopname || "Select shop..."}
+                    <ChevronsUpDown />
+                  </Button>
+                </PopoverTrigger>
+
+                <PopoverContent className="p-0 border border-slate-200" align="start">
+                  <Command className="border-0">
+                    <CommandList>
+                      <CommandEmpty>No shop found.</CommandEmpty>
+                      <CommandGroup>
+                        {data?.customers.length && data?.customers.map((shop: any) => (
+                          <CommandItem
+                            key={shop.id}
+                            value={String(shop.id)}
+                            onSelect={() => {
+                              addCollectionFormik.setFieldValue("customer_id", shop.id);
+                              setOpen((prev: any) => ({ ...prev, customer_id: false }));
+                            }}
+                          >
+                            {shop.shopname}
+                            <Check
+                              className={cn(
+                                "ml-auto",
+                                addCollectionFormik.values.customer_id === shop.id
+                                  ? "opacity-100"
+                                  : "opacity-0"
+                              )}
+                            />
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+
+              {addCollectionFormik.errors.customer_id && (
+                <span className="text-red-500 text-sm">
+                  {addCollectionFormik.errors.customer_id}
+                </span>
+              )}
+            </div>
+
+            {/* balanced */}
+            <div className="">
+              <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
+                Balanced Amount
+              </label>
+              <input
+                name="amount_collected"
+                value={addCollectionFormik.values.amount_collected}
+                onChange={addCollectionFormik.handleChange}
+                className="w-full rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-4 py-3 text-base"
+                placeholder="Enter amount"
+                type="number"
+              />
+              {addCollectionFormik.errors.amount_collected && (
+                <span className="text-red-500 text-sm">
+                  {addCollectionFormik.errors.amount_collected}
+                </span>
+              )}
+            </div>
             {/* AMOUNT */}
             <div className="">
               <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">

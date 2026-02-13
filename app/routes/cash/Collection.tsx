@@ -1,15 +1,28 @@
 import { Link } from "react-router";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from "@/components/ui/table";
-import { IndianRupee, PlusIcon } from "lucide-react";
+import { Edit, IndianRupee, PlusIcon, Trash, TrashIcon } from "lucide-react";
 
 
 import SmallLoading from "@/components/ui/smallLoading";
 import { useGetCollectionsist } from "@/query/Cash.queries";
 import { format } from "date-fns";
-
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogTitle,
+  AlertDialogFooter,
+  AlertDialogHeader,
+} from "@/components/ui/alert-dialog";
+import { useState } from "react";
 const List = () => {
+  const [openAlert, setOpenAlert] = useState<boolean>(false);
+
   const { data, isLoading } = useGetCollectionsist();
-  console.log(data);
+
   return (
     <>
       <div className=" rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-8 py-6">
@@ -44,20 +57,20 @@ const List = () => {
                       <TableHead className=" px-6 py-4 text-xs font-bold uppercase">
                         Date
                       </TableHead>
+                      <TableHead className=" px-6 py-4 text-xs font-bold uppercase">
+                        Order id
+                      </TableHead>
                       <TableHead className=" px-6 py-4 text-xs font-bold uppercase text-center">
                         Payment Type
                       </TableHead>
                       <TableHead className=" px-6 py-4 text-xs font-bold uppercase">
                         Shop name
                       </TableHead>
-                      <TableHead className=" px-6 py-4 text-xs font-bold uppercase">
-                        Customer name
+                      <TableHead className=" px-6 py-4 text-xs font-bold uppercase text-center">
+                        Balanced Amount
                       </TableHead>
                       <TableHead className=" px-6 py-4 text-xs font-bold uppercase text-center">
-                        Amount collected
-                      </TableHead>
-                      <TableHead className=" px-6 py-4 text-xs font-bold uppercase">
-                        Submitted by
+                        Actions
                       </TableHead>
                     </TableRow>
                   </TableHeader>
@@ -67,7 +80,7 @@ const List = () => {
                       isLoading && (
                         <TableRow className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
                           <TableCell
-                            colSpan={6}
+                            colSpan={7}
                             className="px-6 py-4 text-center"
                           >
                             <SmallLoading />
@@ -86,6 +99,10 @@ const List = () => {
                             {collection?.date ? format(new Date(collection.date), "dd/MM/yyyy") : ""}
                           </TableCell>
 
+                          <TableCell className="px-6 py-4 text-sm font-medium capitalize">
+
+                            {collection?.farm_lifting?.batch_id}
+                          </TableCell>
                           <TableCell className="px-6 py-4 text-sm font-medium capitalize text-center">
 
                             {collection?.payment_type}
@@ -94,17 +111,40 @@ const List = () => {
                           <TableCell className="px-6 py-4 text-sm font-medium">
                             {collection?.customer?.shopname}
                           </TableCell>
-                          <TableCell className="px-6 py-4 text-sm font-medium">
-                            {collection?.customer?.name}
-                          </TableCell>
-                          <TableCell className="px-6 py-4 text-sm font-medium">
-                            <div className="flex items-center justify-center">
-                              <IndianRupee size={14} />  {collection?.amount_collected}
-                            </div>
-                          </TableCell>
+
 
                           <TableCell className="px-6 py-4 text-sm font-medium">
-                            {collection?.submitted_by}
+                            <div className="flex items-center justify-center text-red-500">
+                              <IndianRupee size={14} />  {collection?.balanced_amount}
+                            </div>
+                          </TableCell>
+                          <TableCell className="px-6 py-4 text-sm font-medium">
+
+                            <div className="flex items-center justify-center gap-1.5">
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Link
+                                    to={`/cash/collection/${collection?.id}/edit`}
+                                    className="p-1.5 rounded-lg text-slate-500 hover:text-primary hover:bg-primary/10"
+                                  >
+                                    <Edit className="size-5" />
+                                  </Link>
+                                </TooltipTrigger>
+                                <TooltipContent>Edit</TooltipContent>
+                              </Tooltip>
+
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <button
+                                    // onClick={() => handleDeleteModal(farm?.id)}
+                                    className="p-1.5 rounded-lg text-red-500 hover:bg-red-100"
+                                  >
+                                    <Trash className="size-5" />
+                                  </button>
+                                </TooltipTrigger>
+                                <TooltipContent>Delete</TooltipContent>
+                              </Tooltip>
+                            </div>
                           </TableCell>
 
                         </TableRow>
@@ -128,6 +168,39 @@ const List = () => {
         </div>
       </div >
 
+
+      <AlertDialog open={openAlert} onOpenChange={setOpenAlert}>
+        <AlertDialogContent className="p-8 w-110 border-0 items-center">
+          <div className="mx-auto p-4 w-fit flex items-center justify-center bg-red-600 rounded-full">
+            <TrashIcon className="text-white" />
+          </div>
+          <AlertDialogHeader className="mb-8 mt-4 items-center">
+            <AlertDialogTitle className="text-2xl font-bold text-[#181111] dark:text-white leading-tight">
+              Delete Farmer?
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-[#896161] text-sm leading-relaxed mt-3 text-center">
+              Are you sure you want to delete{" "}
+              <strong className="font-semibold text-black">
+                {/* {farm && farm.name} */}
+              </strong>
+              ? This action cannot be undone and all associated records will be
+              lost.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="grid grid-cols-2 gap-4">
+            <AlertDialogCancel className="flex items-center justify-center rounded-lg h-12 bg-gray-200 dark:bg-[#3a1d1d] text-[#181111] dark:text-white hover:text-white border-0 text-sm font-bold  hover:bg-primary/90 dark:hover:bg-[#4d2727] ">
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              // disabled={deleteMutaion.isPending}
+              // onClick={handleDeleteFarm}
+              className="flex items-center justify-center rounded-lg h-12 bg-red-600 text-white text-sm font-bold hover:bg-primary/90  shadow-lg shadow-primary/20"
+            >
+              {/* {deleteMutaion.isPending ? "Processing" : "Confirm"} */}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 };

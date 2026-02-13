@@ -12,6 +12,7 @@ import { Link } from "react-router";
 import * as yup from "yup";
 import { format } from "date-fns";
 import { useChickDeliveryMutation } from "@/query/Chicks.queries";
+import ComboCheckbox from "@/components/ui/ComboCheckbox";
 
 const chicksDeliverySchema = yup.object().shape({
   delivery_date: yup.date().required("Delivery date is required").min(
@@ -92,54 +93,24 @@ const Delivery = () => {
               <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
                 Farmer Name
               </label>
-              <Popover open={open.select_farmer} onOpenChange={(value) =>
-                setOpen((prev: any) => ({
-                  ...prev,
-                  select_farmer: value,
-                }))}>
-                <PopoverTrigger asChild>
-                  <Button variant="outline" role="combobox" aria-expanded={open.select_farmer}
-                    className="w-full border-slate-200 h-12 justify-between bg-white shadow-none"
-                  >
-                    {deliveryForm.values.farm_id
-                      ? selectedFarm?.name
-                      : "Select farm..."}
-                    <ChevronsUpDown />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className=" p-0 border border-slate-200" align="start">
-                  <Command className="border-0">
-                    <CommandInput placeholder="Search farm..." className="border-0" />
-                    <CommandList>
-                      <CommandEmpty>No farm found.</CommandEmpty>
-                      <CommandGroup>
-                        {data?.farms.length > 0 && (
-                          data?.farms.map((farm: any) => (
-                            <CommandItem
-                              key={String(farm.id)}
-                              value={String(farm.id)}
-                              onSelect={(currentValue) => {
-                                deliveryForm.setFieldValue("farm_id", currentValue)
-                                setOpen({
-                                  select_farmer: false
-                                })
-                              }}
-                            >
-                              {farm.name}
-                              <Check
-                                className={cn(
-                                  "ml-auto",
-                                  deliveryForm.values.farm_id === Number(farm.id) ? "opacity-100" : "opacity-0"
-                                )}
-                              />
-                            </CommandItem>
-                          ))
-                        )}
-                      </CommandGroup>
-                    </CommandList>
-                  </Command>
-                </PopoverContent>
-              </Popover>
+              <div className="flex flex-col col-span-1 md:col-span-1">
+                <ComboCheckbox
+                  ref={null}
+                  label="farmer"
+                  items={data?.farms ?? []}
+                  selectedId={deliveryForm.values.farm_id}
+                  onSelect={(id) => {
+                    deliveryForm.setFieldValue("farm_id", id);
+                    deliveryForm.setFieldTouched("farm_id", true);
+                  }}
+                />
+
+                {deliveryForm.touched.farm_id && deliveryForm.errors.farm_id ? (
+                  <span className="text-red-500 text-sm">
+                    {deliveryForm.errors.farm_id}
+                  </span>
+                ) : null}
+              </div>
               {deliveryForm.touched.farm_id && deliveryForm.errors.farm_id ? (
                 <span className="text-red-500 text-sm">
                   {deliveryForm.errors.farm_id}

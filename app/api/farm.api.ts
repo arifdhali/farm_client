@@ -22,9 +22,11 @@ export const createFarmer = async (payload: CreateFarmer) => {
 }
 
 
-export const getFarmersList = async () => {
+export const getFarmersList = async (filter: any) => {
     try {
-        const response = await HTTP.get(`${FARMER_API_URL}/list`);
+        const response = await HTTP.get(`${FARMER_API_URL}/list`, {
+            params: filter
+        });
         if (response.data.status) {
             return response.data.data;
         }
@@ -84,8 +86,11 @@ export const deleteFarms = async (farmid: number) => {
 
 export const updateFarm = async ({ updateData, farmID }: { updateData: any, farmID: number }) => {
     try {
-        let response = await HTTP.patch(`${FARMER_API_URL}/${farmID}/update`);
-        console.log(response);
+        let response = await HTTP.patch(`${FARMER_API_URL}/${farmID}/update`, updateData);
+        if (response.data.status) {
+            return response.data;
+        }
+        return [];
     } catch (error) {
         throw error;
     }

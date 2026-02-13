@@ -18,7 +18,7 @@ const Lifting = () => {
     const { data: lifting, isLoading } = useGetLiftingList({ status });
     const [makeComplete, setMakeComplete] = useState<any>();
     const handleMakeComplete = (id: number): void => {
-        let order = lifting?.data?.find((o: any) => o.active_delivery_id == id);
+        let order = lifting?.data?.find((o: any) => o.active_batch_id == id);
         setMakeComplete(order);
         setOpenAlert(!openAlert);
     };
@@ -111,7 +111,7 @@ const Lifting = () => {
                                                         className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors"
                                                     >
                                                         <TableCell className="px-6 py-4 text-sm font-medium ">
-                                                            {lift?.active_delivery_id}
+                                                            {lift?.active_batch_id}
                                                         </TableCell>
 
                                                         <TableCell className="px-6 py-4">
@@ -155,7 +155,7 @@ const Lifting = () => {
                                                                     <Tooltip>
                                                                         <TooltipTrigger asChild>
                                                                             <button
-                                                                                onClick={() => handleMakeComplete(lift?.active_delivery_id)}
+                                                                                onClick={() => handleMakeComplete(lift?.active_batch_id)}
                                                                                 className="cursor-pointer p-1.5 rounded-lg text-slate-500 hover:bg-slate-100"
                                                                             >
                                                                                 <CheckIcon className="text-green-500" />
@@ -225,13 +225,13 @@ const Lifting = () => {
                                             )}
                                             {!isLoading &&
                                                 lifting?.data?.length > 0 &&
-                                                lifting?.data?.map((lift: any, _) => (
+                                                lifting?.data?.map((lift: any) => (
                                                     <TableRow
                                                         key={lift?.id}
                                                         className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors"
                                                     >
                                                         <TableCell className="px-6 py-4 text-sm font-medium ">
-                                                            {lift?.active_delivery_id}
+                                                            {lift?.active_batch_id}
                                                         </TableCell>
 
                                                         <TableCell className="px-6 py-4">
@@ -275,7 +275,7 @@ const Lifting = () => {
                                                                 <Tooltip>
                                                                     <TooltipTrigger asChild>
                                                                         <Link
-                                                                            to={`/farms/lifting/${lift?.id}?order_id=${lift?.active_delivery_id}`}
+                                                                            to={`/farms/lifting/${lift?.id}?order_id=${lift?.active_batch_id}`}
                                                                             className="p-1.5 rounded-lg text-slate-500 hover:text-primary hover:bg-primary/10"
                                                                         >
                                                                             <EyeIcon className="size-5" />
