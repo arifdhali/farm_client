@@ -9,27 +9,28 @@ import { format } from "date-fns";
 import * as yup from "yup";
 import type { AddAmount } from "@/types/Cash.type";
 import { useAddCollectionMutations } from "@/query/Cash.queries";
-import { Command, CommandEmpty, CommandGroup, CommandItem, CommandList } from "@/components/ui/command";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { cn } from "@/lib/utils";
-import { useGetCustomersList } from "@/query/Customers.queries";
+import { useCutomerLiftingList, useGetCustomersList } from "@/query/Customers.queries";
 import { getMeQuery } from "@/query/Auth.queries";
 import { useQuery } from "@tanstack/react-query";
+import ComboCheckbox from "@/components/ui/ComboCheckbox";
 
 
 const addExpensesSchema = yup.object().shape({
   date: yup.date().required("Date is required"),
   payment_type: yup.string().trim().required("Payment type is required"),
   customer_id: yup.number().nullable().required("Shop is required"),
+  batch_id: yup.string().trim("Bath ID must be string"),
   amount_collected: yup.number().typeError("Amount must be a number")
     .required("Amount is required").positive("Amount must be a positive number"),
 });
 
 const CollectionAdd = () => {
-
+  const [searchBatchID, setSearchBatchID] = useState("")
   const [open, setOpen] = useState<any>({
     payment_type: false,
-    select_date: false,
-    customer_id: false
+    batch_id: false,
   });
   const { data } = useGetCustomersList();
   const { data: user } = useQuery(getMeQuery());
@@ -41,6 +42,7 @@ const CollectionAdd = () => {
       date: new Date(),
       customer_id: null,
       payment_type: "",
+      batch_id: "NA",
       amount_collected: 0,
     },
     validationSchema: addExpensesSchema,
@@ -62,13 +64,15 @@ const CollectionAdd = () => {
     }
   });
 
-  let selectShop = data?.customers.find((c: any) => c.id == addCollectionFormik.values.customer_id);
+
 
   useEffect(() => {
     if (!isError) return;
     let err: any = error;
     addCollectionFormik.setErrors(err?.fieldErrors ?? {});
   }, [isError]);
+
+  const { data: liftings } = useCutomerLiftingList(Number(addCollectionFormik?.values.customer_id));
 
   return (
     <div className="flex-1 overflow-y-auto bg-background-light dark:bg-background-dark">
@@ -200,143 +204,91 @@ const CollectionAdd = () => {
               )}
             </div>
 
-            {/* SHOP */}
+
             <div className="">
               <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
-                Shop name
+                Customer name
               </label>
 
-              <Popover
-                open={open.customer_id}
-                onOpenChange={(value) =>
-                  setOpen((prev: any) => ({ ...prev, customer_id: value }))
-                }
-              >
-                <PopoverTrigger asChild>
-                  <Button variant="outline" role="combobox"
-                    aria-expanded={open.customer_id}
-                    className="w-full border-slate-200 h-12 justify-between bg-white shadow-none"
-                  >
-                    {selectShop?.shopname || "Select shop..."}
-                    <ChevronsUpDown />
-                  </Button>
-                </PopoverTrigger>
+              <ComboCheckbox
+                ref={null}
+                label="customer"
+                items={data?.customers ?? []}
+                selectedId={addCollectionFormik.values.customer_id}
+                onSelect={(id) => {
+                  addCollectionFormik.setFieldValue("customer_id", id);
+                  addCollectionFormik.setFieldTouched("customer_id", true);
+                }}
 
-                <PopoverContent className="p-0 border border-slate-200" align="start">
-                  <Command className="border-0">
-                    <CommandList>
-                      <CommandEmpty>No shop found.</CommandEmpty>
-                      <CommandGroup>
-                        {data?.customers.length && data?.customers.map((shop: any) => (
-                          <CommandItem
-                            key={shop.id}
-                            value={String(shop.id)}
-                            onSelect={() => {
-                              addCollectionFormik.setFieldValue("customer_id", shop.id);
-                              setOpen((prev: any) => ({ ...prev, customer_id: false }));
-                            }}
-                          >
-                            {shop.shopname}
-                            <Check
-                              className={cn(
-                                "ml-auto",
-                                addCollectionFormik.values.customer_id === shop.id
-                                  ? "opacity-100"
-                                  : "opacity-0"
-                              )}
-                            />
-                          </CommandItem>
-                        ))}
-                      </CommandGroup>
-                    </CommandList>
-                  </Command>
-                </PopoverContent>
-              </Popover>
-
-              {addCollectionFormik.errors.customer_id && (
-                <span className="text-red-500 text-sm">
-                  {addCollectionFormik.errors.customer_id}
-                </span>
-              )}
-            </div>
-            <div className="">
-              <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
-                Farmer name
-              </label>
-
-              <Popover
-                open={open.customer_id}
-                onOpenChange={(value) =>
-                  setOpen((prev: any) => ({ ...prev, customer_id: value }))
-                }
-              >
-                <PopoverTrigger asChild>
-                  <Button variant="outline" role="combobox"
-                    aria-expanded={open.customer_id}
-                    className="w-full border-slate-200 h-12 justify-between bg-white shadow-none"
-                  >
-                    {selectShop?.shopname || "Select shop..."}
-                    <ChevronsUpDown />
-                  </Button>
-                </PopoverTrigger>
-
-                <PopoverContent className="p-0 border border-slate-200" align="start">
-                  <Command className="border-0">
-                    <CommandList>
-                      <CommandEmpty>No shop found.</CommandEmpty>
-                      <CommandGroup>
-                        {data?.customers.length && data?.customers.map((shop: any) => (
-                          <CommandItem
-                            key={shop.id}
-                            value={String(shop.id)}
-                            onSelect={() => {
-                              addCollectionFormik.setFieldValue("customer_id", shop.id);
-                              setOpen((prev: any) => ({ ...prev, customer_id: false }));
-                            }}
-                          >
-                            {shop.shopname}
-                            <Check
-                              className={cn(
-                                "ml-auto",
-                                addCollectionFormik.values.customer_id === shop.id
-                                  ? "opacity-100"
-                                  : "opacity-0"
-                              )}
-                            />
-                          </CommandItem>
-                        ))}
-                      </CommandGroup>
-                    </CommandList>
-                  </Command>
-                </PopoverContent>
-              </Popover>
-
-              {addCollectionFormik.errors.customer_id && (
-                <span className="text-red-500 text-sm">
-                  {addCollectionFormik.errors.customer_id}
-                </span>
-              )}
-            </div>
-
-            {/* balanced */}
-            <div className="">
-              <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
-                Balanced Amount
-              </label>
-              <input
-                name="amount_collected"
-                value={addCollectionFormik.values.amount_collected}
-                onChange={addCollectionFormik.handleChange}
-                className="w-full rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-4 py-3 text-base"
-                placeholder="Enter amount"
-                type="number"
               />
-              {addCollectionFormik.errors.amount_collected && (
+
+              {addCollectionFormik.errors.customer_id && (
                 <span className="text-red-500 text-sm">
-                  {addCollectionFormik.errors.amount_collected}
+                  {addCollectionFormik.errors.customer_id}
                 </span>
               )}
             </div>
+            <div className="">
+              <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
+                Enter Lifting ID
+              </label>
+
+
+              <Popover open={open.batch_id}
+                onOpenChange={(value) =>
+                  setOpen((prev: any) => ({ ...prev, batch_id: value }))
+                }>
+
+                <PopoverTrigger asChild>
+                  <Button variant="outline" role="combobox"
+                    aria-expanded={open.payment_type}
+                    className="w-full border-slate-200 h-12 justify-between bg-white shadow-none capitalize"
+                  >
+                    {addCollectionFormik.values.batch_id || "Select lifting..."}
+                    <ChevronsUpDown />
+                  </Button>
+                </PopoverTrigger>
+
+                <PopoverContent className="p-0 border border-slate-200" align="start">
+                  <Command className="border-0">
+                    <CommandInput placeholder={`Search bath id...`} value={searchBatchID} onValueChange={(e) => setSearchBatchID(e)} className="border-0" />
+                    <CommandList>
+                      <CommandEmpty>Not found.</CommandEmpty>
+                      <CommandGroup>
+                        {liftings && liftings.map((lift: any) => (
+                          <CommandItem
+                            className="capitalize"
+                            key={lift.id}
+                            value={lift.batch_id}
+                            onSelect={(currentValue) => {
+                              addCollectionFormik.setFieldValue("batch_id", currentValue);
+                              setOpen((prev: any) => ({ ...prev, batch_id: false }));
+                            }}
+                          >
+                            {lift.batch_id}
+                            <Check
+                              className={cn(
+                                "ml-auto",
+                                addCollectionFormik.values.batch_id === lift.batch_id
+                                  ? "opacity-100"
+                                  : "opacity-0"
+                              )}
+                            />
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+
+              </Popover>
+              {addCollectionFormik.touched.batch_id && addCollectionFormik.errors.batch_id ? (
+                <span className="text-red-500 text-sm">
+                  {addCollectionFormik.errors.batch_id}
+                </span>
+              ) : null}
+            </div>
+
             {/* AMOUNT */}
             <div className="">
               <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">

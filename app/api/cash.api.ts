@@ -51,9 +51,42 @@ export const getCollectionList = async () => {
         throw error;
     }
 }
+export const getCollectionSingle = async (id: number) => {
+
+    try {
+        let res = await HTTP.get(`${PAYMENT_API}/${id}`);
+        if (res.data.status) {
+            return res.data.data;
+        }
+        return [];
+    } catch (error) {
+        throw error;
+    }
+}
 
 
-export const addCollctions = async (payload: AddAmount) => {
+export const editCollections = async ({ id, payload }: { id: number; payload: any }) => {
+    try {
+        console.log(id, payload);
+        let response = await HTTP.patch(`${PAYMENT_API}/${id}/edit`, payload)
+        if (response.data.status) {
+            return response.data;
+        }
+        return null;
+    } catch (err) {
+        const error = err as AxiosError<BackendError>;
+        throw {
+            message: error.response?.data?.message || "Something went wrong",
+            fieldErrors: error.response?.data?.errors?.reduce((acc: Record<string, string>, curr) => {
+                acc[curr.field] = curr.message;
+                return acc;
+            }, {}) ?? {},
+            status: error.response?.data?.status,
+            statusCode: error.response?.status,
+        };
+    }
+}
+export const addCollections = async (payload: AddAmount) => {
     try {
         let response = await HTTP.post(`${PAYMENT_API}/add`, payload)
         if (response.data.status) {

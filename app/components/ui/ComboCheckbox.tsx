@@ -2,7 +2,7 @@
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { cn } from "@/lib/utils";
 import {
-    forwardRef, useImperativeHandle, useMemo, useState
+    forwardRef, memo, useImperativeHandle, useMemo, useState
 } from "react";
 import { ArrowLeftIcon, Check, ChevronsUpDown } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -14,13 +14,15 @@ export type ComboCheckboxRef = {
 };
 
 type ComboCheckboxProps = {
+    disabled?: boolean;
     label: string;
     items: any[];
     selectedId: number | null;
     onSelect: (id: number) => void;
 };
 
-const ComboCheckbox = forwardRef<ComboCheckboxRef, ComboCheckboxProps>(({ label, items, selectedId, onSelect }, ref) => {
+const ComboCheckbox = forwardRef<ComboCheckboxRef, ComboCheckboxProps>(({ disabled, label, items, selectedId, onSelect }, ref) => {
+
     const [open, setOpen] = useState(false);
     const [search, setSearch] = useState("");
 
@@ -45,10 +47,12 @@ const ComboCheckbox = forwardRef<ComboCheckboxRef, ComboCheckboxProps>(({ label,
         <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
                 <Button
+                    aria-readonly={disabled}
                     variant="outline"
                     role="combobox"
                     aria-expanded={open}
-                    className="w-full border-slate-200 h-12 justify-between bg-white shadow-none font-normal text-sm"
+                    disabled={disabled}
+                    className={`w-full border-slate-200 h-12 justify-between  shadow-none font-normal text-sm ${disabled ? "cursor-not-allowed bg-gray-200" : "bg-white"}`}
                 >
                     {selectedItem ? selectedItem.name : `Select ${label}...`}
                     <ChevronsUpDown />
@@ -90,4 +94,4 @@ const ComboCheckbox = forwardRef<ComboCheckboxRef, ComboCheckboxProps>(({ label,
     );
 });
 
-export default ComboCheckbox;
+export default memo(ComboCheckbox);

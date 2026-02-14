@@ -17,6 +17,17 @@ export const getCustomersList = async () => {
         throw error;
     }
 }
+    export const getCustomersLifting = async (id: number) => {
+        try {
+            const response = await HTTP.get(`${API_URL}/${id}`);
+            if (response.data.status) {
+                return response.data.data;
+            }
+            return [];
+        } catch (error) {
+            throw error;
+        }
+    }
 
 export const addCustomer = async (payload: CreateCustomer) => {
     try {

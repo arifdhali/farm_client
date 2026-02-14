@@ -1,4 +1,4 @@
-import { addCash, addCollctions, getCashList, getCollectionList } from "@/api/cash.api"
+import { addCash, addCollections, editCollections, getCashList, getCollectionList, getCollectionSingle } from "@/api/cash.api"
 import { useMutation, useQuery } from "@tanstack/react-query"
 import queryClient from "./client"
 import toast from "react-hot-toast"
@@ -27,9 +27,33 @@ export const useAddCashMutations = () => {
         }
     })
 }
+export const useGetCollectionsListByID = (id: number) => {
+    return useQuery({
+        queryKey: ["payments", id],
+        queryFn: () => getCollectionSingle(id),
+        enabled: !!id
+    })
+}
+
+export const useGetCollectionsUpdateMutations = () => {
+    return useMutation({
+        mutationFn: ({ id, payload }: { id: number; payload: any }) => editCollections({ id, payload }),
+        onSuccess: (data) => {
+            queryClient.invalidateQueries({ queryKey: ["payments"] });
+            toast.success(data?.message)
+        },
+        onError: (err) => {
+            const error: any = err;
+            if (!error.fieldErrors || Object.keys(error.fieldErrors).length <= 0) {
+                toast.error(error.message);
+            }
+        }
+    })
+}
+
 export const useAddCollectionMutations = () => {
     return useMutation({
-        mutationFn: (payload: AddAmount) => addCollctions(payload),
+        mutationFn: (payload: AddAmount) => addCollections(payload),
         onSuccess: (data) => {
             queryClient.invalidateQueries({ queryKey: ["cashList"] });
             toast.success(data?.message)
@@ -44,7 +68,7 @@ export const useAddCollectionMutations = () => {
 }
 
 
-export const useGetCollectionsist = () => {
+export const useGetCollectionsList = () => {
     return useQuery({
         queryKey: ["collections"],
         queryFn: getCollectionList,

@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import queryClient from "./client";
-import { addCustomer, deleteCustomer, getCustomersList } from "@/api/customers.api";
+import { addCustomer, deleteCustomer, getCustomersLifting, getCustomersList } from "@/api/customers.api";
 import toast from "react-hot-toast";
 import type { CreateCustomer } from "@/types/Customers.type";
 
@@ -8,6 +8,14 @@ export const useGetCustomersList = () => {
     return useQuery({
         queryKey: ["customers"],
         queryFn: () => getCustomersList(),
+    })
+}
+
+export const useCutomerLiftingList = (id: number) => {
+    return useQuery({
+        queryKey: ["customers", id],
+        queryFn: () => getCustomersLifting(id),
+        enabled: !!id,
     })
 }
 

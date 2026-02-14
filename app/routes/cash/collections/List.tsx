@@ -4,24 +4,12 @@ import { Edit, IndianRupee, PlusIcon, Trash, TrashIcon } from "lucide-react";
 
 
 import SmallLoading from "@/components/ui/smallLoading";
-import { useGetCollectionsist } from "@/query/Cash.queries";
+import { useGetCollectionsList } from "@/query/Cash.queries";
 import { format } from "date-fns";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogTitle,
-  AlertDialogFooter,
-  AlertDialogHeader,
-} from "@/components/ui/alert-dialog";
-import { useState } from "react";
 const List = () => {
-  const [openAlert, setOpenAlert] = useState<boolean>(false);
 
-  const { data, isLoading } = useGetCollectionsist();
+  const { data, isLoading } = useGetCollectionsList();
 
   return (
     <>
@@ -101,7 +89,7 @@ const List = () => {
 
                           <TableCell className="px-6 py-4 text-sm font-medium capitalize">
 
-                            {collection?.farm_lifting?.batch_id}
+                            {collection?.batch_id ? collection?.batch_id : "NA"}
                           </TableCell>
                           <TableCell className="px-6 py-4 text-sm font-medium capitalize text-center">
 
@@ -132,18 +120,6 @@ const List = () => {
                                 </TooltipTrigger>
                                 <TooltipContent>Edit</TooltipContent>
                               </Tooltip>
-
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <button
-                                    // onClick={() => handleDeleteModal(farm?.id)}
-                                    className="p-1.5 rounded-lg text-red-500 hover:bg-red-100"
-                                  >
-                                    <Trash className="size-5" />
-                                  </button>
-                                </TooltipTrigger>
-                                <TooltipContent>Delete</TooltipContent>
-                              </Tooltip>
                             </div>
                           </TableCell>
 
@@ -168,39 +144,6 @@ const List = () => {
         </div>
       </div >
 
-
-      <AlertDialog open={openAlert} onOpenChange={setOpenAlert}>
-        <AlertDialogContent className="p-8 w-110 border-0 items-center">
-          <div className="mx-auto p-4 w-fit flex items-center justify-center bg-red-600 rounded-full">
-            <TrashIcon className="text-white" />
-          </div>
-          <AlertDialogHeader className="mb-8 mt-4 items-center">
-            <AlertDialogTitle className="text-2xl font-bold text-[#181111] dark:text-white leading-tight">
-              Delete Farmer?
-            </AlertDialogTitle>
-            <AlertDialogDescription className="text-[#896161] text-sm leading-relaxed mt-3 text-center">
-              Are you sure you want to delete{" "}
-              <strong className="font-semibold text-black">
-                {/* {farm && farm.name} */}
-              </strong>
-              ? This action cannot be undone and all associated records will be
-              lost.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter className="grid grid-cols-2 gap-4">
-            <AlertDialogCancel className="flex items-center justify-center rounded-lg h-12 bg-gray-200 dark:bg-[#3a1d1d] text-[#181111] dark:text-white hover:text-white border-0 text-sm font-bold  hover:bg-primary/90 dark:hover:bg-[#4d2727] ">
-              Cancel
-            </AlertDialogCancel>
-            <AlertDialogAction
-              // disabled={deleteMutaion.isPending}
-              // onClick={handleDeleteFarm}
-              className="flex items-center justify-center rounded-lg h-12 bg-red-600 text-white text-sm font-bold hover:bg-primary/90  shadow-lg shadow-primary/20"
-            >
-              {/* {deleteMutaion.isPending ? "Processing" : "Confirm"} */}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </>
   );
 };

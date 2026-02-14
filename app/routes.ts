@@ -35,8 +35,9 @@ export default [
         ...prefix("cash", [
             route("list", "routes/cash/List.tsx"),
             route("add", "routes/cash/Add.tsx"),
-            route("collection", "routes/cash/Collection.tsx"),
-            route("collection/add", "routes/cash/CollectionAdd.tsx"),
+            route("collection", "routes/cash/collections/List.tsx"),
+            route("collection/add", "routes/cash/collections/Add.tsx"),
+            route("collection/:id/edit", "routes/cash/collections/Edit.tsx"),
         ]),
         ...prefix("medicine", [
             route("Add", "routes/medicine/Add.tsx"),
