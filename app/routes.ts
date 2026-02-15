@@ -24,7 +24,7 @@ export default [
         ]),
         ...prefix("farms", [
             route("list", "routes/farms/List.tsx"),
-            route("add", "routes/farms/Add.tsx"),
+            route("add", "routes/farms/AddFarms.tsx"),
             route(":id/edit", "routes/farms/Edit.tsx"),
             route("lifting", "routes/farms/Lifting.tsx"),
             route("lifting/add", "routes/farms/AddLifting.tsx"),
