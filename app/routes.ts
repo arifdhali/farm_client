@@ -55,4 +55,5 @@ export default [
             route("farm", "routes/reports/FarmReport.tsx"),
         ]),
     ])
+    
 ] satisfies RouteConfig;
