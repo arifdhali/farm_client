@@ -8,36 +8,37 @@ import queryClient from "@/query/client"
 import { getMeQuery } from "@/query/Auth.queries"
 
 export async function loader({ request }: { request: Request }) {
-  const cookie = request.headers.get("cookie") ?? undefined;
+    const cookie = request.headers.get("cookie") ?? undefined;
 
-  try {
-    const user = await queryClient.ensureQueryData(getMeQuery(cookie));
+    try {
+        const user = await queryClient.ensureQueryData(getMeQuery(cookie));
+        console.log('admin ', user);
+        // if (!user?.id) throw redirect("/auth/login");
 
-    if (!user?.id) throw redirect("/auth/login");
-
-    return null;
-  } catch {
-    throw redirect("/auth/login");
-  }
+        return null;
+    } catch {
+        console.log('admin error');
+        // throw redirect("/auth/login");
+    }
 }
 
 const AdminLayout = () => {
-  const navigation = useNavigation();
-  const isLoading = navigation.state === "loading";
+    const navigation = useNavigation();
+    const isLoading = navigation.state === "loading";
 
-  return isLoading ? (
-    <Loading />
-  ) : (
-    <SidebarProvider>
-      <MenuSidebar />
-      <SidebarInset>
-        <Header />
-        <div className="p-6">
-          <Outlet />
-        </div>
-      </SidebarInset>
-    </SidebarProvider>
-  );
+    return isLoading ? (
+        <Loading />
+    ) : (
+        <SidebarProvider>
+            <MenuSidebar />
+            <SidebarInset>
+                <Header />
+                <div className="p-6">
+                    <Outlet />
+                </div>
+            </SidebarInset>
+        </SidebarProvider>
+    );
 };
 
 export default AdminLayout;
