@@ -19,6 +19,7 @@ export const useLoginMutation = () => {
         onSuccess: async (e) => {
             await queryClient.invalidateQueries({ queryKey: ["me"] });
             toast.success(e.message);
+            navigate("/",{replace:true})
         },
         onError: (err) => {
             const error: any = err;
