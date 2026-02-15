@@ -3,4 +3,10 @@ export interface LoginRequest {
     password: string;
     remember: boolean;
 }
+export interface ForgotRequest {
+    email: string;
+}
+export interface ConfirmPassword {
+    password: string;
+}
 

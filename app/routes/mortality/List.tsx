@@ -35,84 +35,36 @@ const List = () => {
                     </Link>
                 </div>
             </div>
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div className="bg-white dark:bg-gray-900 p-6 rounded-xl border border-[#dbdee6] dark:border-gray-800 shadow-sm flex flex-col justify-between">
-                    <div>
-                        <p className="text-[#616b89] text-sm font-semibold uppercase tracking-wider mb-2">
-                            Total Mortality (Monthly)
-                        </p>
-                        <div className="flex items-end gap-3">
-                            <h3 className="text-3xl font-black text-primary">
-                                {mortalities?.total_mortality && Number(mortalities?.total_mortality).toLocaleString("en-IN", {
-                                    minimumFractionDigits: 0,
-                                })}
-                            </h3>
-                            <i className="text-green-500 text-sm font-bold pb-1 flex items-center">
-                               Mortality: {mortalities?.percentage?.mortality_percentage}%
-                            </i>
-                        </div>
-                    </div>
-
-                    <div>
-
-                        <img src={'/chicks-dead.gif'} className="mx-auto rounded-2xl mt-3" />
-                    </div>
-                    <div className="pt-6  dark:border-gray-800">
-                        <div className="flex justify-between items-center text-sm mb-2">
-                            <span className="text-gray-500">Survival Rate</span>
-                            <span className="font-bold text-primary">98.4%</span>
-                        </div>
-                        <div className="w-full bg-gray-100 dark:bg-gray-800 h-2 rounded-full overflow-hidden">
-                            <div
-                                className={`bg-primary transition-all duration-500 h-full w-[${mortalities?.percentage?.survival_percentage}%]`}
-                            ></div>
-                        </div>
+            <div className="bg-white dark:bg-gray-900 p-6 rounded-xl border border-[#dbdee6] dark:border-gray-800 shadow-sm flex flex-col justify-between">
+                <div>
+                    <p className="text-[#616b89] text-sm font-semibold uppercase tracking-wider mb-2">
+                        Total Mortality (Monthly)
+                    </p>
+                    <div className="flex items-end gap-3">
+                        <h3 className="text-3xl font-black text-primary">
+                            {mortalities?.total_mortality && Number(mortalities?.total_mortality).toLocaleString("en-IN", {
+                                minimumFractionDigits: 0,
+                            })}
+                        </h3>
+                        <i className="text-green-500 text-sm font-bold pb-1 flex items-center">
+                            Mortality: {mortalities?.percentage?.mortality_percentage}%
+                        </i>
                     </div>
                 </div>
-                <div className="lg:col-span-2 bg-white dark:bg-gray-900 p-6 rounded-xl border border-[#dbdee6] dark:border-gray-800 shadow-sm">
-                    <h4 className="font-bold text-lg  mb-6">
-                        Mortality Rate (Last 30 Days)
-                    </h4>
-                    <div className="h-48 w-full relative">
-                        <div className="absolute inset-0 flex items-end justify-between px-2">
-                            <div className="w-[3%] bg-primary/20 rounded-t-sm h-[20%]"></div>
-                            <div className="w-[3%] bg-primary/20 rounded-t-sm h-[25%]"></div>
-                            <div className="w-[3%] bg-primary/20 rounded-t-sm h-[30%]"></div>
-                            <div className="w-[3%] bg-primary/60 rounded-t-sm h-[45%]"></div>
-                            <div className="w-[3%] bg-primary rounded-t-sm h-[80%]"></div>
-                            <div className="w-[3%] bg-primary/40 rounded-t-sm h-[50%]"></div>
-                            <div className="w-[3%] bg-primary/20 rounded-t-sm h-[30%]"></div>
-                            <div className="w-[3%] bg-primary/20 rounded-t-sm h-[25%]"></div>
-                            <div className="w-[3%] bg-primary/20 rounded-t-sm h-[20%]"></div>
-                            <div className="w-[3%] bg-primary/20 rounded-t-sm h-[15%]"></div>
-                            <div className="w-[3%] bg-primary/20 rounded-t-sm h-[22%]"></div>
-                            <div className="w-[3%] bg-primary/20 rounded-t-sm h-[28%]"></div>
-                            <div className="w-[3%] bg-primary/20 rounded-t-sm h-[35%]"></div>
-                            <div className="w-[3%] bg-primary/20 rounded-t-sm h-[40%]"></div>
-                            <div className="w-[3%] bg-primary/20 rounded-t-sm h-[38%]"></div>
-                            <div className="w-[3%] bg-primary/20 rounded-t-sm h-[30%]"></div>
-                            <div className="w-[3%] bg-primary/20 rounded-t-sm h-[25%]"></div>
-                            <div className="w-[3%] bg-primary/20 rounded-t-sm h-[20%]"></div>
-                            <div className="w-[3%] bg-primary/20 rounded-t-sm h-[18%]"></div>
-                            <div className="w-[3%] bg-primary/20 rounded-t-sm h-[25%]"></div>
-                        </div>
-                        <svg
-                            className="absolute inset-0 w-full h-full"
-                            preserveAspectRatio="none"
-                        >
-                            <path
-                                d="M 0 150 Q 50 140, 100 130 T 200 100 T 300 40 T 400 90 T 500 120 T 600 130 T 700 145"
-                                fill="none"
-                                stroke="#2b5bee"
-                                strokeWidth="3"
-                            ></path>
-                        </svg>
+
+                <div>
+
+                    <img src={'/chicks-dead.gif'} className="mx-auto rounded-2xl mt-3" />
+                </div>
+                <div className="pt-6  dark:border-gray-800">
+                    <div className="flex justify-between items-center text-sm mb-2">
+                        <span className="text-gray-500">Survival Rate</span>
+                        <span className="font-bold text-primary">98.4%</span>
                     </div>
-                    <div className="flex justify-between mt-4 text-[10px] text-gray-400 font-bold uppercase tracking-widest px-2">
-                        <span>Oct 01</span>
-                        <span>Oct 10</span>
-                        <span>Oct 20</span>
-                        <span>Oct 30</span>
+                    <div className="w-full bg-gray-100 dark:bg-gray-800 h-2 rounded-full overflow-hidden">
+                        <div
+                            className={`bg-primary transition-all duration-500 h-full w-[${mortalities?.percentage?.survival_percentage}%]`}
+                        ></div>
                     </div>
                 </div>
             </div>

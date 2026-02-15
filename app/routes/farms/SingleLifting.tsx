@@ -5,7 +5,7 @@ import { getMeQuery } from "@/query/Auth.queries";
 import { useSingleLiftingQuery } from "@/query/Farm.queries";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
-import { CalendarRange, DollarSignIcon, IndianRupee, IndianRupeeIcon, LucideBriefcaseMedical, LucideInbox, LucideRabbit, LucideWeight, LucideWheat, Shield, ShieldCheck } from "lucide-react";
+import { CalendarRange, DollarSignIcon, IndianRupee, IndianRupeeIcon, LucideBriefcaseMedical, LucideInbox, LucidePercent, LucideRabbit, LucideRatio, LucideWeight, LucideWheat, Shield, ShieldCheck } from "lucide-react";
 import { useParams, useSearchParams } from "react-router";
 
 const SingleLifting = () => {
@@ -177,7 +177,7 @@ const SingleLifting = () => {
                                 <div className="bg-primary/5 dark:bg-primary/20 border border-primary/20 p-5 rounded-xl">
                                     <div className="flex items-center gap-2 mb-2">
                                         <LucideInbox className="text-primary text-sm" />
-                                        <p className="text-[10px] font-bold text-primary uppercase">Total chicks</p>
+                                        <p className="text-[10px] font-bold text-primary uppercase">Lifting chicks</p>
                                     </div>
                                     <div className="flex items-baseline gap-1 text-primary">
                                         <span className="text-2xl font-black">{view?.total?.total_chicks_quantity}</span>
@@ -187,31 +187,69 @@ const SingleLifting = () => {
                                 <div className="bg-amber-100/20  dark:bg-primary/20 border border-primary/20 p-5 rounded-xl">
                                     <div className="flex items-center gap-2 mb-2">
                                         <LucideInbox className="text-amber text-sm" />
-                                        <p className="text-[10px] font-bold text-amber uppercase">Total chicks weight</p>
+                                        <p className="text-[10px] font-bold text-amber uppercase">Lifting chicks weight</p>
                                     </div>
                                     <div className="flex items-baseline gap-1 text-amber">
                                         <span className="text-2xl font-black">{view?.total?.total_chicks_weight}</span>
                                         <span className="text-[10px] font-medium text-amber">kg</span>
                                     </div>
                                 </div>
-                                <div className="bg-primary text-white border border-primary p-5 rounded-xl shadow-lg shadow-primary/20">
+                                <div className="bg-amber-100/20  dark:bg-primary/20 border border-primary/20 p-5 rounded-xl">
                                     <div className="flex items-center gap-2 mb-2">
-                                        <LucideWeight className="text-white text-sm" />
-                                        <p className="text-[10px] font-bold uppercase opacity-80">Total Feed Weight</p>
+                                        <LucideInbox className="text-amber text-sm" />
+                                        <p className="text-[10px] font-bold text-amber uppercase">Total Given Chicks</p>
                                     </div>
-                                    <div className="flex items-baseline gap-1">
-                                        <span className="text-2xl font-black">{view?.total?.total_feed_weights}</span>
-                                        <span className="text-[10px] font-medium opacity-80">kg</span>
+                                    <div className="flex items-center gap-1 text-amber">
+                                        <span className="text-[10px] font-medium text-amber">Qty</span>
+                                        <span className="text-2xl font-black">{view?.total?.total_delivered_chicks}</span>
+                                    </div>
+                                    <div className="flex items-center gap-1 text-amber">
+                                        <span className="text-[10px] font-medium text-amber"><IndianRupee size={16} /></span>
+                                        <span className="text-2xl font-black">{Number(view?.total?.total_chicks_price).toLocaleString("en-IN")}</span>
+                                    </div>
+                                </div>
+                                <div className="bg-primary/5 dark:bg-primary/20 border border-primary/20 p-5 rounded-xl">
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <LucideWeight className="text-primary text-sm" />
+                                        <p className="text-[10px] font-bold text-primary uppercase opacity-80">Total Feed Weight</p>
+                                    </div>
+                                    <div className="flex items-center gap-1">
+                                        <span className="text-[10px] font-medium text-primary">kg</span>
+                                        <span className="text-2xl font-black ">{view?.total?.total_feed_weights}</span>
+                                    </div>
+                                    <div className="flex items-center gap-1">
+                                        <span className="text-[10px] font-medium text-primary"><IndianRupee size={16} /></span>
+                                        <span className="text-2xl font-black">{Number(view?.total?.feed_price_total).toLocaleString("en-IN")}</span>
                                     </div>
                                 </div>
                                 <div className="bg-[#f8fafa] dark:bg-[#203033] border text-primary border-[#dce3e5] dark:border-[#3a4a4d] p-5 rounded-xl">
                                     <div className="flex items-center gap-2 mb-2">
-                                        <LucideWeight className="text-primary-500 text-sm" />
+                                        <LucideRatio className="text-primary-500 text-sm" />
                                         <p className="text-[10px] font-bold uppercase opacity-80">FCR (Feed Conv. Ratio)</p>
                                     </div>
                                     <div className="flex items-baseline gap-1">
                                         <span className="text-2xl font-black">{view?.fcr}</span>
                                         <span className="text-[12px] font-medium opacity-80">Ratio</span>
+                                    </div>
+                                </div>
+                                <div className="bg-[#f8fafa] dark:bg-[#203033] border text-primary border-[#dce3e5] dark:border-[#3a4a4d] p-5 rounded-xl">
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <LucidePercent className="text-primary-500 text-sm" />
+                                        <p className="text-[10px] font-bold uppercase opacity-80">Chicks Average </p>
+                                    </div>
+                                    <div className="flex items-baseline gap-1">
+                                        <span className="text-2xl font-black">{view?.avg}</span>
+                                        <span className="text-[12px] font-medium opacity-80">KG</span>
+                                    </div>
+                                </div>
+                                <div className="bg-[#f8fafa] dark:bg-[#203033] border text-primary border-[#dce3e5] dark:border-[#3a4a4d] p-5 rounded-xl">
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <LucideWeight className="text-primary-500 text-sm" />
+                                        <p className="text-[10px] font-bold uppercase opacity-80">Total Cost </p>
+                                    </div>
+                                    <div className="flex items-baseline gap-1">
+                                        <span className="text-2xl font-black">{view?.per_chicks}</span>
+                                        <span className="text-[12px] font-medium opacity-80">avg</span>
                                     </div>
                                 </div>
                             </div>

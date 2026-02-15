@@ -3,6 +3,8 @@ import { type RouteConfig, index, layout, prefix, route } from "@react-router/de
 export default [
 
 
+    route("/reset-password", "auth/ResetPassword.tsx"),
+
     layout("components/layout/AuthLayout.tsx", [
         route("auth/login", "auth/Login.tsx"),
     ]
@@ -48,6 +50,9 @@ export default [
         ...prefix("mortality", [
             route("list", "routes/mortality/List.tsx"),
             route("add", "routes/mortality/Add.tsx"),
+        ]),
+        ...prefix("report", [
+            route("farm", "routes/reports/FarmReport.tsx"),
         ]),
     ])
 ] satisfies RouteConfig;

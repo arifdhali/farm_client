@@ -89,7 +89,12 @@ const menuItems = [
       { title: "Delivered", url: "/medicine/delivery" },
     ],
   },
-  { title: "Reports", icon: NotebookIcon, url: "/reports" },
+  {
+    title: "Reports", icon: NotebookIcon, url: "/reports",
+    children: [
+      { title: "Farm", url: "/report/farm" },
+    ],
+  },
   {
     title: "Mortality", icon: PenLineIcon, url: "/mortality",
     children: [
@@ -127,7 +132,7 @@ export default function MenuSidebar() {
         <div className="flex items-center gap-3">
           <div className="bg-primary text-white rounded-lg p-2">🌱</div>
           <div>
-            <h1 className="text-sm font-bold">SohanaChicken</h1>
+            <h1 className="text-sm font-bold">{import.meta.env.VITE_APP_NAME}</h1>
             <p className="text-[12px] text-muted-foreground">
               Manage your business
             </p>

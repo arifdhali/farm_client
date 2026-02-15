@@ -1,4 +1,4 @@
-import { getMe, Login, logout } from "@/api/auth.api";
+import { ForgotPassword, getMe, Login, logout, ResetPassword } from "@/api/auth.api";
 import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router";
@@ -19,7 +19,38 @@ export const useLoginMutation = () => {
         onSuccess: async (e) => {
             await queryClient.invalidateQueries({ queryKey: ["me"] });
             toast.success(e.message);
-            navigate("/", { replace: true });
+        },
+        onError: (err) => {
+            const error: any = err;
+            if (!error.fieldErrors || Object.keys(error.fieldErrors).length <= 0) {
+                toast.error(error.message);
+            }
+        }
+    })
+}
+export const useResetPasswordMutation = () => {
+
+    return useMutation({
+        mutationFn: ResetPassword,
+        onSuccess: async (data) => {
+            await queryClient.invalidateQueries({ queryKey: ["reset-password"] });
+            toast.success(data.message)
+        },
+        onError: (err) => {
+            const error: any = err;
+            if (!error.fieldErrors || Object.keys(error.fieldErrors).length <= 0) {
+                toast.error(error.message);
+            }
+        }
+    })
+}
+export const useForgotPasswordMutation = () => {
+
+    return useMutation({
+        mutationFn: ForgotPassword,
+        onSuccess: async (data) => {
+            await queryClient.invalidateQueries({ queryKey: ["forgot-password"] });
+            toast.success(data.message)
         },
         onError: (err) => {
             const error: any = err;

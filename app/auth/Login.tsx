@@ -5,24 +5,26 @@ import { ArrowLeftIcon } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import * as Yup from "yup";
 import { useFormik } from "formik";
-import { useLoginMutation } from "@/query/Auth.queries";
+import { useForgotPasswordMutation, useLoginMutation } from "@/query/Auth.queries";
+import { useNavigate } from "react-router";
 
 const LoginSchema = Yup.object({
   email: Yup.string().email("Invalid email").required("Email is required"),
   password: Yup.string().required("Password is required"),
 });
 
-const Login = () => {
 
+const Login = () => {
+  const navigate = useNavigate();
   const inputRef = useRef<Record<string, HTMLInputElement | null>>({});
   const [showPassword, setShowPassword] = useState(false);
   const [step, setStep] = useState(0);
   const loginMutation = useLoginMutation();
+  const forgotMutation = useForgotPasswordMutation();
 
 
-  const handleSubmit = () => {
-    loginMutation.mutate(loginFormik.values);
-  };
+
+
   let loginFormik = useFormik({
     initialValues: {
       email: "",
@@ -32,7 +34,13 @@ const Login = () => {
     validationSchema: LoginSchema,
     validateOnBlur: false,
     validateOnChange: false,
-    onSubmit: handleSubmit,
+    onSubmit: (values) => {
+      loginMutation.mutate(values, {
+        onSuccess: () => {
+          navigate("/", { replace: true });
+        }
+      });
+    },
   })
 
   useEffect(() => {
@@ -58,10 +66,16 @@ const Login = () => {
       email: Yup.string().email("Invalid email").required("Email is required"),
     }),
     onSubmit: (values) => {
-      console.log("Reset password data:", values);
 
+      forgotMutation.mutate(values, {
+        onSuccess: () => {
+          setStep(0);
+          resetPasswordFormik.resetForm();
+        }
+      });
     },
   })
+
 
 
 
@@ -106,7 +120,7 @@ const Login = () => {
                   ref={(el) => { el && (inputRef.current["email"] = el) }}
                   type="email"
                   name="email"
-                  autoComplete="email"
+                  autoComplete="off"
                   value={loginFormik.values.email}
                   onChange={loginFormik.handleChange}
                   placeholder="admin@poultryfarm.com"
@@ -127,7 +141,7 @@ const Login = () => {
                     ref={(el) => { el && (inputRef.current["password"] = el) }}
                     type={showPassword ? "text" : "password"}
                     name="password"
-                    autoComplete="current-password"
+                    autoComplete="off"
                     value={loginFormik.values.password}
                     onChange={loginFormik.handleChange}
                     placeholder="••••••••"
@@ -173,7 +187,7 @@ const Login = () => {
                 {loginMutation.isPending ? "Logging in..." : "Log In"}
               </Button>
             </form>
-            <form onSubmit={handleSubmit} className="space-y-5 min-w-full" >
+            <form onSubmit={resetPasswordFormik.handleSubmit} className="space-y-5 min-w-full" >
               {/* Email */}
               <div>
                 <label className="block text-sm text-gray-500 mb-1">
@@ -182,22 +196,26 @@ const Login = () => {
                 <input
                   type="email"
                   name="email"
-                  autoComplete="email"
-                  required
+                  autoComplete="off"
                   value={resetPasswordFormik.values.email}
                   onChange={resetPasswordFormik.handleChange}
-                  placeholder="admin@poultryfarm.com"
                   className="w-full rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-4 py-3 text-base"
                 />
+
+                {resetPasswordFormik.touched.email && resetPasswordFormik.errors.email ? (
+                  <span className="text-red-500 text-sm">{resetPasswordFormik.errors.email}</span>
+                ) : null}
               </div>
 
-              {/* Submit */}
-              <button
+
+              <Button
+                disabled={forgotMutation.isPending}
+                spinner={forgotMutation.isPending}
                 type="submit"
-                className="cursor-pointer w-full bg-primary text-white font-bold py-3 rounded-lg hover:bg-primary/80"
+                className="cursor-pointer h-11 w-full bg-primary text-white font-bold py-3 rounded-md hover:bg-primary/80"
               >
                 Reset Password
-              </button>
+              </Button>
               <Button onClick={() => setStep(0)} className="h-fit w-full text-center text-sm bg-transparent hover:bg-transparent font-semibold text-primary  cursor-pointer hover:text-primary/80">
                 <ArrowLeftIcon /> Back to Login
               </Button>

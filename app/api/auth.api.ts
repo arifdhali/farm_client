@@ -1,8 +1,8 @@
 import HTTP from "@/api/client";
-import type { LoginRequest } from "@/types/Auth.type";
+import type { ConfirmPassword, ForgotRequest, LoginRequest } from "@/types/Auth.type";
 import type { AxiosError } from "axios";
 import type { BackendError } from "@/types/AxiosErrors.type";
-import axios from "axios";
+
 
 
 export const getMe = async (cookies?: string) => {
@@ -17,7 +17,6 @@ export const getMe = async (cookies?: string) => {
         throw error;
     }
 };
-
 export const Login = async (payload: LoginRequest) => {
     try {
         let response = await HTTP.post("/auth/login", payload);
@@ -40,7 +39,48 @@ export const Login = async (payload: LoginRequest) => {
         };
     }
 }
+export const ForgotPassword = async (payload: ForgotRequest) => {
+    try {
+        let response = await HTTP.post("/auth/forgot-password", payload);
+        console.log(response);
+        return response.data;
+    } catch (err) {
+        const error = err as AxiosError<BackendError>;
+        throw {
+            message:
+                error.response?.data?.message ||
+                "Something went wrong",
+            fieldErrors: error.response?.data?.errors?.reduce(
+                (acc: Record<string, string>, curr) => {
+                    acc[curr.field] = curr.message;
+                    return acc;
+                },
+                {}
+            ) ?? {},
+            status: error.response?.data?.status,
+            statusCode: error.response?.status,
+        };
+    }
+}
+export const ResetPassword = async ({ password, token }: { password: string; token: string }) => {
 
+    try {
+        let response = await HTTP.post("/auth/reset-password", { password, token });
+        return response.data;
+    } catch (err) {
+        const error = err as AxiosError<BackendError>;
+        throw {
+            message: error.response?.data?.message || "Something went wrong",
+            fieldErrors: error.response?.data?.errors?.reduce((acc: Record<string, string>, curr) => {
+                acc[curr.field] = curr.message;
+                return acc;
+            }, {}
+            ) ?? {},
+            status: error.response?.data?.status,
+            statusCode: error.response?.status,
+        };
+    }
+}
 export const logout = async () => {
     await HTTP.post("/auth/logout");
 };

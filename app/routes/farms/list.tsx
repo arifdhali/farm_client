@@ -96,7 +96,6 @@ const List = () => {
           <HeaderFilter setValue={setFilter} hide={hideFilter} />
           <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
             <div className="overflow-x-auto @container">
-              <div className="overflow-x-auto @container">
                 <Table className="w-full">
                   <TableHeader>
                     <TableRow className="bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800">
@@ -233,7 +232,6 @@ const List = () => {
                     )}
                   </TableBody>
                 </Table>
-              </div>
             </div>
 
             {
