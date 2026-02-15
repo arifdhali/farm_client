@@ -10,7 +10,7 @@ import * as yup from "yup";
 import { format } from "date-fns";
 import type { ComboCheckboxRef } from "@/components/ui/ComboCheckbox";
 import ComboCheckbox from "@/components/ui/ComboCheckbox";
-import { useAddMoratlityMutations } from "@/query/mortality.queries";
+import { useAddMoratlityMutations } from "@/query/Mortality.queries";
 
 const mortalitySchema = yup.object().shape({
   farm_id: yup.number().typeError("Farm must be a number").required("Farm is required"),

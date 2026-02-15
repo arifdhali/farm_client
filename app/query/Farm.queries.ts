@@ -24,7 +24,7 @@ export const useCreateFarmerMutation = () => {
     })
 }
 
-export const useGetFarmersList = (filter: any) => {
+export const useGetFarmersList = (filter?: any) => {
     return useQuery({
         queryKey: ["farmers", filter],
         queryFn: () => getFarmersList(filter),
