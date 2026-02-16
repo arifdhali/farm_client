@@ -46,7 +46,9 @@ const FarmReport = () => {
                 <div className="p-5 border border-gray-300 bg-white rounded-lg">
                     <p className="text-slate-600 text-xs font-semibold uppercase tracking-wider mb-1">Avg. Feed Used</p>
                     <div className="flex items-end justify-between">
-                        <h3 className="text-2xl font-bold text-text-charcoal dark:text-white">{data?.total_data?.avg_feed_used} </h3>
+                        <h3 className="text-2xl font-bold text-text-charcoal dark:text-white">{Number(data?.total_data?.avg_feed_used).toLocaleString("en-IN", {
+                            maximumFractionDigits: 2,
+                        })} </h3>
                         <span className="text-emerald-600 text-xs font-bold mb-1 flex items-center">
                             kg
                         </span>
