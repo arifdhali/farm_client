@@ -15,8 +15,9 @@ export async function loader({ request }: { request: Request }) {
         if (!user?.id) return redirect("/auth/login");
         return null;
     } catch (error) {
+        console.log("its admin layout error")
         if (error instanceof Response) throw error;
-        return redirect("/auth/login");
+        throw redirect("/auth/login");
     }
 }
 

@@ -11,10 +11,12 @@ export async function loader({ request }: { request: Request }) {
     try {
         let user = await queryClient.ensureQueryData(getMeQuery(cookie));
         if (user?.id) {
-            return redirect("/");
+            throw redirect("/");
         }
         return null;
     } catch (error) {
+        console.log("its Authlaout layout error")
+
         if (error instanceof Response) throw error;
         return null;
     }
