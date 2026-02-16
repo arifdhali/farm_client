@@ -9,7 +9,7 @@ export const getMeQuery = (cookies?: string | undefined) => ({
     queryKey: ["me"],
     queryFn: () => getMe(cookies),
     retry: false,
-    staleTime: 5 * 60 * 1000,
+    staleTime: 0,
 })
 
 export const useLoginMutation = () => {
@@ -19,7 +19,6 @@ export const useLoginMutation = () => {
         onSuccess: async (e) => {
             await queryClient.invalidateQueries({ queryKey: ["me"] });
             toast.success(e.message);
-            navigate("/",{replace:true})
         },
         onError: (err) => {
             const error: any = err;

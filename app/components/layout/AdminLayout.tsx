@@ -12,13 +12,11 @@ export async function loader({ request }: { request: Request }) {
 
     try {
         const user = await queryClient.ensureQueryData(getMeQuery(cookie));
-        console.log('admin ', user);
-        // if (!user?.id) throw redirect("/auth/login");
-
+        if (!user?.id) return redirect("/auth/login");
         return null;
-    } catch {
-        console.log('admin error');
-        // throw redirect("/auth/login");
+    } catch (error) {
+        if (error instanceof Response) throw error;
+        return redirect("/auth/login");
     }
 }
 
