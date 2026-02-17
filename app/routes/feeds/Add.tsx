@@ -1,9 +1,11 @@
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { useAddMutations } from "@/query/Feed.queries";
 import type { addFeed } from "@/types/Feed.type";
+import { format } from "date-fns";
 import { useFormik } from "formik";
 import { ArrowLeftIcon, Check, ChevronsUpDown } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -12,7 +14,7 @@ import * as yup from "yup";
 
 
 const addFeedSchema = yup.object().shape({
-  name: yup.string().required("Name is required"),
+  delivery_date: yup.date().required("Delivery date is required"),
   feed_type: yup.string()
     .required("Type is required"),
   quantity: yup.number().typeError("Quantity must be a number")
@@ -27,11 +29,13 @@ const Add = () => {
   const addFeedMutation = useAddMutations();
   const inputRef = useRef<Record<string, HTMLInputElement | HTMLTextAreaElement | null>>({});
 
-  const [open, setOpen] = useState<boolean>(false);
-
+  const [open, setOpen] = useState<any>({
+    select_feed: false,
+    select_date: false,
+  });
   const addFeedFormik = useFormik<addFeed>({
     initialValues: {
-      name: "",
+      delivery_date: new Date(),
       feed_type: "",
       weight: 0,
       rate: 40,
@@ -96,9 +100,13 @@ const Add = () => {
               <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
                 Feed Type <span className="font-normal text-sm text-zinc-500">(small, large, medium)</span>
               </label>
-              <Popover open={open} onOpenChange={setOpen}>
+              <Popover open={open.select_feed} onOpenChange={(value) =>
+                setOpen((prev: any) => ({
+                  ...prev,
+                  select_feed: value,
+                }))}>
                 <PopoverTrigger asChild>
-                  <Button variant="outline" role="combobox" aria-expanded={open}
+                  <Button variant="outline" role="combobox" aria-expanded={open.select_feed}
                     className="w-full border-slate-200 h-12 justify-between bg-white shadow-none capitalize"
                   >
                     {addFeedFormik.values.feed_type
@@ -120,7 +128,9 @@ const Add = () => {
                               value={String(type)}
                               onSelect={(currentValue) => {
                                 addFeedFormik.setFieldValue("feed_type", currentValue)
-                                setOpen(false)
+                                setOpen({
+                                  select_feed: false
+                                })
                               }}
                             >
                               {type}
@@ -146,23 +156,43 @@ const Add = () => {
             </div>
             <div className="flex flex-col col-span-2 md:col-span-1">
               <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
-                Name
+                Select Date
               </label>
-              <input
-                className="w-full h-12 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-4 py-3 text-base"
-                placeholder="Feed name"
-                type="text"
-                name="name"
-                ref={(el) => {
-                  el && (inputRef.current["name"] = el);
-                }}
-                onChange={addFeedFormik.handleChange}
-                onBlur={addFeedFormik.handleBlur}
-                value={addFeedFormik.values.name}
-              />
-              {addFeedFormik.touched.name && addFeedFormik.errors.name ? (
+
+              <Popover open={open.select_date} onOpenChange={(value) =>
+                setOpen((prev: any) => ({
+                  ...prev,
+                  select_date: value,
+                }))}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={`w-full h-12 rounded-lg border border-zinc-200 dark:border-zinc-700 shadow-none justify-start font-normal bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-4 py-3 text-base`}
+                  >
+                    {addFeedFormik.values.delivery_date
+                      ? format(addFeedFormik.values.delivery_date, "dd/MM/yyyy")
+                      : "Select date"}
+                  </Button>
+                </PopoverTrigger >
+                <PopoverContent className="w-full rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 p-0 text-base" align="start">
+                  <Calendar
+                    className="w-75"
+                    mode="single"
+                    buttonVariant="outline"
+                    selected={addFeedFormik.values.delivery_date}
+                    onSelect={(date) => {
+                      if (!date) return;
+                      setOpen({
+                        select_date: false
+                      });
+                      addFeedFormik.setFieldValue("delivery_date", date)
+                    }}
+                  />
+                </PopoverContent>
+              </Popover>
+              {addFeedFormik.touched.delivery_date && addFeedFormik.errors.delivery_date ? (
                 <span className="text-red-500 text-sm">
-                  {addFeedFormik.errors.name}
+                  {addFeedFormik.errors.delivery_date}
                 </span>
               ) : null}
             </div>

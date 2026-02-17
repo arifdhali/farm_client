@@ -1,10 +1,11 @@
 interface FeedFormValues {
-    name: string;
+    name?: string;
     quantity: number;
     feed_type: string,
 }
 
 export interface addFeed extends FeedFormValues {
+    delivery_date: Date | string;
     weight: number;
     rate: number;
 }

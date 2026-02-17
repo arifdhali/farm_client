@@ -330,7 +330,7 @@ const Lifting = () => {
                                         {makeComplete?.available_chicks} chicks
                                     </strong>{" "}
                                     remaining.
-                                    <br />
+
                                     Please lift all chicks before marking it as complete.
                                 </>
                             ) : (
@@ -340,7 +340,7 @@ const Lifting = () => {
                                         {makeComplete?.name}
                                     </strong>{" "}
                                     as complete?
-                                    <br />
+                                
                                     This action cannot be undone.
                                 </>
                             )}

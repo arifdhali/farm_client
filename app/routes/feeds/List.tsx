@@ -13,6 +13,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { useDeleteFeedMutation, useGetFeedListQuery } from "@/query/Feed.queries";
 import SmallLoading from "@/components/ui/smallLoading";
 import type { totalFeed } from "@/types/Feed.type";
+import { format } from "date-fns";
 
 const List = () => {
   const [openAlert, setOpenAlert] = useState<boolean>(false);
@@ -67,11 +68,12 @@ const List = () => {
                 <TableHeader>
                   <TableRow className="bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800">
                     <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider">
-                      Feed Type
+                      Date
                     </TableHead>
                     <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider">
-                      Feed name
+                      Feed Type
                     </TableHead>
+
                     <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-center   min-w-50">
                       Quantity
                     </TableHead>
@@ -103,6 +105,11 @@ const List = () => {
                     !isLoading && feedslist?.feeds?.length > 0 && (
                       feedslist?.feeds.map((feed: any) => (
                         <TableRow key={feed.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors group">
+
+
+                          <TableCell className="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">
+                            {format(new Date(feed?.delivery_date), "dd/MM/yyyy")}
+                          </TableCell>
                           <TableCell className="px-6 py-4">
                             <div className="flex gap-2 items-center ">
 
@@ -111,9 +118,6 @@ const List = () => {
                             </div>
                           </TableCell>
 
-                          <TableCell className="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">
-                            {feed?.name}
-                          </TableCell>
 
                           <TableCell className="px-6 py-4 text-center">
                             {/* <div className="space-y-1.5">

@@ -15,10 +15,7 @@ import { useChickDeliveryMutation } from "@/query/Chicks.queries";
 import ComboCheckbox from "@/components/ui/ComboCheckbox";
 
 const chicksDeliverySchema = yup.object().shape({
-  delivery_date: yup.date().required("Delivery date is required").min(
-    new Date(new Date().setHours(0, 0, 0, 0)),
-    "Delivery date cannot be in the past"
-  ),
+  delivery_date: yup.date().required("Delivery date is required"),
   farm_id: yup.number().typeError("Farm must be a number").required("Farm is required"),
   quantity: yup.number().typeError("Quantity must be a number")
     .required("Quantity is required").positive("Quantity must be a positive number"),
@@ -111,11 +108,6 @@ const Delivery = () => {
                   </span>
                 ) : null}
               </div>
-              {deliveryForm.touched.farm_id && deliveryForm.errors.farm_id ? (
-                <span className="text-red-500 text-sm">
-                  {deliveryForm.errors.farm_id}
-                </span>
-              ) : null}
             </div>
 
             <div className="flex flex-col col-span-2 md:col-span-1">
@@ -144,7 +136,6 @@ const Delivery = () => {
                     mode="single"
                     buttonVariant="outline"
                     selected={deliveryForm.values.delivery_date}
-                    disabled={{ before: new Date() }}
                     onSelect={(date) => {
                       if (!date) return;
                       setOpen({
