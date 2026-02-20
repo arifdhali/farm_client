@@ -1,6 +1,6 @@
 import { Link } from "react-router";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from "@/components/ui/table";
-import { PlusIcon } from "lucide-react";
+import { IndianRupee, PlusIcon } from "lucide-react";
 
 
 import SmallLoading from "@/components/ui/smallLoading";
@@ -15,7 +15,7 @@ const List = () => {
     page: 1,
   });
   const { data, isLoading } = useGetCashList();
-  const hideFilter = useMemo(() => ({ from: false, to: false }), []);
+  const hideFilter = useMemo(() => ({ from: false, to: false, input: true }), []);
   // const handlePaginationChange = useCallback((newpage: number) => setFilter((prev) => ({ ...prev, page: newpage })), [])
 
   return (
@@ -106,6 +106,25 @@ const List = () => {
                       </TableCell>
                     </TableRow>
                   )}
+                  <TableRow
+                    className="bg-blue-50/80 dark:hover:bg-slate-800/50 transition-colors"
+                  >
+                    <TableCell className="px-6 py-4 font-bold text-base">
+                      Total Amount
+                    </TableCell>
+                    <TableCell className="px-6 py-4 font-bold">
+
+                    </TableCell>
+
+
+                    <TableCell className="px-6 py-4 font-bold text-emerald-600">
+                      <div className="flex items-center">
+                        <IndianRupee className="mt-[2px]" size={15} />
+                        {Number(data?.current_month_expenses).toLocaleString("en-IN")}
+                      </div>
+                    </TableCell>
+
+                  </TableRow>
                 </TableBody>
               </Table>
             </div>

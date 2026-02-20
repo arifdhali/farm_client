@@ -21,7 +21,7 @@ import { ChevronDown, Search } from "lucide-react";
 import { format } from "date-fns";
 
 const HeaderFilter = ({ setValue, hide }: { setValue: any, hide: any }) => {
-  const { to = false, from = false } = hide;
+  const { to = false, from = false, input = false } = hide;
   const [fromDate, setFromDate] = useState<Date | undefined>();
   const [toDate, setToDate] = useState<Date | undefined>();
   const [openFrom, setOpenFrom] = useState(false);
@@ -32,16 +32,20 @@ const HeaderFilter = ({ setValue, hide }: { setValue: any, hide: any }) => {
       <div className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 flex gap-4 items-center">
 
         {/* Search */}
-        <div className="relative flex-1 ">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4  text-slate-400" />
-          <Input
-            onChange={(v) =>
-              setValue((prev: any) => ({ ...prev, search: v.target.value }))
-            }
-            placeholder="Search by name.."
-            className="pl-11 h-11 shadow-none w-full"
-          />
-        </div>
+        {
+          !input && (
+            < div className="relative flex-1 ">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4  text-slate-400" />
+              <Input
+                onChange={(v) =>
+                  setValue((prev: any) => ({ ...prev, search: v.target.value }))
+                }
+                placeholder="Search by name.."
+                className="pl-11 h-11 shadow-none w-full"
+              />
+            </div>
+          )
+        }
 
         <div className="flex-1">
           <div className="flex items-center gap-3">
@@ -127,7 +131,7 @@ const HeaderFilter = ({ setValue, hide }: { setValue: any, hide: any }) => {
 
           </div>
         </div>
-      </div>
+      </div >
 
     </>
   );

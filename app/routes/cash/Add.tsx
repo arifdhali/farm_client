@@ -12,12 +12,9 @@ import { useAddCashMutations } from "@/query/Cash.queries";
 
 
 const addExpensesSchema = yup.object().shape({
-  date: yup.date().required("Date is required").min(
-    new Date(new Date().setHours(0, 0, 0, 0)),
-    "Delivery date cannot be in the past"
-  ),
+  date: yup.date().required("Date is required"),
   expenses_type: yup.string().trim().required("Expenses type is required"),
-  amount: yup.number().typeError("Amount must be a number")
+  amount: yup.number()
     .required("Amount is required").positive("Amount must be a positive number"),
 
 });
@@ -99,7 +96,6 @@ const Add = () => {
                     className="w-75"
                     mode="single"
                     buttonVariant="outline"
-                    disabled={{ before: new Date() }}
                     onSelect={(date) => {
                       if (!date) return;
                       setOpenDate(false);
