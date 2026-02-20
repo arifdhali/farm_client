@@ -57,7 +57,7 @@ const Edit = () => {
   useEffect(() => {
     editFeedFormik.setFieldValue("weight", totalWegiht);
   }, [totalWegiht]);
-
+console.log(feed)
 
   return (
 
@@ -97,20 +97,8 @@ const Edit = () => {
                 value={feed?.feed_type || ""}
               />
             </div>
-            <div className="flex flex-col col-span-2 md:col-span-1">
-              <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
-                Name
-              </label>
-              <input
-                disabled
-                readOnly
-                className="w-full  rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-200 cursor-not-allowed dark:bg-zinc-800 px-4 py-3"
-                type="text"
-                name="name"
-                value={feed?.name || ""}
-              />
-
-            </div>
+           
+           
             <div className="flex flex-col col-span-2 md:col-span-1">
               <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
                 Quantity
