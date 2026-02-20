@@ -5,9 +5,18 @@ import { PlusIcon } from "lucide-react";
 
 import SmallLoading from "@/components/ui/smallLoading";
 import { useGetCashList } from "@/query/Cash.queries";
+import HeaderFilter from "@/components/ui/headerFilter";
+import { useCallback, useMemo, useState } from "react";
 
 const List = () => {
+  const [filter, setFilter] = useState({
+    search: "",
+    per_page: 10,
+    page: 1,
+  });
   const { data, isLoading } = useGetCashList();
+  const hideFilter = useMemo(() => ({ from: false, to: false }), []);
+  // const handlePaginationChange = useCallback((newpage: number) => setFilter((prev) => ({ ...prev, page: newpage })), [])
 
   return (
     <>
@@ -33,6 +42,7 @@ const List = () => {
 
       <div className="flex-1 overflow-y-auto pb-8 pt-4 bg-background-light dark:bg-background-dark">
         <div className="space-y-6">
+          <HeaderFilter setValue={setFilter} hide={hideFilter} />
 
           <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
             <div className="overflow-x-auto @container">
