@@ -14,20 +14,42 @@ import {
     Edit,
     IndianRupee,
     PlusIcon,
+    Trash,
+    TrashIcon,
 } from "lucide-react";
-
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogTitle,
+    AlertDialogFooter,
+    AlertDialogHeader,
+} from "@/components/ui/alert-dialog";
 import {
     Tooltip,
     TooltipContent,
     TooltipTrigger,
 } from "@/components/ui/tooltip";
 import SmallLoading from "@/components/ui/smallLoading";
-import { useGetMedicineListQuery } from "@/query/Medicine.queries";
+import { useDeleteMedicineMutation, useGetMedicineListQuery } from "@/query/Medicine.queries";
+import { useState } from "react";
 
 const List = () => {
+    const [medicine, setMedicine] = useState<any>({});
+    const [openAlert, setOpenAlert] = useState<boolean>(false);
+    const deleteMutaion = useDeleteMedicineMutation();
 
     const { data, isLoading } = useGetMedicineListQuery();
+    const handleDeleteModal = (id: number): void => {
+        setMedicine(id);
+        setOpenAlert(!openAlert);
+    };
 
+    const handleDeleteMedicine = () => {
+        deleteMutaion.mutate(medicine);
+    };
 
     return (
         <>
@@ -110,18 +132,36 @@ const List = () => {
 
                                                         </TableCell>
                                                         <TableCell className="flex items-center justify-center gap-1.5">
-                                                            <Tooltip>
-                                                                <TooltipTrigger asChild>
-                                                                    <Link
-                                                                        to={`/medicine/${list?.id}/edit`}
-                                                                        className="p-1.5 rounded-lg text-slate-500 hover:text-primary hover:bg-primary/10"
-                                                                    >
-                                                                        <Edit className="size-5" />
-                                                                    </Link>
-                                                                </TooltipTrigger>
-                                                                <TooltipContent>Update</TooltipContent>
-                                                            </Tooltip>
+                                                            <div className="flex items-center justify-center gap-1.5">
+
+                                                                <Tooltip>
+                                                                    <TooltipTrigger asChild>
+                                                                        <Link
+                                                                            to={`/medicine/${list?.id}/edit`}
+                                                                            className="p-1.5 rounded-lg text-slate-500 hover:text-primary hover:bg-primary/10"
+                                                                        >
+                                                                            <Edit className="size-5" />
+                                                                        </Link>
+                                                                    </TooltipTrigger>
+                                                                    <TooltipContent>Update</TooltipContent>
+                                                                </Tooltip>
+
+                                                                <Tooltip>
+                                                                    <TooltipTrigger asChild>
+                                                                        <button
+                                                                            onClick={() => handleDeleteModal(list?.id)}
+                                                                            className="p-1.5 rounded-lg text-red-500 hover:bg-red-100"
+                                                                        >
+                                                                            <Trash className="size-5" />
+                                                                        </button>
+                                                                    </TooltipTrigger>
+                                                                    <TooltipContent>Delete</TooltipContent>
+                                                                </Tooltip>
+                                                            </div>
+
                                                         </TableCell>
+
+
                                                     </TableRow>
 
                                                 ))
@@ -143,6 +183,35 @@ const List = () => {
                     </div>
                 </div>
             </div>
+
+
+            <AlertDialog open={openAlert} onOpenChange={setOpenAlert}>
+                <AlertDialogContent className="p-8 w-110 border-0 items-center">
+                    <div className="mx-auto p-4 w-fit flex items-center justify-center bg-red-600 rounded-full">
+                        <TrashIcon className="text-white" />
+                    </div>
+                    <AlertDialogHeader className="mb-8 mt-4 items-center">
+                        <AlertDialogTitle className="text-2xl font-bold text-[#181111] dark:text-white leading-tight">
+                            Delete Medicine?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription className="text-[#896161] text-sm leading-relaxed mt-3 text-center">
+                            Are you sure you want to delete, This action cannot be undone.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter className="grid grid-cols-2 gap-4">
+                        <AlertDialogCancel className="flex items-center justify-center rounded-lg h-12 bg-gray-200 dark:bg-[#3a1d1d] text-[#181111] dark:text-white hover:text-white border-0 text-sm font-bold  hover:bg-primary/90 dark:hover:bg-[#4d2727] ">
+                            Cancel
+                        </AlertDialogCancel>
+                        <AlertDialogAction
+                            disabled={deleteMutaion.isPending}
+                            onClick={handleDeleteMedicine}
+                            className="flex items-center justify-center rounded-lg h-12 bg-red-600 text-white text-sm font-bold hover:bg-primary/90  shadow-lg shadow-primary/20"
+                        >
+                            {deleteMutaion.isPending ? "Processing" : "Confirm"}
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </>
     );
 };

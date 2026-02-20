@@ -187,11 +187,11 @@ const AddLifting = () => {
                         </div>
                         <div className="flex flex-col col-span-2 md:col-span-1">
                             <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold mb-2">
-                                User
+                                Customer
                             </label>
                             <ComboCheckbox
                                 ref={null}
-                                label="User"
+                                label="customer"
                                 items={users?.customers ?? []}
                                 selectedId={form.values.user_id}
                                 onSelect={(id) => {

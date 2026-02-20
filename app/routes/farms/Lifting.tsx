@@ -174,7 +174,7 @@ const Lifting = () => {
                                             {!isLoading && lifting?.data?.length === 0 && (
                                                 <TableRow className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
                                                     <TableCell
-                                                        colSpan={5}
+                                                        colSpan={6}
                                                         className="px-6 py-4 text-center"
                                                     >
                                                         No records
@@ -231,7 +231,7 @@ const Lifting = () => {
                                                         className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors"
                                                     >
                                                         <TableCell className="px-6 py-4 text-sm font-medium ">
-                                                            {lift?.active_batch_id}
+                                                            {lift?.batch_id}
                                                         </TableCell>
 
                                                         <TableCell className="px-6 py-4">
@@ -244,7 +244,7 @@ const Lifting = () => {
                                                                     }}
                                                                 />
                                                                 <span className="font-semibold text-sm">
-                                                                    {lift?.name}
+                                                                    {lift?.farmer_name}
                                                                 </span>
                                                             </div>
                                                         </TableCell>
@@ -254,7 +254,7 @@ const Lifting = () => {
                                                         </TableCell>
 
                                                         <TableCell className="px-6 py-4 text-sm font-medium text-center">
-                                                            {lift?.total_chicks} birds
+                                                            {lift?.total_chicks}
                                                         </TableCell>
 
                                                         <TableCell className="px-6 py-4 text-center">
@@ -275,7 +275,7 @@ const Lifting = () => {
                                                                 <Tooltip>
                                                                     <TooltipTrigger asChild>
                                                                         <Link
-                                                                            to={`/farms/lifting/${lift?.id}?order_id=${lift?.active_batch_id}`}
+                                                                            to={`/farms/lifting/${lift?.farmer_id}?order_id=${lift?.batch_id}`}
                                                                             className="p-1.5 rounded-lg text-slate-500 hover:text-primary hover:bg-primary/10"
                                                                         >
                                                                             <EyeIcon className="size-5" />
@@ -291,7 +291,7 @@ const Lifting = () => {
                                             {!isLoading && lifting?.data?.length === 0 && (
                                                 <TableRow className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
                                                     <TableCell
-                                                        colSpan={5}
+                                                        colSpan={6}
                                                         className="px-6 py-4 text-center"
                                                     >
                                                         No records
@@ -340,7 +340,7 @@ const Lifting = () => {
                                         {makeComplete?.name}
                                     </strong>{" "}
                                     as complete?
-                                
+
                                     This action cannot be undone.
                                 </>
                             )}

@@ -29,7 +29,8 @@ import {
 } from "@/components/ui/sidebar";
 import { Link, useLocation } from "react-router";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "../ui/alert-dialog";
-import { useLogoutMutation } from "@/query/Auth.queries";
+import { getMeQuery, useLogoutMutation } from "@/query/Auth.queries";
+import { useQuery } from "@tanstack/react-query";
 
 const menuItems = [
   { title: "Dashboard", icon: LayoutDashboard, url: "/" },
@@ -67,6 +68,7 @@ const menuItems = [
     children: [
       { title: "List", url: "/customers/list" },
       { title: "Add Customer", url: "/customers/add" },
+      { title: "Collections", url: "/cash/collection" },
     ]
   },
   {
@@ -76,7 +78,6 @@ const menuItems = [
     children: [
       { title: "Expense List", url: "/cash/list" },
       { title: "Expense Add", url: "/cash/add" },
-      { title: "Collections", url: "/cash/collection" },
     ],
   },
   {
@@ -106,6 +107,10 @@ const menuItems = [
 ];
 
 export default function MenuSidebar() {
+
+  const { data: user } = useQuery(getMeQuery());
+
+
   const { mutate: logoutUser, isPending } = useLogoutMutation();
   const location = useLocation();
   const isActive = (path: string) =>
@@ -214,9 +219,9 @@ export default function MenuSidebar() {
             className="h-9 w-9 rounded-full"
           />
           <div className="min-w-0">
-            <p className="text-xs font-bold truncate">Alex Morgan</p>
-            <p className="text-[10px] text-muted-foreground truncate">
-              Administrator
+            <p className="text-xs font-bold truncate">{user?.name}</p>
+            <p className="text-[10px] text-muted-foreground truncate capitalize">
+              {user?.role?.name}
             </p>
           </div>
           <button onClick={handleDelete} className="ml-auto text-muted-foreground hover:text-foreground">

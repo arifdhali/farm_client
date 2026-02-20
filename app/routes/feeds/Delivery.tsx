@@ -3,17 +3,18 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useGetFarmersList, useGetLastOrderID } from "@/query/Farm.queries";
 import { useFormik } from "formik";
-import { ArrowLeftIcon } from "lucide-react";
+import { ArrowLeftIcon, Check, ChevronsUpDown } from "lucide-react";
 import { useEffect, useMemo, useRef } from "react";
 import { Link } from "react-router";
 import * as yup from "yup";
-import { format } from "date-fns";
+import { format, set } from "date-fns";
 import { useState } from "react";
 import type { FeedDeliveryFormValues } from "@/types/Feed.type";
 import { useFeedDeliveryMutation, useGetFeedListQuery } from "@/query/Feed.queries";
 import type { ComboCheckboxRef } from "@/components/ui/ComboCheckbox";
 import ComboCheckbox from "@/components/ui/ComboCheckbox";
-
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { cn } from "@/lib/utils";
 
 const feedDeliverySchema = yup.object().shape({
   farm_id: yup.number().typeError("Farm must be a number").required("Farm is required"),
@@ -29,9 +30,10 @@ const feedDeliverySchema = yup.object().shape({
 
 });
 const Delivery = () => {
-  const feedRef = useRef<ComboCheckboxRef>(null);
+
   const farmerRef = useRef<ComboCheckboxRef>(null);
   const [openDate, setOpenDate] = useState<boolean>(false);
+  const [openFeed, setOpenFeed] = useState<boolean>(false);
 
   const inputRef = useRef<Record<string, HTMLInputElement | HTMLTextAreaElement | null>>({});
 
@@ -96,6 +98,11 @@ const Delivery = () => {
   useEffect(() => {
     deliveryForm.setFieldValue("weight", totalWegiht);
   }, [totalWegiht]);
+
+  const selectedFeed = useMemo(() => {
+    if (!deliveryForm.values.feed_id || !feed) return;
+    return feed?.feeds.find((f: any) => f.id == deliveryForm.values.feed_id);
+  }, [deliveryForm.values.feed_id, feed]);
   return (
     <div className="flex-1 overflow-y-auto bg-background-light dark:bg-background-dark">
       <div className="mb-8 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-8 py-6">
@@ -124,17 +131,51 @@ const Delivery = () => {
               <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
                 Select Feed
               </label>
-              <ComboCheckbox
-                ref={feedRef}
-                label="Feed"
-                items={feed?.feeds ?? []}
-                selectedId={deliveryForm.values.feed_id}
-                onSelect={(id) => {
-                  deliveryForm.setFieldValue("feed_id", id);
-                  deliveryForm.setFieldTouched("feed_id", true);
-                  farmerRef.current?.open();
-                }}
-              />
+
+              <Popover open={openFeed} onOpenChange={setOpenFeed}>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" role="combobox" aria-expanded={openFeed}
+                    className="w-full border-slate-200 h-12 justify-between bg-white shadow-none capitalize"
+                  >
+                    {selectedFeed?.feed_type
+                      ? selectedFeed?.feed_type
+                      : "Select feed type..."}
+
+                    <ChevronsUpDown />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className=" p-0 border border-slate-200" align="start">
+                  <Command className="border-0">
+                    <CommandList>
+                      <CommandEmpty>No feed type found.</CommandEmpty>
+                      <CommandGroup>
+                        {
+                          feed && feed?.feeds.map((type: any, index: number) => (
+                            <CommandItem
+                              className="capitalize"
+                              key={index}
+                              value={String(type.id)}
+                              onSelect={(currentValue) => {
+                                deliveryForm.setFieldValue("feed_id", currentValue)
+                                setOpenFeed(false);
+                              }}
+                            >
+                              {type?.feed_type}
+                              <Check
+                                className={cn(
+                                  "ml-auto",
+                                  selectedFeed?.id === type?.id ? "opacity-100" : "opacity-0"
+                                )}
+                              />
+                            </CommandItem>
+                          ))
+                        }
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+
               {deliveryForm.touched.feed_id && deliveryForm.errors.feed_id ? (
                 <span className="text-red-500 text-sm">
                   {deliveryForm.errors.feed_id}

@@ -1,4 +1,4 @@
-import { addMedicine, deliveryMedicine, getMedicineList, getSingleMedicine, updateMedicine } from "@/api/Medicine.api";
+import { addMedicine, deleteMedicine, deliveryMedicine, getMedicineList, getSingleMedicine, updateMedicine } from "@/api/Medicine.api";
 import queryClient from "@/query/client";
 import type { MedicineDeliveryFormValues } from "@/types/Medicine";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -69,5 +69,20 @@ export const useUpdateMedicineMutation = () => {
                 toast.error(error.response.data.message);
             }
         }
+    })
+}
+
+export const useDeleteMedicineMutation = () => {
+    return useMutation({
+        mutationFn: deleteMedicine,
+        onSuccess: async (data) => {
+            await queryClient.invalidateQueries({ queryKey: ["medicines"] });
+            toast.success("Medicine deleted successfully");
+        },
+        onError: (err) => {
+            const error: any = err;
+            toast.error(error.response.data.message);
+        }
+
     })
 }

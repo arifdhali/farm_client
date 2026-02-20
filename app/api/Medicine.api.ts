@@ -101,4 +101,19 @@ export const updateMedicine = async ({ updateData, id }: { updateData: any, id: 
     }
 }
 
-export const sendToFarmer = () => { }
+
+export const deleteMedicine = async (id: number) => {
+    try {
+        let response = await HTTP.delete(`${API}`, {
+            params: {
+                id: id
+            }
+        });
+        if (response.data.status) {
+            return response.data;
+        }
+        return null;
+    } catch (error) {
+        throw error;
+    }
+}

@@ -103,9 +103,6 @@ const List = () => {
                                             <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-center">
                                                 Unit Price
                                             </TableHead>
-                                            <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-center">
-                                                Actions
-                                            </TableHead>
                                         </TableRow>
                                     </TableHeader>
 
@@ -143,21 +140,6 @@ const List = () => {
                                                         <div className="flex items-center justify-center">
                                                             <IndianRupee size={14} /> {list?.chicks_rate}
                                                         </div>
-                                                    </TableCell>
-
-                                                    <TableCell className="flex items-center justify-center gap-1.5">
-
-                                                        <Tooltip>
-                                                            <TooltipTrigger asChild>
-                                                                <button
-                                                                    onClick={() => handleDelete(list?.id)}
-                                                                    className="p-1.5 rounded-lg text-red-500 hover:bg-red-100"
-                                                                >
-                                                                    <Trash className="size-5" />
-                                                                </button>
-                                                            </TooltipTrigger>
-                                                            <TooltipContent>Delete</TooltipContent>
-                                                        </Tooltip>
                                                     </TableCell>
                                                 </TableRow>
 

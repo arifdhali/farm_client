@@ -177,7 +177,7 @@ const SingleLifting = () => {
                                 <div className="bg-primary/5 dark:bg-primary/20 border border-primary/20 p-5 rounded-xl">
                                     <div className="flex items-center gap-2 mb-2">
                                         <LucideInbox className="text-primary text-sm" />
-                                        <p className="text-[10px] font-bold text-primary uppercase">Lifting chicks</p>
+                                        <p className="text-[10px] font-bold text-primary uppercase">Lifted chicks</p>
                                     </div>
                                     <div className="flex items-baseline gap-1 text-primary">
                                         <span className="text-2xl font-black">{view?.total?.total_chicks_quantity}</span>
