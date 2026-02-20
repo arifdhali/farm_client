@@ -11,6 +11,7 @@ import { Tooltip, TooltipContent, TooltipTrigger, } from "@/components/ui/toolti
 import { useGetLiftingList } from "@/query/Farm.queries";
 import SmallLoading from "@/components/ui/smallLoading";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { format } from "date-fns";
 
 const Lifting = () => {
     const [openAlert, setOpenAlert] = useState<boolean>(false);
@@ -191,6 +192,9 @@ const Lifting = () => {
                                     <Table className="w-full">
                                         <TableHeader>
                                             <TableRow className="bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800">
+                                                <TableHead className="px-6 py-4 text-xs font-bold uppercase text-center">
+                                                    Lifting Date
+                                                </TableHead>
                                                 <TableHead className="px-6 py-4 text-xs font-bold uppercase">
                                                     ORder id
                                                 </TableHead>
@@ -203,9 +207,7 @@ const Lifting = () => {
                                                 <TableHead className="px-6 py-4 text-xs font-bold uppercase text-center">
                                                     Lifted Chicks
                                                 </TableHead>
-                                                <TableHead className="px-6 py-4 text-xs font-bold uppercase text-center">
-                                                    Lifting Status
-                                                </TableHead>
+
                                                 <TableHead className="px-6 py-4 text-xs font-bold uppercase text-center">
                                                     Actions
                                                 </TableHead>
@@ -230,6 +232,9 @@ const Lifting = () => {
                                                         key={lift?.id}
                                                         className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors"
                                                     >
+                                                        <TableCell className="px-6 py-4">
+                                                            {lift?.lifted_date && format(new Date(lift?.lifted_date), "dd/MM/yyyy")}
+                                                        </TableCell>
                                                         <TableCell className="px-6 py-4 text-sm font-medium ">
                                                             {lift?.batch_id}
                                                         </TableCell>
@@ -257,18 +262,7 @@ const Lifting = () => {
                                                             {lift?.total_chicks}
                                                         </TableCell>
 
-                                                        <TableCell className="px-6 py-4 text-center">
-                                                            <span
-                                                                className={`capitalize inline-flex justify-center items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400`}
-                                                            >
-                                                                <span
-                                                                    className={`w-1 h-1 rounded-full mr-1.5  bg-emerald-500`}
-                                                                />
-                                                                {lift?.lifting_status === "started"
-                                                                    ? "Started"
-                                                                    : "Completed"}
-                                                            </span>
-                                                        </TableCell>
+
 
                                                         <TableCell className="px-6 py-4">
                                                             <div className="flex items-center justify-center gap-1.5">
