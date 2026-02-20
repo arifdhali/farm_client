@@ -168,7 +168,7 @@ const List = () => {
                                             )
                                         }
                                         {
-                                            !isLoading && data?.length === 0 && (
+                                            !isLoading && data?.medicines?.length === 0 && (
                                                 <TableRow className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors group">
                                                     <TableCell className="px-6 py-4 text-center" colSpan={6}>
                                                         No data available
