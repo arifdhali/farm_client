@@ -24,15 +24,9 @@ import {
 import {
     IndianRupee,
     PlusIcon,
-    Trash,
     TrashIcon,
 } from "lucide-react";
 
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { useGetDeliveredListQuery } from "@/query/Chicks.queries";
 import HeaderFilter from "@/components/ui/headerFilter";
 import { format } from "date-fns";
@@ -84,78 +78,76 @@ const List = () => {
                     <HeaderFilter setValue={setFilter} hide={hideFilter} />
                     <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
                         <div className="overflow-x-auto @container">
-                            <div className="overflow-x-auto @container">
-                                <Table className="w-full text-left border-collapse">
-                                    <TableHeader>
-                                        <TableRow className="bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800">
-                                            <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider">
-                                                Delivered ID
-                                            </TableHead>
-                                            <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider">
-                                                Date
-                                            </TableHead>
-                                            <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider">
-                                                Farmer Name
-                                            </TableHead>
-                                            <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider min-w-50 text-center">
-                                                Quantity
-                                            </TableHead>
-                                            <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-center">
-                                                Unit Price
-                                            </TableHead>
-                                        </TableRow>
-                                    </TableHeader>
+                            <Table className="w-full text-left border-collapse">
+                                <TableHeader>
+                                    <TableRow className="bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800">
+                                        <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider">
+                                            Delivered ID
+                                        </TableHead>
+                                        <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider">
+                                            Date
+                                        </TableHead>
+                                        <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider">
+                                            Farmer Name
+                                        </TableHead>
+                                        <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider min-w-50 text-center">
+                                            Quantity
+                                        </TableHead>
+                                        <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-center">
+                                            Unit Price
+                                        </TableHead>
+                                    </TableRow>
+                                </TableHeader>
 
-                                    <TableBody className="divide-y divide-slate-100 dark:divide-slate-800">
-                                        {
-                                            isLoading && (
-                                                <TableRow className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
-                                                    <TableCell
-                                                        colSpan={6}
-                                                        className="px-6 py-4 text-center"
-                                                    >
-                                                        <SmallLoading />
-                                                    </TableCell>
-                                                </TableRow>
-                                            )
-                                        }
-                                        {!isLoading && data?.delivery_list.length > 0 && (
-                                            data?.delivery_list.map((list: any) => (
-                                                <TableRow key={list.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors group">
-                                                    <TableCell className="px-6 py-4">
-                                                        <div className=" text-primary font-semibold">{list?.batch_id}</div>
-                                                    </TableCell>
-
-                                                    <TableCell className="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">
-                                                        {format(list?.delivery_date, "dd/MM/yyyy")}
-                                                    </TableCell>
-                                                    <TableCell className="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">
-                                                        {list?.farm?.name}
-                                                    </TableCell>
-                                                    <TableCell className="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 font-medium text-center">
-                                                        {list?.total_delivered}
-                                                    </TableCell>
-
-                                                    <TableCell className="px-6 py-4 text-sm font-medium text-slate-900 dark:text-white text-center">
-                                                        <div className="flex items-center justify-center">
-                                                            <IndianRupee size={14} /> {list?.chicks_rate}
-                                                        </div>
-                                                    </TableCell>
-                                                </TableRow>
-
-                                            ))
-                                        )}
-                                        {(!isLoading && data?.delivery_list.length === 0) && (
-
-                                            <TableRow className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors group">
-                                                <TableCell className="px-6 py-4 text-center" colSpan={6}>
-                                                    No data available
+                                <TableBody className="divide-y divide-slate-100 dark:divide-slate-800">
+                                    {
+                                        isLoading && (
+                                            <TableRow className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
+                                                <TableCell
+                                                    colSpan={6}
+                                                    className="px-6 py-4 text-center"
+                                                >
+                                                    <SmallLoading />
                                                 </TableCell>
                                             </TableRow>
-                                        )}
-                                    </TableBody>
-                                </Table>
-                            </div>
+                                        )
+                                    }
+                                    {!isLoading && data?.delivery_list.length > 0 && (
+                                        data?.delivery_list.map((list: any) => (
+                                            <TableRow key={list.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors group">
+                                                <TableCell className="px-6 py-4">
+                                                    <div className=" text-primary font-semibold">{list?.batch_id}</div>
+                                                </TableCell>
+
+                                                <TableCell className="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">
+                                                    {format(list?.delivery_date, "dd/MM/yyyy")}
+                                                </TableCell>
+                                                <TableCell className="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">
+                                                    {list?.farm?.name}
+                                                </TableCell>
+                                                <TableCell className="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 font-medium text-center">
+                                                    {list?.total_delivered}
+                                                </TableCell>
+
+                                                <TableCell className="px-6 py-4 text-sm font-medium text-slate-900 dark:text-white text-center">
+                                                    <div className="flex items-center justify-center">
+                                                        <IndianRupee size={14} /> {list?.chicks_rate}
+                                                    </div>
+                                                </TableCell>
+                                            </TableRow>
+
+                                        ))
+                                    )}
+                                    {(!isLoading && data?.delivery_list.length === 0) && (
+
+                                        <TableRow className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors group">
+                                            <TableCell className="px-6 py-4 text-center" colSpan={6}>
+                                                No data available
+                                            </TableCell>
+                                        </TableRow>
+                                    )}
+                                </TableBody>
+                            </Table>
                         </div>
                         {
                             data?.total_delivery > filter.per_page && (

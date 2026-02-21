@@ -7,17 +7,17 @@ import SmallLoading from "@/components/ui/smallLoading";
 import { useGetCashList } from "@/query/Cash.queries";
 import HeaderFilter from "@/components/ui/headerFilter";
 import { useCallback, useMemo, useState } from "react";
+import CustomPagination from "@/components/ui/CustomPagination";
 
 const List = () => {
   const [filter, setFilter] = useState({
-    search: "",
     per_page: 10,
     page: 1,
   });
-  const { data, isLoading } = useGetCashList();
+  const { data, isLoading } = useGetCashList(filter);
   const hideFilter = useMemo(() => ({ from: false, to: false, input: true }), []);
-  // const handlePaginationChange = useCallback((newpage: number) => setFilter((prev) => ({ ...prev, page: newpage })), [])
-
+  const handlePaginationChange = useCallback((newpage: number) => setFilter((prev) => ({ ...prev, page: newpage })), [])
+  console.log(filter)
   return (
     <>
       <div className=" rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-8 py-6">
@@ -90,7 +90,10 @@ const List = () => {
                         </TableCell>
 
                         <TableCell className="px-6 py-4 text-sm font-medium">
-                          {expense?.amount}
+                          <div className="flex items-center">
+                            <IndianRupee className="mt-[2px]" size={15} />
+                            {expense?.amount}
+                          </div>
                         </TableCell>
 
                       </TableRow>
@@ -128,6 +131,13 @@ const List = () => {
                 </TableBody>
               </Table>
             </div>
+
+            <CustomPagination
+              total={data?.total_expenses}
+              page={filter.page}
+              per_page={filter.per_page}
+              onPageChange={handlePaginationChange}
+            />
           </div>
         </div>
       </div>

@@ -5,10 +5,12 @@ import toast from "react-hot-toast"
 import type { AddAmount, cashType } from "@/types/Cash.type"
 
 
-export const useGetCashList = () => {
+export const useGetCashList = (filter: any) => {
+    console.log(filter)
+  
     return useQuery({
-        queryKey: ["cashList"],
-        queryFn: getCashList,
+        queryKey: ["cashList", filter],
+        queryFn: () => getCashList(filter),
     })
 }
 

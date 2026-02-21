@@ -3,12 +3,14 @@ import HTTP from "./client";
 import type { AxiosError } from "axios";
 import type { BackendError } from "@/types/AxiosErrors.type";
 
-const API_URL = `/expenses`;
+const API_URL = `/cash`;
 
-export const getCashList = async () => {
+export const getCashList = async (filter: any) => {
 
     try {
-        let res = await HTTP.get(`${API_URL}/list`);
+        let res = await HTTP.get(`${API_URL}/list`, {
+            params: filter
+        });
         if (res.data.status) {
             return res.data.data;
         }

@@ -96,6 +96,7 @@ const HeaderFilter = ({ setValue, hide }: { setValue: any, hide: any }) => {
                 <PopoverContent align="end" className="bg-white p-0 border-0">
                   <Calendar mode="single" className="w-full calender"
                     selected={toDate}
+                    disabled={(date) => fromDate ? date < fromDate : false}
                     onSelect={(date) => {
                       if (!date) return;
                       setToDate(date);
