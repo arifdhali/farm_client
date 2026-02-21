@@ -113,8 +113,7 @@ export default function MenuSidebar() {
 
   const { mutate: logoutUser, isPending } = useLogoutMutation();
   const location = useLocation();
-  const isActive = (path: string) =>
-    location.pathname === path || location.pathname.startsWith(path + "/");
+  const isActive = (path: string) => location.pathname === path || location.pathname.startsWith(path + "/");
 
   const [openMenu, setOpenMenu] = useState<string | null>(null);
 

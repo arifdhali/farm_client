@@ -1,8 +1,8 @@
-import { createFarmer, deleteFarms, getFarmersList, getLastOrderID, getLfitingList, getSingleFarm, makeLifiting, updateFarm, viewSinglLifting } from "@/api/farm.api";
+import { addBounus, createFarmer, deleteFarms, getFarmersList, getLastOrderID, getLfitingList, getSingleFarm, makeLifiting, updateFarm, viewSinglLifting } from "@/api/farm.api";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import queryClient from "./client";
-import type { makeLifting } from "@/types/Farm";
+import type { AddBonusType, makeLifting } from "@/types/Farm";
 
 
 
@@ -114,3 +114,13 @@ export const useSingleLiftingQuery = ({ farm_id, order_id }: { farm_id: number, 
         queryFn: () => viewSinglLifting({ farm_id, order_id })
     })
 }
+
+export const useAddBonusMutation = () => {
+    return useMutation({
+        mutationFn: (payload: AddBonusType) => addBounus(payload),
+        onSuccess: async (data) => {
+
+        }
+    })
+
+};

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from "@/components/ui/table";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogTitle, AlertDialogFooter, AlertDialogHeader, } from "@/components/ui/alert-dialog";
-import { PlusIcon, Trash, TrashIcon } from "lucide-react";
+import { EyeIcon, PlusIcon, Trash, TrashIcon } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger, } from "@/components/ui/tooltip";
 
 import { useDeleteCustomerMutation } from "@/query/Customers.queries";
@@ -138,6 +138,18 @@ const List = () => {
 
                           <TableCell className="px-6 py-4 text-right">
                             <div className="flex items-center justify-center gap-1.5">
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <Link
+                                      to={`/customers/${customer?.id}`}
+                                      className="p-1.5 rounded-lg text-slate-500 hover:text-primary hover:bg-primary/10"
+                                    >
+                                      <EyeIcon className="size-5" />
+                                    </Link>
+                                  </TooltipTrigger>
+                                  <TooltipContent>View</TooltipContent>
+                                </Tooltip>
+                              
                               <Tooltip>
                                 <TooltipTrigger asChild>
                                   <button

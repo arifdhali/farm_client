@@ -1,11 +1,15 @@
 import SmallLoading from "@/components/ui/smallLoading";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { toWords } from "@/hooks/useToWords";
 import { getMeQuery } from "@/query/Auth.queries";
-import { useSingleLiftingQuery } from "@/query/Farm.queries";
+import { useAddBonusMutation, useSingleLiftingQuery } from "@/query/Farm.queries";
+import type { AddBonusType } from "@/types/Farm";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
-import { CalendarRange, DollarSignIcon, IndianRupee, IndianRupeeIcon, LucideBriefcaseMedical, LucideInbox, LucidePercent, LucideRabbit, LucideRatio, LucideWeight, LucideWheat, Shield, ShieldCheck } from "lucide-react";
+import { CalendarRange, DollarSignIcon, IndianRupee, IndianRupeeIcon, Loader2, LucideBriefcaseMedical, LucideInbox, LucidePercent, LucideRabbit, LucideRatio, LucideWeight, LucideWheat, Shield, ShieldCheck } from "lucide-react";
+import { useEffect, useState } from "react";
+import { CheckmarkIcon } from "react-hot-toast";
 import { useParams, useSearchParams } from "react-router";
 
 const SingleLifting = () => {
@@ -14,8 +18,36 @@ const SingleLifting = () => {
     const [searchParams] = useSearchParams();
     const order_id = searchParams.get("order_id");
     const { data: view, isLoading } = useSingleLiftingQuery({ farm_id, order_id });
+    const addBonusMutation = useAddBonusMutation();
     const { data: user } = useQuery(getMeQuery());
-    console.log(view)
+    const [bonus, setBonus] = useState<number>(0);
+    const [totalPayment, setTotalPayment] = useState<number>(0);
+    const [isBounsAdded, setIsBonusAdded] = useState<boolean>(false);
+
+
+    useEffect(() => {
+        setTotalPayment(Number(view?.finance?.farmer_payment) + Number(bonus));
+        if (view?.finance?.farmer_bonus) {
+            setIsBonusAdded(true);
+            setBonus(Number(view?.finance?.farmer_bonus));
+        }
+    }, [bonus, view?.finance?.farmer_payment, view?.finance?.farmer_bonus]);
+
+
+    const handleBounsForm = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        let payload: AddBonusType = {
+            farm_id: Number(farm_id),
+            batch_id: String(order_id),
+            bonus: Number(bonus)
+        }
+        addBonusMutation.mutate(payload, {
+            onSuccess: () => {
+                setIsBonusAdded(true);
+            }
+        });
+    }
+
     return (
 
         <>
@@ -90,8 +122,8 @@ const SingleLifting = () => {
                                     </TableHeader>
 
                                     <TableBody className="text-xs">
-                                        {view?.lift?.map((v, _) => (
-                                            <TableRow className="border-b border-[#dce3e5] dark:border-[#2a3a3d]  transition-colors">
+                                        {view?.lift?.map((v: any, index: number) => (
+                                            <TableRow key={index} className="border-b border-[#dce3e5] dark:border-[#2a3a3d]  transition-colors">
                                                 <TableCell className="">
                                                     {v?.liftings?.lifting_date}
                                                 </TableCell>
@@ -258,26 +290,46 @@ const SingleLifting = () => {
                             <div className=" flex flex-wrap gap-6 items-start bg-[#f0f3f4] dark:bg-[#2a3a3d] p-4 rounded-lg border border-[#dce3e5] dark:border-[#3a4a4d]">
                                 <div>
                                     <p className="text-[10px] font-bold text-[#658086] uppercase mb-1">Commision</p>
-                                    <p className="text-xl font-bold flex items-center">                                                <IndianRupeeIcon size={18} />
+                                    <p className="text-xl font-bold flex items-center">
+                                        <IndianRupeeIcon size={18} />
                                         {view?.finance?.farmer_commision}</p>
                                 </div>
-                                <div className="h-8 w-px bg-[#c1c1c1] dark:bg-[#3a4a4d]"></div>
+                                <div className="h-10 w-px bg-[#c1c1c1] dark:bg-[#3a4a4d]"></div>
                                 <div>
                                     <div className="flex gap-6">
                                         <div className="flex flex-col">
                                             <label htmlFor="" className="text-[10px] font-bold text-[#658086] uppercase mb-1">Add Bonus</label>
-                                            <input type="text"
-                                                name="bonus"
-                                                autoComplete="off"
-                                                placeholder="Amount"
-                                                className="w-[100px] rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-4 py-3 text-base"
-                                            />
+                                            <form onSubmit={handleBounsForm} className="flex items-center gap-2">
+                                                <input type="text"
+                                                    disabled={isBounsAdded}
+                                                    name="bonus"
+                                                    onChange={(e) => setBonus(e.target.value as any)}
+                                                    autoComplete="off"
+                                                    placeholder="Amount"
+                                                    value={bonus}
+                                                    className={`w-25 rounded-lg border border-zinc-200 dark:border-zinc-700 ${isBounsAdded || view?.finance?.farmer_bonus ? "bg-gray-300 dark:bg-zinc-700" : "bg-white dark:bg-zinc-800"} text-zinc-900 dark:text-zinc-100 px-4 py-3 text-base`}
+                                                />
+                                                <Tooltip>
+                                                    <TooltipTrigger asChild>
+                                                        <button disabled={isBounsAdded || addBonusMutation.isPending} type="submit">
+                                                            {addBonusMutation.isPending ? (
+                                                                <Loader2 className="w-5 h-5 animate-spin text-emerald-600" />
+                                                            ) : (
+                                                                <CheckmarkIcon />
+
+                                                            )}
+                                                        </button>
+                                                    </TooltipTrigger>
+                                                    <TooltipContent>{isBounsAdded || view?.finance?.farmer_bonus ? "Bonus Already Added" : "Add Bonus"}</TooltipContent>
+                                                </Tooltip>
+                                            </form>
                                         </div>
                                         <div>
                                             <p className="text-[10px] font-bold text-[#658086] uppercase mb-1">Total Payment</p>
                                             <p className="text-xl font-bold flex items-center">
                                                 <IndianRupeeIcon size={18} />
-                                                {Number(view?.finance?.farmer_payment).toLocaleString("en-IN")}
+                                                <span>
+                                                    {totalPayment.toLocaleString("en-IN")}</span>
                                             </p>
                                             <span className="text-xs">{toWords.convert(view?.finance?.farmer_payment)}</span>
                                         </div>
@@ -293,7 +345,9 @@ const SingleLifting = () => {
                                                 <p className="text-[10px] font-bold  uppercase mb-1">Total {`${view?.finance?.owner_profit > 0 ? 'Profit' : 'Loss'}`}</p>
                                                 <p className={`text-xl font-bold flex items-center ${view?.finance?.owner_profit > 0 ? 'text-emerald-500' : 'text-red-500'}`}>
                                                     <IndianRupeeIcon size={18} />
-                                                    {Number(view?.finance?.owner_profit).toLocaleString("en-IN")}
+                                                    {Number(view?.finance?.owner_profit).toLocaleString("en-IN", {
+                                                        minimumFractionDigits: 2
+                                                    })}
                                                 </p>
                                                 <span className="text-xs">{toWords.convert(view?.finance?.owner_profit)}</span>
                                             </div>

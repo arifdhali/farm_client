@@ -1,6 +1,6 @@
 import HTTP from "@/api/client";
 import type { BackendError } from "@/types/AxiosErrors.type";
-import type { CreateFarmer, makeLifting } from "@/types/Farm";
+import type { AddBonusType, CreateFarmer, makeLifting } from "@/types/Farm";
 import type { AxiosError } from "axios";
 import toast from "react-hot-toast";
 
@@ -149,5 +149,17 @@ export const viewSinglLifting = async ({ farm_id, order_id }: { farm_id: number,
     } catch (err) {
         throw err;
 
+    }
+}
+
+export const addBounus = async (payload: AddBonusType) => {
+    try {
+        let res = await HTTP.patch(`${FARMER_API_URL}/lifting/add-bonus`, payload);
+        if (res.data.status) {
+            return res.data;
+        }
+
+    } catch (er) {
+        throw er;
     }
 }

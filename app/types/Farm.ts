@@ -25,3 +25,9 @@ export interface paginationProp {
     total: number;
     onPageChange: (page: number) => void;
 }
+
+export type AddBonusType = {
+    farm_id: number;
+    batch_id: string;
+    bonus: number;
+}
