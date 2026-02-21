@@ -15,6 +15,7 @@ const SingleLifting = () => {
     const order_id = searchParams.get("order_id");
     const { data: view, isLoading } = useSingleLiftingQuery({ farm_id, order_id });
     const { data: user } = useQuery(getMeQuery());
+    console.log(view)
     return (
 
         <>
@@ -29,13 +30,13 @@ const SingleLifting = () => {
                             <div>
                                 <div className="leading-none">
                                     <span className="text-xs font-bold text-primary uppercase tracking-widest">Lifting Report</span>
-                                    <h2 className="text-2xl font-bold">Sohana Poultry Farm</h2>
+                                    <h2 className="text-2xl font-bold">{view?.farm_name}</h2>
                                 </div>
                                 <p className="text-sm text-[#658086] max-w-xs">123 Industrial Ave, Farming District, 45902. Contact: logistics@agrifarm.com</p>
                             </div>
                             <div className="text-left md:text-right">
                                 <h3 className="text-3xl font-extrabold text-[#121617] dark:text-white mb-1">Lifting Summary</h3>
-                                <p className="text-sm font-medium text-[#658086] uppercase tracking-tighter mb-4">Report ID: #LIFT-2023-OCT-07-COMP</p>
+                                <p className="text-sm font-medium text-[#658086] uppercase tracking-tighter mb-4">Report ID: {order_id}</p>
                                 <div className="inline-flex flex-col bg-background-light dark:bg-[#2a3a3d] p-3 rounded-lg border border-[#dce3e5] dark:border-[#3a4a4d]">
                                     <span className="text-[10px] font-bold text-[#658086] uppercase">lifting ID</span>
                                     <span className="text-sm font-bold">{order_id}</span>
@@ -235,7 +236,7 @@ const SingleLifting = () => {
                                 <div className="bg-[#f8fafa] dark:bg-[#203033] border text-primary border-[#dce3e5] dark:border-[#3a4a4d] p-5 rounded-xl">
                                     <div className="flex items-center gap-2 mb-2">
                                         <LucidePercent className="text-primary-500 text-sm" />
-                                        <p className="text-[10px] font-bold uppercase opacity-80">Chicks Average </p>
+                                        <p className="text-[10px] font-bold uppercase opacity-80">Chicks Weight Average </p>
                                     </div>
                                     <div className="flex items-baseline gap-1">
                                         <span className="text-2xl font-black">{view?.avg}</span>
@@ -257,16 +258,30 @@ const SingleLifting = () => {
                             <div className=" flex flex-wrap gap-6 items-start bg-[#f0f3f4] dark:bg-[#2a3a3d] p-4 rounded-lg border border-[#dce3e5] dark:border-[#3a4a4d]">
                                 <div>
                                     <p className="text-[10px] font-bold text-[#658086] uppercase mb-1">Commision</p>
-                                    <p className="text-xl font-bold">{view?.finance?.farmer_commision}</p>
+                                    <p className="text-xl font-bold flex items-center">                                                <IndianRupeeIcon size={18} />
+                                        {view?.finance?.farmer_commision}</p>
                                 </div>
                                 <div className="h-8 w-px bg-[#c1c1c1] dark:bg-[#3a4a4d]"></div>
                                 <div>
-                                    <p className="text-[10px] font-bold text-[#658086] uppercase mb-1">Total Payment</p>
-                                    <p className="text-xl font-bold flex items-center">
-                                        <IndianRupeeIcon size={18} />
-                                        {Number(view?.finance?.farmer_payment).toLocaleString("en-IN")}
-                                    </p>
-                                    <span className="text-xs">{toWords.convert(view?.finance?.farmer_payment)}</span>
+                                    <div className="flex gap-6">
+                                        <div className="flex flex-col">
+                                            <label htmlFor="" className="text-[10px] font-bold text-[#658086] uppercase mb-1">Add Bonus</label>
+                                            <input type="text"
+                                                name="bonus"
+                                                autoComplete="off"
+                                                placeholder="Amount"
+                                                className="w-[100px] rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-4 py-3 text-base"
+                                            />
+                                        </div>
+                                        <div>
+                                            <p className="text-[10px] font-bold text-[#658086] uppercase mb-1">Total Payment</p>
+                                            <p className="text-xl font-bold flex items-center">
+                                                <IndianRupeeIcon size={18} />
+                                                {Number(view?.finance?.farmer_payment).toLocaleString("en-IN")}
+                                            </p>
+                                            <span className="text-xs">{toWords.convert(view?.finance?.farmer_payment)}</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             {

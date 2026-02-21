@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/table";
 import SmallLoading from "@/components/ui/smallLoading";
 import { useGetMoralityListQuery } from "@/query/Mortality.queries";
+import { format } from "date-fns";
 
 const List = () => {
     let { data: mortalities, isLoading } = useGetMoralityListQuery();
@@ -133,7 +134,7 @@ const List = () => {
                                         </TableCell>
 
                                         <TableCell className="px-6 py-4 text-sm font-medium">
-                                            {mortal?.incident_date}
+                                            {format(new Date(mortal?.incident_date), "dd/MM/yyyy")}
                                         </TableCell>
                                         <TableCell className="px-6 py-4 text-sm font-medium text-center">
                                             {mortal?.total_mortality}

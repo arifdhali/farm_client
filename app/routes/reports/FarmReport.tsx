@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/table";
 import { useGetReportFarmerQuery } from '@/query/Reports.queries';
 import SmallLoading from '@/components/ui/smallLoading';
+import { format } from 'date-fns';
 
 
 const FarmReport = () => {
@@ -114,7 +115,7 @@ const FarmReport = () => {
                                         </TableCell>
 
                                         <TableCell className="px-6 py-4 text-sm hidden md:table-cell">
-                                            {farm?.delivery_date}
+                                            {farm?.delivery_date ? format(new Date(farm?.delivery_date),"dd/MM/yyyy") : "N/A"}
                                         </TableCell>
 
                                         <TableCell className="px-6 py-4 text-sm font-medium text-center">

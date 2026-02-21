@@ -193,7 +193,7 @@ const Lifting = () => {
                                         <TableHeader>
                                             <TableRow className="bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800">
                                                 <TableHead className="px-6 py-4 text-xs font-bold uppercase">
-                                                    Lifting Date
+                                                    compilation  Date
                                                 </TableHead>
                                                 <TableHead className="px-6 py-4 text-xs font-bold uppercase">
                                                     ORder id
