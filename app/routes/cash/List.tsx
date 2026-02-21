@@ -17,7 +17,7 @@ const List = () => {
   const { data, isLoading } = useGetCashList(filter);
   const hideFilter = useMemo(() => ({ from: false, to: false, input: true }), []);
   const handlePaginationChange = useCallback((newpage: number) => setFilter((prev) => ({ ...prev, page: newpage })), [])
-  console.log(filter)
+
   return (
     <>
       <div className=" rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-8 py-6">
@@ -27,7 +27,7 @@ const List = () => {
               Expense Listing
             </h2>
             <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
-              Manage and monitor all registered expenses across locations.
+              See specific date informations and monitor all registered expenses across locations.
             </p>
           </div>
           <Link
@@ -109,35 +109,46 @@ const List = () => {
                       </TableCell>
                     </TableRow>
                   )}
-                  <TableRow
-                    className="bg-blue-50/80 dark:hover:bg-slate-800/50 transition-colors"
-                  >
-                    <TableCell className="px-6 py-4 font-bold text-base">
-                      Total Amount
-                    </TableCell>
-                    <TableCell className="px-6 py-4 font-bold">
-
-                    </TableCell>
 
 
-                    <TableCell className="px-6 py-4 font-bold text-emerald-600">
-                      <div className="flex items-center">
-                        <IndianRupee className="mt-[2px]" size={15} />
-                        {Number(data?.current_month_expenses).toLocaleString("en-IN")}
-                      </div>
-                    </TableCell>
 
-                  </TableRow>
+                  {
+                    data?.current_month_expenses > 0 && (
+                      <TableRow
+                        className="bg-blue-50/80 dark:hover:bg-slate-800/50 transition-colors"
+                      >
+                        <TableCell className="px-6 py-4 font-bold text-base">
+                          Total Expenses
+                        </TableCell>
+                        <TableCell className="px-6 py-4 font-bold">
+
+                        </TableCell>
+                        <TableCell className="px-6 py-4 font-bold text-emerald-600">
+                          <div className="flex items-center">
+                            <IndianRupee className="mt-[2px]" size={15} />
+                            {Number(data?.current_month_expenses).toLocaleString("en-IN", {
+                              minimumFractionDigits: 2,
+                            })}
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    )
+                  }
+
+
                 </TableBody>
               </Table>
             </div>
-
-            <CustomPagination
-              total={data?.total_expenses}
-              page={filter.page}
-              per_page={filter.per_page}
-              onPageChange={handlePaginationChange}
-            />
+            {
+              data?.total_expenses > filter.per_page && (
+                <CustomPagination
+                  total={data?.total_expenses}
+                  page={filter.page}
+                  per_page={filter.per_page}
+                  onPageChange={handlePaginationChange}
+                />
+              )
+            }
           </div>
         </div>
       </div>
