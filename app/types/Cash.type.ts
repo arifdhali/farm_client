@@ -16,6 +16,7 @@ export interface AddAmount {
 
 export interface EditAmount {
     amount_collected: number;
+    balanced_amount: number;
     customer_name: string;
     batch_id: string | number;
     payment_type: string;

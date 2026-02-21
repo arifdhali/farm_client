@@ -141,7 +141,7 @@ const List = () => {
                                 <Tooltip>
                                   <TooltipTrigger asChild>
                                     <Link
-                                      to={`/customers/${customer?.id}`}
+                                      to={`/customers/${customer?.id}/view`}
                                       className="p-1.5 rounded-lg text-slate-500 hover:text-primary hover:bg-primary/10"
                                     >
                                       <EyeIcon className="size-5" />

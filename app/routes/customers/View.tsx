@@ -7,14 +7,18 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import { useGetReportFarmerQuery } from '@/query/Reports.queries';
 import SmallLoading from '@/components/ui/smallLoading';
 import { IndianRupee } from 'lucide-react';
+import { useCutomerByIdQuery } from '@/query/Customers.queries';
+import { useParams } from 'react-router';
+import { format } from 'date-fns';
 
 
 const FarmReport = () => {
-    const { data, isLoading } = useGetReportFarmerQuery();
-    console.log(data?.reports);
+    const { id } = useParams();
+    console.log(id)
+    const { data, isLoading } = useCutomerByIdQuery(Number(id));
+
     return (
         <>
 
@@ -22,7 +26,9 @@ const FarmReport = () => {
                 <div className="p-5 border border-gray-300 rounded-lg">
                     <p className="text-slate-600 text-xs font-semibold uppercase tracking-wider mb-1">Total Paid Amount</p>
                     <div className="flex items-end justify-between">
-                        <h3 className="text-2xl font-bold text-text-charcoal dark:text-white">{data?.total_data?.total_chick}</h3>
+                        <h3 className="text-2xl font-bold text-text-charcoal dark:text-white">{Number(data?.totals?.total_paid_amount).toLocaleString("en-IN", {
+                            maximumFractionDigits: 2,
+                        })}</h3>
                         <span className="text-emerald-600 text-xs font-bold mb-1 flex items-center">
                             <IndianRupee />
                         </span>
@@ -31,7 +37,9 @@ const FarmReport = () => {
                 <div className="p-5 border border-gray-300 bg-white rounded-lg">
                     <p className="text-slate-600 text-xs font-semibold uppercase tracking-wider mb-1">Total Due Amount</p>
                     <div className="flex items-end justify-between">
-                        <h3 className="text-2xl font-bold text-text-charcoal dark:text-white">{data?.total_data?.total_mortality}</h3>
+                        <h3 className="text-2xl font-bold text-text-charcoal dark:text-white">{Number(data?.totals?.total_balance_amount).toLocaleString("en-IN", {
+                            maximumFractionDigits: 2,
+                        })}</h3>
                         <span className="text-rose-600 text-xs font-bold mb-1 flex items-center">
                             <span className="material-symbols-outlined text-sm">                             <IndianRupee />
                             </span>
@@ -42,7 +50,7 @@ const FarmReport = () => {
                 <div className="p-5 border border-gray-300 bg-white rounded-lg">
                     <p className="text-slate-600 text-xs font-semibold uppercase tracking-wider mb-1">Total Sales Amount</p>
                     <div className="flex items-end justify-between">
-                        <h3 className="text-2xl font-bold text-text-charcoal dark:text-white">{Number(data?.total_data?.avg_feed_used).toLocaleString("en-IN", {
+                        <h3 className="text-2xl font-bold text-text-charcoal dark:text-white">{Number(data?.totals?.total_purchase_amount).toLocaleString("en-IN", {
                             maximumFractionDigits: 2,
                         })} </h3>
                         <span className="text-emerald-600 text-xs font-bold mb-1 flex items-center">
@@ -56,11 +64,16 @@ const FarmReport = () => {
                     <Table className="w-full">
                         <TableHeader>
                             <TableRow className="bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800">
-                                <TableHead className="px-6 py-4 text-xs font-bold uppercase">
-                                    Farmer Name
+
+                                <TableHead className="px-6 py-4 text-xs font-bold uppercase ">
+                                    Bath Id
                                 </TableHead>
+
                                 <TableHead className="px-6 py-4 text-xs font-bold uppercase ">
                                     Lifted Date
+                                </TableHead>
+                                <TableHead className="px-6 py-4 text-xs font-bold uppercase">
+                                    Farmer Name
                                 </TableHead>
                                 <TableHead className="px-6 py-4 text-xs font-bold uppercase text-center">
                                     Chicks Qty
@@ -85,7 +98,7 @@ const FarmReport = () => {
                                 isLoading && (
                                     <TableRow className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
                                         <TableCell
-                                            colSpan={7}
+                                            colSpan={8}
                                             className="px-6 py-4 text-center"
                                         >
                                             <SmallLoading />
@@ -94,53 +107,66 @@ const FarmReport = () => {
 
                                 )
                             }
-                            {!isLoading && data?.reports.length > 0 && (
-                                data?.reports.map((farm: any) => (
+                            {!isLoading && data?.liftings.length > 0 && (
+                                data?.liftings.map((lift: any, index) => (
                                     <TableRow
-                                        key={farm.id}
+                                        key={index}
                                         className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors"
                                     >
+                                        <TableCell className="px-6 py-4 text-sm hidden md:table-cell">
+                                            {lift?.batch_id}
+                                        </TableCell>
+
+
+                                        <TableCell className="px-6 py-4 text-sm hidden md:table-cell">
+                                            {format(new Date(lift?.lifting_date), "dd/MM/yyyy")}
+                                        </TableCell>
+
                                         <TableCell className="px-6 py-4">
                                             <div className="flex items-center gap-3">
 
                                                 <span className="font-semibold text-sm">
-                                                    {farm?.farmer_name}
+                                                    {lift?.farm?.name}
                                                 </span>
                                             </div>
                                         </TableCell>
 
-                                        <TableCell className="px-6 py-4 text-sm hidden md:table-cell">
-                                            {farm?.delivery_date}
+                                        <TableCell className="px-6 py-4 text-sm font-medium text-center">
+                                            {lift?.total_chicks_count}
                                         </TableCell>
 
                                         <TableCell className="px-6 py-4 text-sm font-medium text-center">
-                                            {farm?.chicks_supplied}
+                                            {lift?.total_chicks_weight}
+                                        </TableCell>
+                                        <TableCell className="px-6 py-4 text-sm font-medium text-center ">
+                                            <div className="flex items-center bg-red-100 rounded-xl px-3 w-fit justify-center mx-auto">
+                                                <IndianRupee className='text-red-600' size={13} />
+                                                <span className=" text-red-600  py-1 ">{lift?.total_balance_amount}</span>
+                                            </div>
                                         </TableCell>
 
                                         <TableCell className="px-6 py-4 text-sm font-medium text-center">
-                                            {farm?.feed_used}
-                                        </TableCell>
-                                        <TableCell className="px-6 py-4 text-sm font-medium text-center">
-                                            {farm?.medicine_price}
-                                        </TableCell>
-
-                                        <TableCell className="px-6 py-4 text-sm font-medium text-center">
-
-                                            {farm?.batch_days}
+                                            <div className="flex items-center bg-green-100 rounded-xl px-3 w-fit justify-center mx-auto">
+                                                <IndianRupee className='text-green-600' size={13} />
+                                                <span className=" text-green-600  py-1 ">{lift?.total_paid_amount}</span>
+                                            </div>
                                         </TableCell>
 
                                         <TableCell className="px-6 py-4 text-sm font-medium text-center">
 
-                                            <span className="bg-red-100 text-red-600 px-3 py-1 rounded-xl">{farm?.mortality}</span>
+                                            <div className="flex items-center bg-emerald-200 rounded-xl px-3 w-fit justify-center mx-auto">
+                                                <IndianRupee className='text-emerald-700' size={13} />
+                                                <span className=" text-emerald-700  py-1 ">{lift?.total_purchase_amount}</span>
+                                            </div>
 
                                         </TableCell>
                                     </TableRow>
                                 ))
                             )}
-                            {(!isLoading && data?.reports?.length === 0) && (
+                            {(!isLoading && data?.liftings?.length === 0) && (
                                 <TableRow className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
                                     <TableCell
-                                        colSpan={7}
+                                        colSpan={8}
                                         className="px-6 py-4 text-center"
                                     >
                                         No records

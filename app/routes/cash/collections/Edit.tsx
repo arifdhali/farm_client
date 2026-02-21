@@ -37,8 +37,9 @@ const CollectionEdit = () => {
     initialValues: {
       date: data?.payment.date || new Date(),
       customer_name: data?.payment?.customer?.name || "",
-      payment_type: data?.payment?.payment_type || "",
+      payment_type:  "",
       batch_id: data?.payment?.batch_id || "NA",
+      balanced_amount: data?.payment?.balanced_amount || 0,
       amount_collected: 0,
     },
     validationSchema: editExpensesSchema,
@@ -224,6 +225,26 @@ const CollectionEdit = () => {
               ) : null}
             </div>
 
+
+            <div className="">
+              <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
+                Balaned Amount
+              </label>
+              <input
+                readOnly
+                name="balanced_amount"
+                value={editCollectionFormik.values.balanced_amount}
+                onChange={editCollectionFormik.handleChange}
+                className="w-full rounded-lg border border-zinc-200 dark:border-zinc-700 bg-gray-200 cursor-not-allowed dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-4 py-3 text-base"
+                placeholder="Enter amount"
+                type="number"
+              />
+              {editCollectionFormik.errors.balanced_amount && (
+                <span className="text-red-500 text-sm">
+                  {editCollectionFormik.errors.balanced_amount}
+                </span>
+              )}
+            </div>
 
             <div className="">
               <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">

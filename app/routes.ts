@@ -33,7 +33,7 @@ export default [
         ...prefix("customers", [
             route("list", "routes/customers/List.tsx"),
             route("add", "routes/customers/Add.tsx"),
-            route(":id", "routes/customers/View.tsx"),
+            route(":id/view", "routes/customers/View.tsx"),
         ]),
         ...prefix("cash", [
             route("list", "routes/cash/List.tsx"),
