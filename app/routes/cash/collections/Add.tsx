@@ -45,7 +45,7 @@ const CollectionAdd = () => {
       customer_id: null,
       payment_type: "",
       batch_id: "NA",
-      due_amount: false,
+      is_due: false,
       amount_collected: 0,
     },
     validationSchema: addExpensesSchema,
@@ -295,8 +295,8 @@ const CollectionAdd = () => {
             <Field orientation="horizontal" className="">
               <Checkbox
                 id="terms-checkbox"
-                checked={addCollectionFormik.values.due_amount}
-                onCheckedChange={(checked) => addCollectionFormik.setFieldValue("due_amount", checked)}
+                checked={addCollectionFormik.values.is_due}
+                onCheckedChange={(checked) => addCollectionFormik.setFieldValue("is_due", checked)}
               />
               <FieldLabel htmlFor="terms-checkbox" className="cursor-pointer">
                 Is it Due amount?

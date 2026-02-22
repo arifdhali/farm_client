@@ -45,11 +45,9 @@ const List = () => {
                       <TableHead className=" px-6 py-4 text-xs font-bold uppercase">
                         Date
                       </TableHead>
-                      <TableHead className=" px-6 py-4 text-xs font-bold uppercase">
-                        Order id
-                      </TableHead>
+                    
                       <TableHead className=" px-6 py-4 text-xs font-bold uppercase text-center">
-                        Payment Type
+                        Customer Name
                       </TableHead>
                       <TableHead className=" px-6 py-4 text-xs font-bold uppercase">
                         Shop name
@@ -68,7 +66,7 @@ const List = () => {
                       isLoading && (
                         <TableRow className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
                           <TableCell
-                            colSpan={7}
+                            colSpan={6}
                             className="px-6 py-4 text-center"
                           >
                             <SmallLoading />
@@ -78,22 +76,19 @@ const List = () => {
                       )
                     }
                     {!isLoading && data?.payments?.length > 0 && (
-                      data?.payments.map((collection: any) => (
+                      data?.payments.map((collection: any, index:number) => (
                         <TableRow
-                          key={collection.id}
+                          key={index}
                           className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors"
                         >
                           <TableCell className="px-6 py-4 text-sm hidden md:table-cell">
                             {collection?.date ? format(new Date(collection.date), "dd/MM/yyyy") : ""}
                           </TableCell>
 
-                          <TableCell className="px-6 py-4 text-sm font-medium capitalize">
-
-                            {collection?.batch_id ? collection?.batch_id : "NA"}
-                          </TableCell>
+                       
                           <TableCell className="px-6 py-4 text-sm font-medium capitalize text-center">
 
-                            {collection?.payment_type}
+                            {collection?.customer?.name}
                           </TableCell>
 
                           <TableCell className="px-6 py-4 text-sm font-medium">
@@ -103,7 +98,7 @@ const List = () => {
 
                           <TableCell className="px-6 py-4 text-sm font-medium">
                             <div className="flex items-center justify-center text-red-500">
-                              <IndianRupee size={14} />  {collection?.balanced_amount}
+                              <IndianRupee size={14} />  {collection?.balance}
                             </div>
                           </TableCell>
                           <TableCell className="px-6 py-4 text-sm font-medium">
@@ -112,7 +107,7 @@ const List = () => {
                               <Tooltip>
                                 <TooltipTrigger asChild>
                                   <Link
-                                    to={`/cash/collection/${collection?.id}/edit`}
+                                    to={`/cash/collection/${collection?.customer_id}/edit`}
                                     className="p-1.5 rounded-lg text-slate-500 hover:text-primary hover:bg-primary/10"
                                   >
                                     <Edit className="size-5" />

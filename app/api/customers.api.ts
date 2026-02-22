@@ -40,6 +40,18 @@ export const getCustomerById = async (id: number) => {
         throw error;
     }
 }
+export const getCustomerByStatus = async (id: number, status: string) => {
+    try {
+        const response = await HTTP.get(`${API_URL}/${id}/${status}`);
+        if (response.data.status) {
+            return response.data.data;
+        }
+        console.log(response.data)
+        return [];
+    } catch (error) {
+        throw error;
+    }
+}
 
 export const addCustomer = async (payload: CreateCustomer) => {
     try {

@@ -69,7 +69,7 @@ export const getCollectionSingle = async (id: number) => {
 
 export const editCollections = async ({ id, payload }: { id: number; payload: any }) => {
     try {
-        console.log(id, payload);
+
         let response = await HTTP.patch(`${PAYMENT_API}/${id}/edit`, payload)
         if (response.data.status) {
             return response.data;

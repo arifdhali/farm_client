@@ -23,10 +23,10 @@ const editExpensesSchema = yup.object().shape({
 const CollectionEdit = () => {
   let { id } = useParams();
   const { data } = useGetCollectionsListByID(Number(id));
-
-  const [open, setOpen] = useState<any>({
+  const [currentDate] = useState(new Date());
+  const [open, setOpen] = useState({
     payment_type: false,
-
+    select_date: false,
   });
   const navigate = useNavigate();
   let updateMutations = useGetCollectionsUpdateMutations();
@@ -35,11 +35,10 @@ const CollectionEdit = () => {
     enableReinitialize: true,
 
     initialValues: {
-      date: data?.payment.date || new Date(),
-      customer_name: data?.payment?.customer?.name || "",
-      payment_type:  "",
-      batch_id: data?.payment?.batch_id || "NA",
-      balanced_amount: data?.payment?.balanced_amount || 0,
+      date: currentDate,
+      customer_name: data?.name || "",
+      payment_type: "",
+      balanced_amount: data?.balance || 0,
       amount_collected: 0,
     },
     validationSchema: editExpensesSchema,
@@ -49,6 +48,7 @@ const CollectionEdit = () => {
     onSubmit: (values) => {
       if (!editCollectionFormik.dirty) return;
       let payload = {
+        date: format(new Date(values.date), "yyyy-MM-dd"),
         payment_type: values.payment_type,
         amount_collected: values.amount_collected
       }
@@ -64,14 +64,6 @@ const CollectionEdit = () => {
     }
   });
 
-  // useEffect(() => {
-  //   if (!isError) return;
-  //   let err: any = error;
-  //   editCollectionFormik.setErrors(err?.fieldErrors ?? {});
-  // }, [isError]);
-
-  // const { data: liftings } = useCutomerLiftingList(Number(editCollectionFormik?.values.customer_name));
-  // console.log(liftings);
   return (
 
     <div className="flex-1 overflow-y-auto bg-background-light dark:bg-background-dark">
@@ -79,10 +71,10 @@ const CollectionEdit = () => {
         <div className="flex flex-wrap justify-between items-end gap-3">
           <div className="flex flex-col ">
             <h2 className="text-zinc-900 dark:text-zinc-100 text-3xl font-black leading-tight tracking-[-0.033em]">
-              Edit Collections
+              Update Collections
             </h2>
             <p className="text-zinc-500 dark:text-zinc-400 text-base font-normal leading-normal">
-              Edit  collections to the system.
+              Update collections to the system.
             </p>
           </div>
           <Link
@@ -104,17 +96,36 @@ const CollectionEdit = () => {
               <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
                 Select Date
               </label>
-              <input
-                readOnly
-                name="date"
-                value={format(editCollectionFormik.values.date, "dd/MM/yyyy")}
-                onChange={editCollectionFormik.handleChange}
-                className="w-full rounded-lg border border-zinc-200 dark:border-zinc-700 bg-gray-200 cursor-not-allowed dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-4 py-3 text-base"
-                placeholder="Enter amount"
-                type="text"
-              />
 
-
+              <Popover open={open.select_date} onOpenChange={(value) =>
+                setOpen((prev: any) => ({
+                  ...prev,
+                  select_date: value,
+                }))}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={`w-full h-12 rounded-lg border border-zinc-200 dark:border-zinc-700 shadow-none justify-start font-normal bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-4 py-3 text-base`}
+                  >
+                    {editCollectionFormik.values.date
+                      ? format(editCollectionFormik.values.date, "dd/MM/yyyy")
+                      : "Select date"}
+                  </Button>
+                </PopoverTrigger >
+                <PopoverContent className="w-full rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 p-0 text-base" align="start">
+                  <Calendar
+                    className="w-75"
+                    mode="single"
+                    buttonVariant="outline"
+                    selected={editCollectionFormik.values.date}
+                    onSelect={(date) => {
+                      if (!date) return;
+                      setOpen((prev: any) => ({ ...prev, select_date: false }));
+                      editCollectionFormik.setFieldValue("date", date)
+                    }}
+                  />
+                </PopoverContent>
+              </Popover>
               {editCollectionFormik.errors.date && (
                 <span className="text-red-500 text-sm">
                   {editCollectionFormik.errors.date}
@@ -205,30 +216,12 @@ const CollectionEdit = () => {
                 </span>
               )}
             </div>
-            <div className="">
-              <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
-                Enter Lifting ID
-              </label>
-              <input
-                readOnly
-                name="batch_id"
-                value={editCollectionFormik.values.batch_id}
-                onChange={editCollectionFormik.handleChange}
-                className="w-full rounded-lg border border-zinc-200 dark:border-zinc-700 bg-gray-200 cursor-not-allowed dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-4 py-3 text-base"
-                placeholder="Enter amount"
-                type="text"
-              />
-              {editCollectionFormik.touched.batch_id && editCollectionFormik.errors.batch_id ? (
-                <span className="text-red-500 text-sm">
-                  {editCollectionFormik.errors.batch_id}
-                </span>
-              ) : null}
-            </div>
+
 
 
             <div className="">
               <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
-                Balaned Amount
+                Due Amount
               </label>
               <input
                 readOnly

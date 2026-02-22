@@ -17,6 +17,7 @@ const Lifting = () => {
     const [openAlert, setOpenAlert] = useState<boolean>(false);
     const [status, setStatus] = useState("started")
     const { data: lifting, isLoading } = useGetLiftingList({ status });
+    
     const [makeComplete, setMakeComplete] = useState<any>();
     const handleMakeComplete = (id: number): void => {
         let order = lifting?.data?.find((o: any) => o.active_batch_id == id);

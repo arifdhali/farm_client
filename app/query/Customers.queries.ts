@@ -1,8 +1,9 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import queryClient from "./client";
-import { addCustomer, deleteCustomer, getCustomerById, getCustomersLifting, getCustomersList } from "@/api/customers.api";
+import { addCustomer, deleteCustomer, getCustomerById, getCustomerByStatus, getCustomersLifting, getCustomersList } from "@/api/customers.api";
 import toast from "react-hot-toast";
 import type { CreateCustomer } from "@/types/Customers.type";
+import { id } from "date-fns/locale";
 
 export const useGetCustomersList = () => {
     return useQuery({
@@ -23,6 +24,13 @@ export const useCutomerByIdQuery = (id: number) => {
         queryKey: ["customers-view", id],
         queryFn: () => getCustomerById(id),
         enabled: !!id,
+    })
+}
+export const useCutomerByStatus = (id: number, status: string, options?: any) => {
+    return useQuery({
+        queryKey: ["customer-status", id, status],
+        queryFn: () => getCustomerByStatus(id, status),
+        enabled: options.enabled,
     })
 }
 

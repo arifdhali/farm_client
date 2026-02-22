@@ -24,8 +24,9 @@ export const useAddMutations = () => {
         },
         onError: (err) => {
             const error: any = err;
+            console.log(error)
             if (!error.fieldErrors || Object.keys(error.fieldErrors).length <= 0) {
-                toast.error(error.response.data.message);
+                toast.error(error.message);
             }
         }
     })
