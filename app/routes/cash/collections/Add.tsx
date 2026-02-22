@@ -15,6 +15,8 @@ import { useCutomerLiftingList, useGetCustomersList } from "@/query/Customers.qu
 import { getMeQuery } from "@/query/Auth.queries";
 import { useQuery } from "@tanstack/react-query";
 import ComboCheckbox from "@/components/ui/ComboCheckbox";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Field, FieldLabel } from "@/components/ui/field";
 
 
 const addExpensesSchema = yup.object().shape({
@@ -43,6 +45,7 @@ const CollectionAdd = () => {
       customer_id: null,
       payment_type: "",
       batch_id: "NA",
+      due_amount: false,
       amount_collected: 0,
     },
     validationSchema: addExpensesSchema,
@@ -55,6 +58,7 @@ const CollectionAdd = () => {
         submitted_by: user?.name,
 
       }
+      console.log(payload);
 
       addCashCollection(payload, {
         onSuccess: () => {
@@ -288,6 +292,16 @@ const CollectionAdd = () => {
                 </span>
               ) : null}
             </div>
+            <Field orientation="horizontal" className="">
+              <Checkbox
+                id="terms-checkbox"
+                checked={addCollectionFormik.values.due_amount}
+                onCheckedChange={(checked) => addCollectionFormik.setFieldValue("due_amount", checked)}
+              />
+              <FieldLabel htmlFor="terms-checkbox" className="cursor-pointer">
+                Is it Due amount?
+              </FieldLabel>
+            </Field>
 
             {/* AMOUNT */}
             <div className="">

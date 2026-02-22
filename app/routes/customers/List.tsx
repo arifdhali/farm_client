@@ -125,7 +125,7 @@ const List = () => {
                           </TableCell>
 
                           <TableCell className="px-6 py-4 text-sm font-medium">
-                            {customer?.email}
+                            {customer?.email ? customer?.email : "NA"}
                           </TableCell>
 
                           <TableCell className="px-6 py-4 text-sm font-medium">

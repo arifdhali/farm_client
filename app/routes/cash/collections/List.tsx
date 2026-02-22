@@ -55,7 +55,7 @@ const List = () => {
                         Shop name
                       </TableHead>
                       <TableHead className=" px-6 py-4 text-xs font-bold uppercase text-center">
-                        Balanced Amount
+                        Due Amount
                       </TableHead>
                       <TableHead className=" px-6 py-4 text-xs font-bold uppercase text-center">
                         Actions
