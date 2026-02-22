@@ -306,7 +306,7 @@ const CollectionAdd = () => {
             {/* AMOUNT */}
             <div className="">
               <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
-                Amount collected
+                Amount
               </label>
               <input
                 name="amount_collected"
