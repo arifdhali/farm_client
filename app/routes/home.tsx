@@ -1,6 +1,6 @@
 import type { MetaArgs } from "react-router";
 
-export function meta({}: MetaArgs) {
+export function meta({ }: MetaArgs) {
   return [
     { title: "Sohana Farm" },
     { name: "description", content: "Welcome to React Router!" },
@@ -10,8 +10,7 @@ export function meta({}: MetaArgs) {
 export default function Home() {
   return (
     <>
-      <button className="bg-primary">Hello</button>
-      <h1>Main page</h1>
+      <h1 className=" text-2xl font-bold">Welcome to <span className="text-primary">{`${import.meta.env.VITE_APP_NAME}`}</span></h1>
     </>
   );
 }

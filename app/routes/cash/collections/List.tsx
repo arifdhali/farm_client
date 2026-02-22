@@ -45,7 +45,7 @@ const List = () => {
                       <TableHead className=" px-6 py-4 text-xs font-bold uppercase">
                         Date
                       </TableHead>
-                    
+
                       <TableHead className=" px-6 py-4 text-xs font-bold uppercase text-center">
                         Customer Name
                       </TableHead>
@@ -76,7 +76,7 @@ const List = () => {
                       )
                     }
                     {!isLoading && data?.payments?.length > 0 && (
-                      data?.payments.map((collection: any, index:number) => (
+                      data?.payments.map((collection: any, index: number) => (
                         <TableRow
                           key={index}
                           className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors"
@@ -85,7 +85,7 @@ const List = () => {
                             {collection?.date ? format(new Date(collection.date), "dd/MM/yyyy") : ""}
                           </TableCell>
 
-                       
+
                           <TableCell className="px-6 py-4 text-sm font-medium capitalize text-center">
 
                             {collection?.customer?.name}
@@ -121,6 +121,26 @@ const List = () => {
                         </TableRow>
                       ))
                     )}
+                    {
+                      data?.total_due?.total_due_amount > 0 && (
+                        <TableRow
+                          className="bg-blue-50/80 dark:hover:bg-slate-800/50 transition-colors"
+                        >
+                          <TableCell className="px-6 py-4 font-bold text-base">
+                            Total Due Amount
+                          </TableCell>
+
+                          <TableCell colSpan={4} className="px-6 py-4 font-bold text-emerald-600">
+                            <div className="flex items-center justify-end">
+                              <IndianRupee className="mt-[2px]" size={15} />
+                              {Number(data?.total_due?.total_due_amount).toLocaleString("en-IN", {
+                                minimumFractionDigits: 2,
+                              })}
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      )
+                    }
                     {(!isLoading && data?.payments?.length === 0) && (
                       <TableRow className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
                         <TableCell
