@@ -66,87 +66,6 @@ const FarmReport = () => {
                             <TableRow className="bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800">
 
                                 <TableHead className="px-6 py-4 text-xs font-bold uppercase ">
-                                    Date
-                                </TableHead>
-                                <TableHead className="px-6 py-4 text-xs font-bold uppercase ">
-                                    Transaction Type
-                                </TableHead>
-                                <TableHead className="px-6 py-4 text-xs font-bold uppercase">
-                                    Paid Amount
-                                </TableHead>
-                                <TableHead className="px-6 py-4 text-xs font-bold uppercase text-center">
-                                    Due Amount
-                                </TableHead>
-
-                            </TableRow>
-                        </TableHeader>
-
-                        <TableBody className="divide-y divide-slate-100 dark:divide-slate-800">
-                            {
-                                isLoading && (
-                                    <TableRow className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
-                                        <TableCell
-                                            colSpan={8}
-                                            className="px-6 py-4 text-center"
-                                        >
-                                            <SmallLoading />
-                                        </TableCell>
-                                    </TableRow>
-
-                                )
-                            }
-                            {!isLoading && data?.liftings.length > 0 && (
-                                data?.liftings.map((lift: any, index) => (
-                                    <TableRow
-                                        key={index}
-                                        className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors"
-                                    >
-                                        <TableCell className="px-6 py-4 text-sm hidden md:table-cell">
-                                            {format(new Date(lift?.lifting_date), "dd/MM/yyyy")}
-                                        </TableCell>
-
-                                        <TableCell className="px-6 py-4">
-                                            <div className="flex items-center gap-3">
-
-                                                <span className="font-semibold text-sm">
-                                                    {lift?.farm?.name}
-                                                </span>
-                                            </div>
-                                        </TableCell>
-                                        <TableCell className="px-6 py-4">
-                                            <div className="flex items-center gap-3">
-
-                                                <span className="font-semibold text-sm">
-                                                    {lift?.farm?.name}
-                                                </span>
-                                            </div>
-                                        </TableCell>
-
-                                        <TableCell className="px-6 py-4 text-sm font-medium text-center">
-                                            {lift?.total_chicks_count}
-                                        </TableCell>
-                                    </TableRow>
-                                ))
-                            )}
-                            {(!isLoading && data?.liftings?.length === 0) && (
-                                <TableRow className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
-                                    <TableCell
-                                        colSpan={4}
-                                        className="px-6 py-4 text-center"
-                                    >
-                                        No records
-                                    </TableCell>
-                                </TableRow>
-                            )}
-                        </TableBody>
-                    </Table>
-                </div>
-                <div className="overflow-x-auto @container">
-                    <Table className="w-full">
-                        <TableHeader>
-                            <TableRow className="bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800">
-
-                                <TableHead className="px-6 py-4 text-xs font-bold uppercase ">
                                     Batch Id
                                 </TableHead>
 
@@ -161,6 +80,9 @@ const FarmReport = () => {
                                 </TableHead>
                                 <TableHead className="px-6 py-4 text-xs font-bold uppercase text-center">
                                     Chicks weight (kg)
+                                </TableHead>
+                                <TableHead className="px-6 py-4 text-xs font-bold uppercase text-center">
+                                    Rate
                                 </TableHead>
                                 <TableHead className="px-6 py-4 text-xs font-bold uppercase text-center">
                                     Due Amount
@@ -218,6 +140,9 @@ const FarmReport = () => {
 
                                         <TableCell className="px-6 py-4 text-sm font-medium text-center">
                                             {lift?.total_chicks_weight}
+                                        </TableCell>
+                                        <TableCell className="px-6 py-4 text-sm font-medium text-center">
+                                            {lift?.rate}
                                         </TableCell>
                                         <TableCell className="px-6 py-4 text-sm font-medium text-center ">
                                             <div className="flex items-center bg-red-100 rounded-xl px-3 w-fit justify-center mx-auto">
