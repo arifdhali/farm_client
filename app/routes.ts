@@ -20,6 +20,7 @@ export default [
             route("list", "routes/feeds/List.tsx"),
             route(":id/edit", "routes/feeds/Edit.tsx"),
             route("add", "routes/feeds/Add.tsx"),
+            route("returned", "routes/feeds/Returned.tsx"),
             route("delivery", "routes/feeds/Delivery.tsx"),
         ]),
         ...prefix("farms", [

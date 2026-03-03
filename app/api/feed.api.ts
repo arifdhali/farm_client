@@ -1,4 +1,4 @@
-import type { addFeed, editFeed, FeedDeliveryFormValues } from "@/types/Feed.type"
+import type { addFeed, editFeed, FeedDeliveryFormValues, returnFeed } from "@/types/Feed.type"
 import HTTP from "./client"
 import type { AxiosError } from "axios";
 import type { BackendError } from "@/types/AxiosErrors.type";
@@ -8,6 +8,18 @@ const API = `/feed`
 export const getFeedListAPI = async () => {
     try {
         let response = await HTTP.get(`${API}/list`);
+        if (response.data.status) {
+            return response.data.data;
+        }
+
+    } catch (err) {
+        throw err;
+    }
+}
+
+export const getFeedReturnedListAPI = async () => {
+    try {
+        let response = await HTTP.get(`${API}/returned`);
         if (response.data.status) {
             return response.data.data;
         }
@@ -97,6 +109,23 @@ export const deleteFeeds = async (id: number) => {
 export const deliveryFeed = async (payload: FeedDeliveryFormValues) => {
     try {
         const res = await HTTP.post(`${API}/delivered`, payload);
+        return res.data;
+    } catch (err) {
+        const error = err as AxiosError<BackendError>;
+        throw {
+            message: error.response?.data?.message || "Something went wrong",
+            fieldErrors: error.response?.data?.errors?.reduce((acc: Record<string, string>, curr) => {
+                acc[curr.field] = curr.message;
+                return acc;
+            }, {}) ?? {},
+            status: error.response?.data?.status,
+            statusCode: error.response?.status,
+        };
+    }
+}
+export const returnedFeed = async (payload: returnFeed) => {
+    try {
+        const res = await HTTP.post(`${API}/returned`, payload);
         return res.data;
     } catch (err) {
         const error = err as AxiosError<BackendError>;

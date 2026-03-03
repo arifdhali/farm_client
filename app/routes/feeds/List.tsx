@@ -10,14 +10,19 @@ import {
 
 import { Edit, IndianRupee, PlusIcon, Trash, TrashIcon } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { useDeleteFeedMutation, useGetFeedListQuery } from "@/query/Feed.queries";
+import { useDeleteFeedMutation, useGetFeedListQuery, useGetFeedReturnedListQuery } from "@/query/Feed.queries";
 import SmallLoading from "@/components/ui/smallLoading";
-import type { totalFeed } from "@/types/Feed.type";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
 import { format } from "date-fns";
 
 const List = () => {
+
   const [openAlert, setOpenAlert] = useState<boolean>(false);
+  const [status, setStatus] = useState("list");
+
   const { data: feedslist, isLoading } = useGetFeedListQuery();
+  const { data: returnedFeedslist, isLoading: isReturnedLoading } = useGetFeedReturnedListQuery();
   const [feed, setfeed] = useState<any>({});
   const deleteMutatoin = useDeleteFeedMutation();
 
@@ -35,6 +40,7 @@ const List = () => {
     setOpenAlert(!openAlert);
   }
 
+
   return (
     <>
       <div className=" rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-8 py-6">
@@ -49,11 +55,11 @@ const List = () => {
             </p>
           </div>
           <Link
-            to={"/feeds/add"}
+            to={status === "list" ? "/feeds/add" : "/feeds/returned"}
             className=" flex items-center gap-2 px-5 py-2.5 bg-primary hover:bg-black text-white text-sm font-bold rounded-lg transition-all shadow-lg shadow-primary/20"
           >
             <PlusIcon />
-            Add Feed
+            {status === "list" ? "Add Feed" : "Returned Feed"}
           </Link>
         </div>
       </div>
@@ -63,143 +69,229 @@ const List = () => {
           {/* <HeaderFilter /> */}
           <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
 
-            <div className="overflow-x-auto @container">
-              <Table className="w-full text-left border-collapse">
-                <TableHeader>
-                  <TableRow className="bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800">
-                    <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider">
-                      Date
-                    </TableHead>
-                    <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider">
-                      Feed Type
-                    </TableHead>
 
-                    <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-center   min-w-50">
-                      Quantity
-                    </TableHead>
-                    <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-center ">
-                      Weight
-                    </TableHead>
-                    <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-center">
-                      Unit Price
-                    </TableHead>
-                    <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-center">
-                      Actions
-                    </TableHead>
-                  </TableRow>
-                </TableHeader>
 
-                <TableBody className="divide-y divide-slate-100 dark:divide-slate-800">
+            <Tabs defaultValue="list" onValueChange={(value: string) => setStatus(value)} className="w-full p-4">
+              <TabsList>
+                <TabsTrigger
+                  value="list"
+                  className="h-fit px-4 py-2 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:bg-blue-100"
+                >
+                  List
+                </TabsTrigger>
 
-                  {
-                    isLoading && (
-                      <TableRow className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors group">
-                        <TableCell className="px-6 py-4 text-center" colSpan={6}>
-                          <SmallLoading />
-                        </TableCell>
+                <TabsTrigger
+                  value="returned"
+                  className="h-fit px-4 py-2 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:bg-blue-100"
+                >
+                  Returned
+                </TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="list">
+                <div className="overflow-x-auto @container">
+                  <Table className="w-full text-left border-collapse">
+                    <TableHeader>
+                      <TableRow className="bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800">
+                        <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider">
+                          Date
+                        </TableHead>
+                        <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider">
+                          Feed Type
+                        </TableHead>
+
+                        <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-center   min-w-50">
+                          Quantity
+                        </TableHead>
+                        <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-center ">
+                          Weight
+                        </TableHead>
+                        <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-center">
+                          Unit Price
+                        </TableHead>
+                        <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-center">
+                          Actions
+                        </TableHead>
                       </TableRow>
-                    )
-                  }
+                    </TableHeader>
 
-                  {
-                    !isLoading && feedslist?.feeds?.length > 0 && (
-                      feedslist?.feeds.map((feed: any) => (
-                        <TableRow key={feed.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors group">
+                    <TableBody className="divide-y divide-slate-100 dark:divide-slate-800">
+
+                      {
+                        isLoading && (
+                          <TableRow className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors group">
+                            <TableCell className="px-6 py-4 text-center" colSpan={6}>
+                              <SmallLoading />
+                            </TableCell>
+                          </TableRow>
+                        )
+                      }
+
+                      {
+                        !isLoading && feedslist?.feeds?.length > 0 && (
+                          feedslist?.feeds.map((feed: any) => (
+                            <TableRow key={feed.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors group">
 
 
-                          <TableCell className="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">
-                            {format(new Date(feed?.delivery_date), "dd/MM/yyyy")}
-                          </TableCell>
-                          <TableCell className="px-6 py-4">
-                            <div className="flex gap-2 items-center ">
+                              <TableCell className="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">
+                                {format(new Date(feed?.delivery_date), "dd/MM/yyyy")}
+                              </TableCell>
+                              <TableCell className="px-6 py-4">
+                                <div className="flex gap-2 items-center ">
 
-                              <span className="size-2 rounded-full bg-emerald-500"></span>
-                              <span className="font-semibold text-sm capitalize">{feed?.feed_type}</span>
-                            </div>
-                          </TableCell>
+                                  <span className="size-2 rounded-full bg-emerald-500"></span>
+                                  <span className="font-semibold text-sm capitalize">{feed?.feed_type}</span>
+                                </div>
+                              </TableCell>
+
+                              <TableCell className="px-6 py-4 text-center">
+                                {feed?.quantity}
+                              </TableCell>
+
+                              <TableCell className="px-6 text-center py-4 text-sm text-slate-600 dark:text-slate-400 font-medium">
+                                {feed?.weight} <sup className="">Kg</sup>
+                              </TableCell>
+
+                              <TableCell className="px-6 py-4 text-sm text-center font-medium text-slate-900 dark:text-white">
+
+                                <div className="flex items-center justify-center">
+                                  <IndianRupee size={14} />  {feed?.rate}
+                                </div>
+                              </TableCell>
+
+                              <TableCell className="flex items-center justify-center gap-1.5">
+
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <Link
+                                      to={`/feeds/${feed?.id}/edit`}
+                                      className="p-1.5 rounded-lg text-slate-500 hover:text-primary hover:bg-primary/10"
+                                    >
+                                      <Edit className="size-5" />
+                                    </Link>
+                                  </TooltipTrigger>
+                                  <TooltipContent>Edit</TooltipContent>
+                                </Tooltip>
+
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <button
+                                      onClick={() => handleDelete(feed?.id)}
+                                      className="p-1.5 rounded-lg text-red-500 hover:bg-red-100"
+                                    >
+                                      <Trash className="size-5" />
+                                    </button>
+                                  </TooltipTrigger>
+                                  <TooltipContent >Delete</TooltipContent>
+                                </Tooltip>
+                              </TableCell>
+                            </TableRow>
+                          )))
+                      }
+
+                      {
+                        !isLoading && feedslist?.feeds?.length == 0 && (
+                          <TableRow className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors group">
+                            <TableCell className="px-6 py-4 text-center" colSpan={6}>
+                              No data available
+                            </TableCell>
+                          </TableRow>
+                        )
+                      }
+                    </TableBody>
+                  </Table>
+                </div>
+              </TabsContent>
+              <TabsContent value="returned">
+                <div className="overflow-x-auto @container">
+                  <Table className="w-full text-left border-collapse">
+                    <TableHeader>
+                      <TableRow className="bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800">
+                        <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider">
+                          Date
+                        </TableHead>
+                        <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider">
+                          Batch Id
+                        </TableHead>
+                        <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider">
+                          Farm name
+                        </TableHead>
+                        <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider">
+                          Feed Type
+                        </TableHead>
+
+                        <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-center   min-w-50">
+                          Quantity
+                        </TableHead>
+                        <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-center ">
+                          Weight
+                        </TableHead>
 
 
-                          <TableCell className="px-6 py-4 text-center">
-                            {/* <div className="space-y-1.5">
-                              <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-wide">
-                                <span className="text-slate-500">420/500 Bags</span>
-                                <span className="text-emerald-500">84%</span>
-                              </div>
-                              <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-1.5 overflow-hidden">
-                                <div className="bg-emerald-500 h-full rounded-full" style={{ width: "84%" }} />
-                              </div>
-                            </div> */}
-                            {feed?.quantity}
-                          </TableCell>
-
-                          <TableCell className="px-6 text-center py-4 text-sm text-slate-600 dark:text-slate-400 font-medium">
-                            {feed?.weight} <sup className="">Kg</sup>
-                          </TableCell>
-
-                          <TableCell className="px-6 py-4 text-sm text-center font-medium text-slate-900 dark:text-white">
-
-                            <div className="flex items-center justify-center">
-                              <IndianRupee size={14} />  {feed?.rate}
-                            </div>
-                          </TableCell>
-
-                          <TableCell className="flex items-center justify-center gap-1.5">
-
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <Link
-                                  to={`/feeds/${feed?.id}/edit`}
-                                  className="p-1.5 rounded-lg text-slate-500 hover:text-primary hover:bg-primary/10"
-                                >
-                                  <Edit className="size-5" />
-                                </Link>
-                              </TooltipTrigger>
-                              <TooltipContent>Edit</TooltipContent>
-                            </Tooltip>
-
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <button
-                                  onClick={() => handleDelete(feed?.id)}
-                                  className="p-1.5 rounded-lg text-red-500 hover:bg-red-100"
-                                >
-                                  <Trash className="size-5" />
-                                </button>
-                              </TooltipTrigger>
-                              <TooltipContent >Delete</TooltipContent>
-                            </Tooltip>
-                          </TableCell>
-                        </TableRow>
-                      )))
-                  }
-
-                  {
-                    !isLoading && feedslist?.feeds?.length == 0 && (
-                      <TableRow className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors group">
-                        <TableCell className="px-6 py-4 text-center" colSpan={6}>
-                          No data available
-                        </TableCell>
                       </TableRow>
-                    )
-                  }
-                </TableBody>
-              </Table>
-            </div>
+                    </TableHeader>
 
-            {/* <div className="grid grid-cols-3 px-5 py-4 bg-primary/20">
-              {
-                feedslist?.total_data?.map((d: totalFeed) => (
-                  <div className="flex flex-col">
-                    <div className="rounded-sm bg-primary px-4 py-2 text-white inline-block uppercase text-sm mb-1">{d.feed_type}</div>
-                    <div>
-                      <strong className="text-sm">Total Quantity:</strong> {d.total_quantity} Qty
-                    </div>
-                    <div>
-                      <strong className="text-sm">Total Weight:</strong> {d.total_weight} Kg
-                    </div>
-                  </div>
-                ))}
-            </div> */}
+                    <TableBody className="divide-y divide-slate-100 dark:divide-slate-800">
+
+                      {
+                        isReturnedLoading && (
+                          <TableRow className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors group">
+                            <TableCell className="px-6 py-4 text-center" colSpan={6}>
+                              <SmallLoading />
+                            </TableCell>
+                          </TableRow>
+                        )
+                      }
+
+                      {
+                        !isReturnedLoading && returnedFeedslist?.length > 0 && (
+                          returnedFeedslist?.map((feed: any) => (
+                            <TableRow key={feed.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors group">
+
+
+                              <TableCell className="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">
+                                {format(new Date(feed?.returned_date), "dd/MM/yyyy")}
+                              </TableCell>
+                              <TableCell className="px-6 py-4">
+                                {feed?.batch_id}
+                              </TableCell>
+                              <TableCell className="px-6 py-4 ">
+                                {feed?.farm?.name}
+                              </TableCell>
+                              <TableCell className="px-6 py-4">
+                                <div className="flex gap-2 items-center ">
+
+                                  <span className="size-2 rounded-full bg-emerald-500"></span>
+                                  <span className="font-semibold text-sm capitalize">{feed?.feed?.feed_type}</span>
+                                </div>
+                              </TableCell>
+
+                              <TableCell className="px-6 py-4 text-center">
+                                {feed?.quantity}
+                              </TableCell>
+
+                              <TableCell className="px-6 text-center py-4 text-sm text-slate-600 dark:text-slate-400 font-medium">
+                                {feed?.weight} <sup className="">Kg</sup>
+                              </TableCell>
+                            </TableRow>
+                          )))
+                      }
+
+                      {
+                        !isReturnedLoading && returnedFeedslist?.length == 0 && (
+                          <TableRow className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors group">
+                            <TableCell className="px-6 py-4 text-center" colSpan={6}>
+                              No data available
+                            </TableCell>
+                          </TableRow>
+                        )
+                      }
+                    </TableBody>
+                  </Table>
+                </div>
+
+              </TabsContent>
+            </Tabs>
           </div>
         </div>
       </div >

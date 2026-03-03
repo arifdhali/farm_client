@@ -1,5 +1,5 @@
-import { addFeedAPI, deleteFeeds, deliveryFeed, editFeedAPI, getFeedListAPI, getSingleFeedAPI } from "@/api/feed.api";
-import type { addFeed, editFeed, FeedDeliveryFormValues } from "@/types/Feed.type";
+import { addFeedAPI, deleteFeeds, deliveryFeed, editFeedAPI, getFeedListAPI, getFeedReturnedListAPI, getSingleFeedAPI, returnedFeed } from "@/api/feed.api";
+import type { addFeed, editFeed, FeedDeliveryFormValues, returnFeed } from "@/types/Feed.type";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import queryClient from "./client";
 import toast from "react-hot-toast";
@@ -10,6 +10,12 @@ export const useGetFeedListQuery = () => {
     return useQuery({
         queryFn: getFeedListAPI,
         queryKey: ["feeds"]
+    })
+}
+export const useGetFeedReturnedListQuery = () => {
+    return useQuery({
+        queryFn: getFeedReturnedListAPI,
+        queryKey: ["feeds-returned"]
     })
 }
 
@@ -78,6 +84,21 @@ export const useDeleteFeedMutation = () => {
 }
 
 
+export const useFeedReturnedMutation = () => {
+    return useMutation({
+        mutationFn: (payload: returnFeed) => returnedFeed(payload),
+        onSuccess: async (data) => {
+            await queryClient.invalidateQueries({ queryKey: ["feeds-returned"] })
+            toast.success(data?.message);
+        },
+        onError: (err) => {
+            const error: any = err;
+            if (!error.fieldErrors || Object.keys(error.fieldErrors).length <= 0) {
+                toast.error(error.message);
+            }
+        }
+    })
+}
 export const useFeedDeliveryMutation = () => {
     return useMutation({
         mutationFn: (payload: FeedDeliveryFormValues) => deliveryFeed(payload),

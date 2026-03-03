@@ -9,6 +9,13 @@ export interface addFeed extends FeedFormValues {
     weight: number;
     rate: number;
 }
+export interface returnFeed extends Omit<FeedFormValues, "name" | "feed_type"> {
+    returned_date: Date | string;
+    farm_id: number | null;
+    feed_id: number | null;
+    batch_id: string | null;
+    weight: number;
+}
 export interface editFeed {
     weight?: number;
     quantity: number;
