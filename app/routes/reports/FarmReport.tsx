@@ -45,9 +45,20 @@ const FarmReport = () => {
                     </div>
                 </div> */}
                 <div className="p-5 border border-gray-300 bg-white rounded-lg">
+                    <p className="text-slate-600 text-xs font-semibold uppercase tracking-wider mb-1">Total Available Chicks</p>
+                    <div className="flex items-end justify-between">
+                        <h3 className="text-2xl font-bold text-text-charcoal dark:text-white">{Number(data?.total_data?.total_available_chicks || 0).toLocaleString("en-IN", {
+                            maximumFractionDigits: 2,
+                        })} </h3>
+                        <span className="text-emerald-600 text-xs font-bold mb-1 flex items-center">
+                            Qty
+                        </span>
+                    </div>
+                </div>
+                <div className="p-5 border border-gray-300 bg-white rounded-lg">
                     <p className="text-slate-600 text-xs font-semibold uppercase tracking-wider mb-1">Avg. Feed Used</p>
                     <div className="flex items-end justify-between">
-                        <h3 className="text-2xl font-bold text-text-charcoal dark:text-white">{Number(data?.total_data?.avg_feed_used).toLocaleString("en-IN", {
+                        <h3 className="text-2xl font-bold text-text-charcoal dark:text-white">{Number(data?.total_data?.avg_feed_used || 0).toLocaleString("en-IN", {
                             maximumFractionDigits: 2,
                         })} </h3>
                         <span className="text-emerald-600 text-xs font-bold mb-1 flex items-center">
@@ -55,6 +66,7 @@ const FarmReport = () => {
                         </span>
                     </div>
                 </div>
+
             </section>
             <section className='bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden mt-6'>
                 <div className="overflow-x-auto @container">
@@ -115,7 +127,7 @@ const FarmReport = () => {
                                         </TableCell>
 
                                         <TableCell className="px-6 py-4 text-sm hidden md:table-cell">
-                                            {farm?.delivery_date ? format(new Date(farm?.delivery_date),"dd/MM/yyyy") : "N/A"}
+                                            {farm?.delivery_date ? format(new Date(farm?.delivery_date), "dd/MM/yyyy") : "N/A"}
                                         </TableCell>
 
                                         <TableCell className="px-6 py-4 text-sm font-medium text-center">

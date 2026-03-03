@@ -331,7 +331,6 @@ const SingleLifting = () => {
                                                 <span>
                                                     {totalPayment.toLocaleString("en-IN")}</span>
                                             </p>
-                                            <span className="text-xs">{toWords.convert(view?.finance?.farmer_payment)}</span>
                                         </div>
                                     </div>
                                 </div>
