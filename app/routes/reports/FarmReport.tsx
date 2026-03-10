@@ -10,6 +10,7 @@ import {
 import { useGetReportFarmerQuery } from '@/query/Reports.queries';
 import SmallLoading from '@/components/ui/smallLoading';
 import { format } from 'date-fns';
+import { IndianRupeeIcon } from 'lucide-react';
 
 
 const FarmReport = () => {
@@ -20,7 +21,7 @@ const FarmReport = () => {
 
             <section className="rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-8 py-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div className="p-5 border border-gray-300 rounded-lg">
-                    <p className="text-slate-600 text-xs font-semibold uppercase tracking-wider mb-1">Total Chicks Supplied</p>
+                    <p className="text-slate-600 text-xs font-semibold uppercase tracking-wider mb-1"> Chicks Supplied <sup className='capitalize'>30d</sup></p>
                     <div className="flex items-end justify-between">
                         <h3 className="text-2xl font-bold text-text-charcoal dark:text-white">{data?.total_data?.total_chick}</h3>
                         <span className="text-emerald-600 text-xs font-bold mb-1 flex items-center">
@@ -55,17 +56,7 @@ const FarmReport = () => {
                         </span>
                     </div>
                 </div>
-                <div className="p-5 border border-gray-300 bg-white rounded-lg">
-                    <p className="text-slate-600 text-xs font-semibold uppercase tracking-wider mb-1">Avg. Feed Used</p>
-                    <div className="flex items-end justify-between">
-                        <h3 className="text-2xl font-bold text-text-charcoal dark:text-white">{Number(data?.total_data?.avg_feed_used || 0).toLocaleString("en-IN", {
-                            maximumFractionDigits: 2,
-                        })} </h3>
-                        <span className="text-emerald-600 text-xs font-bold mb-1 flex items-center">
-                            kg
-                        </span>
-                    </div>
-                </div>
+
 
             </section>
             <section className='bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden mt-6'>
@@ -77,19 +68,19 @@ const FarmReport = () => {
                                     Farmer Name
                                 </TableHead>
                                 <TableHead className="px-6 py-4 text-xs font-bold uppercase ">
-                                    Delivery Date
+                                    Batch ID
                                 </TableHead>
                                 <TableHead className="px-6 py-4 text-xs font-bold uppercase text-center">
                                     Chicks Supplied
+                                </TableHead>
+                                <TableHead className="px-6 py-4 text-xs font-bold uppercase text-center">
+                                    Available Chicks
                                 </TableHead>
                                 <TableHead className="px-6 py-4 text-xs font-bold uppercase text-center">
                                     Feed Used (kg)
                                 </TableHead>
                                 <TableHead className="px-6 py-4 text-xs font-bold uppercase text-center">
                                     Medicine Price
-                                </TableHead>
-                                <TableHead className="px-6 py-4 text-xs font-bold uppercase text-center">
-                                    Batch (Days)
                                 </TableHead>
                                 <TableHead className="px-6 py-4 text-xs font-bold uppercase text-center">
                                     Mortality
@@ -127,24 +118,27 @@ const FarmReport = () => {
                                         </TableCell>
 
                                         <TableCell className="px-6 py-4 text-sm hidden md:table-cell">
-                                            {farm?.delivery_date ? format(new Date(farm?.delivery_date), "dd/MM/yyyy") : "N/A"}
+                                            {farm?.active_batch_id ? farm?.active_batch_id : "N/A"}
                                         </TableCell>
 
                                         <TableCell className="px-6 py-4 text-sm font-medium text-center">
-                                            {farm?.chicks_supplied}
+                                            {farm?.chicks_delivered}
+                                        </TableCell>
+
+                                        <TableCell className="px-6 py-4 text-sm font-medium text-center">
+                                            {farm?.available_chicks}
                                         </TableCell>
 
                                         <TableCell className="px-6 py-4 text-sm font-medium text-center">
                                             {farm?.feed_used}
                                         </TableCell>
                                         <TableCell className="px-6 py-4 text-sm font-medium text-center">
-                                            {farm?.medicine_price}
+                                            <div className="flex gap-1 items-center justify-center">
+                                                <IndianRupeeIcon size={14} /> {farm?.medicine_price}
+                                            </div>
                                         </TableCell>
 
-                                        <TableCell className="px-6 py-4 text-sm font-medium text-center">
 
-                                            {farm?.batch_days}
-                                        </TableCell>
 
                                         <TableCell className="px-6 py-4 text-sm font-medium text-center">
 
