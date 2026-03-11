@@ -28,7 +28,7 @@ const Lifting = () => {
     };
 
     const makeCompleteLift = () => {
-        mutate.mutate({ farm_id: makeComplete?.id, isComplete: true }, {
+        mutate.mutate({ farm_id: makeComplete?.id, batch_id: makeComplete?.active_batch_id, isComplete: true }, {
             onSuccess: () => {
                 setOpenAlert(false);
                 queryClient.invalidateQueries({ queryKey: ["lifiting"] })
