@@ -67,8 +67,8 @@ const FarmReport = () => {
                                 <TableHead className="px-6 py-4 text-xs font-bold uppercase">
                                     Farmer Name
                                 </TableHead>
-                                <TableHead className="px-6 py-4 text-xs font-bold uppercase ">
-                                    Date
+                                <TableHead className="px-6 py-4 text-xs font-bold uppercase text-center ">
+                                    Batch Days
                                 </TableHead>
                                 <TableHead className="px-6 py-4 text-xs font-bold uppercase text-center">
                                     Chicks Supplied
@@ -117,8 +117,8 @@ const FarmReport = () => {
                                             </div>
                                         </TableCell>
 
-                                        <TableCell className="px-6 py-4 text-sm hidden md:table-cell">
-                                            {farm?.delivery_date ? format(new Date(farm?.delivery_date), "dd/MM/yyyy") : "N/A"}
+                                        <TableCell className="px-6 py-4 text-sm hidden md:table-cell text-center">
+                                            <span className="bg-green-100 text-green-600 font-medium px-3 py-1 rounded-xl"> {farm?.batch_days ? farm?.batch_days : "N/A"}</span>
                                         </TableCell>
 
                                         <TableCell className="px-6 py-4 text-sm font-medium text-center">
