@@ -118,7 +118,7 @@ const FarmReport = () => {
                                         </TableCell>
 
                                         <TableCell className="px-6 py-4 text-sm hidden md:table-cell text-center">
-                                            <span className="bg-green-100 text-green-600 font-medium px-3 py-1 rounded-xl"> {farm?.batch_days ? farm?.batch_days : "N/A"}</span>
+                                            <span className={`${farm?.batch_days ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-600'} font-medium px-3 py-1 rounded-xl`}> {farm?.batch_days ? farm?.batch_days : "N/A"}</span>
                                         </TableCell>
 
                                         <TableCell className="px-6 py-4 text-sm font-medium text-center">
