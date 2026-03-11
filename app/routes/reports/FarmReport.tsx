@@ -68,7 +68,7 @@ const FarmReport = () => {
                                     Farmer Name
                                 </TableHead>
                                 <TableHead className="px-6 py-4 text-xs font-bold uppercase ">
-                                    Batch ID
+                                    Date
                                 </TableHead>
                                 <TableHead className="px-6 py-4 text-xs font-bold uppercase text-center">
                                     Chicks Supplied
@@ -118,7 +118,7 @@ const FarmReport = () => {
                                         </TableCell>
 
                                         <TableCell className="px-6 py-4 text-sm hidden md:table-cell">
-                                            {farm?.active_batch_id ? farm?.active_batch_id : "N/A"}
+                                            {farm?.delivery_date ? format(new Date(farm?.delivery_date), "dd/MM/yyyy") : "N/A"}
                                         </TableCell>
 
                                         <TableCell className="px-6 py-4 text-sm font-medium text-center">
