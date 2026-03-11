@@ -1,8 +1,8 @@
-import { addBounus, createFarmer, deleteFarms, getFarmersList, getLastOrderID, getLfitingList, getSingleFarm, makeLifiting, updateFarm, viewSinglLifting } from "@/api/farm.api";
+import { addBounus, createFarmer, deleteFarms, getFarmersList, getLastOrderID, getLfitingList, getSingleFarm, makeCompleteLifting, makeLifiting, updateFarm, viewSinglLifting } from "@/api/farm.api";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import queryClient from "./client";
-import type { AddBonusType, makeLifting } from "@/types/Farm";
+import queryClient from "@/query/client";
+import type { AddBonusType, makeComplete, makeLifting } from "@/types/Farm";
 
 
 
@@ -124,3 +124,20 @@ export const useAddBonusMutation = () => {
     })
 
 };
+
+
+export const useMakeCompleteMutations = () => {
+    return useMutation({
+        mutationFn: (payload:makeComplete ) => makeCompleteLifting(payload),
+        onSuccess: async (data) => {
+            await queryClient.invalidateQueries({ queryKey: ["lifting-complete"] });
+            toast.success(data?.message);
+        },
+        onError: (err) => {
+            const error: any = err;
+            if (!error.fieldErrors || Object.keys(error.fieldErrors).length <= 0) {
+                toast.error(error.message);
+            }
+        }
+    })
+}

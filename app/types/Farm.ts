@@ -31,3 +31,7 @@ export type AddBonusType = {
     batch_id: string;
     bonus: number;
 }
+    export type makeComplete = {
+    farm_id: number;
+    isComplete: boolean;
+}

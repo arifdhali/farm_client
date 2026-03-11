@@ -8,21 +8,32 @@ import {
 
 import { Birdhouse, CheckIcon, EyeIcon, PlusIcon, TrashIcon, } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger, } from "@/components/ui/tooltip";
-import { useGetLiftingList } from "@/query/Farm.queries";
+import { useGetLiftingList, useMakeCompleteMutations } from "@/query/Farm.queries";
 import SmallLoading from "@/components/ui/smallLoading";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { format } from "date-fns";
+import queryClient from "@/query/client";
 
 const Lifting = () => {
     const [openAlert, setOpenAlert] = useState<boolean>(false);
     const [status, setStatus] = useState("started")
     const { data: lifting, isLoading } = useGetLiftingList({ status });
-    
+    const mutate = useMakeCompleteMutations();
+
     const [makeComplete, setMakeComplete] = useState<any>();
     const handleMakeComplete = (id: number): void => {
         let order = lifting?.data?.find((o: any) => o.active_batch_id == id);
         setMakeComplete(order);
         setOpenAlert(!openAlert);
+    };
+
+    const makeCompleteLift = () => {
+        mutate.mutate({ farm_id: makeComplete?.id, isComplete: true }, {
+            onSuccess: () => {
+                setOpenAlert(false);
+                queryClient.invalidateQueries({ queryKey: ["lifiting"] })
+            }
+        });
     };
     return (
         <>
@@ -345,7 +356,7 @@ const Lifting = () => {
                         <AlertDialogCancel className="flex items-center justify-center rounded-lg h-12 bg-gray-200 dark:bg-[#3a1d1d] text-[#181111] dark:text-white hover:text-white border-0 text-sm font-bold  hover:bg-primary/90 dark:hover:bg-[#4d2727] ">
                             Cancel
                         </AlertDialogCancel>
-                        <AlertDialogAction disabled={makeComplete?.available_chicks > 0} className="flex items-center justify-center rounded-lg h-12 bg-primary text-white text-sm font-bold hover:bg-primary/90  shadow-lg shadow-primary/20">
+                        <AlertDialogAction onClick={makeCompleteLift} disabled={makeComplete?.available_chicks > 0 || mutate.isPending} className="flex items-center justify-center rounded-lg h-12 bg-primary text-white text-sm font-bold hover:bg-primary/90  shadow-lg shadow-primary/20">
                             Continue
                         </AlertDialogAction>
                     </AlertDialogFooter>

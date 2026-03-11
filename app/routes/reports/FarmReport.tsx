@@ -15,7 +15,7 @@ import { IndianRupeeIcon } from 'lucide-react';
 
 const FarmReport = () => {
     const { data, isLoading } = useGetReportFarmerQuery();
-    console.log(data?.reports);
+
     return (
         <>
 
