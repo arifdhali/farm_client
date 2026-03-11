@@ -60,10 +60,11 @@ const List = () => {
                 <div className="pt-6  dark:border-gray-800">
                     <div className="flex justify-between items-center text-sm mb-2">
                         <span className="text-gray-500">Survival Rate</span>
-                        <span className="font-bold text-primary">98.4%</span>
+                        <span className="font-bold text-primary">{mortalities?.percentage?.survival_percentage}%</span>
                     </div>
                     <div className="w-full bg-gray-100 dark:bg-gray-800 h-2 rounded-full overflow-hidden">
                         <div
+                            style={{ width: `${mortalities?.percentage?.survival_percentage}%` }}
                             className={`bg-primary transition-all duration-500 h-full w-[${mortalities?.percentage?.survival_percentage}%]`}
                         ></div>
                     </div>
