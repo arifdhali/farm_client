@@ -35,7 +35,7 @@ const CustomPagination = ({ page, per_page, total, onPageChange }: paginationPro
                             onClick={() =>
                                 currentPage > 0 && onPageChange(currentPage - 1)
                             }
-                            href="#"
+                          
                             className={`${currentPage == 1 ? "cursor-not-allowed bg-accent text-accent-foreground" : "bg-primary text-white"}`}
                         />
                     </PaginationItem>
@@ -59,7 +59,7 @@ const CustomPagination = ({ page, per_page, total, onPageChange }: paginationPro
                                 currentPage < totalPages && onPageChange(currentPage + 1)
                             } className={`${currentPage != 1 && currentPage <= totalPages ? "cursor-not-allowed bg-accent text-accent-foreground" : "bg-primary text-white"}`}
 
-                            href="#" />
+                            />
                     </PaginationItem>
                 </PaginationContent>
             </Pagination>
