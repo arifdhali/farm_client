@@ -62,7 +62,7 @@ export const getLastOrderID = async (id: number) => {
         }
         return null;
     } catch (err) {
-        // toast.error(err.response.data.message)
+        toast.error(err.response.data?.message)
         throw err;
     }
 }

@@ -13,6 +13,7 @@ import * as yup from "yup";
 import { format } from "date-fns";
 import { useChickDeliveryMutation } from "@/query/Chicks.queries";
 import ComboCheckbox from "@/components/ui/ComboCheckbox";
+import useDebounce from "@/hooks/useDebounce";
 
 const chicksDeliverySchema = yup.object().shape({
   delivery_date: yup.date().required("Delivery date is required"),
@@ -24,13 +25,16 @@ const chicksDeliverySchema = yup.object().shape({
 
 });
 const Delivery = () => {
+  const [search, setSearch] = useState("");
+  let deboundSearched = useDebounce(search, 400);
+
   const inputRef = useRef<Record<string, HTMLInputElement | HTMLTextAreaElement | null>>({});
   const [open, setOpen] = useState<any>({
     select_farmer: false,
     select_date: false,
   });
 
-  const { data } = useGetFarmersList();
+  const { data } = useGetFarmersList({search: deboundSearched});
   const makeDelivery = useChickDeliveryMutation();
 
   const deliveryForm = useFormik<DeliveryFormValues>({
@@ -95,6 +99,7 @@ const Delivery = () => {
                   ref={null}
                   label="farmer"
                   items={data?.farms ?? []}
+                  onSearch={(value:string)=>setSearch(value)}
                   selectedId={deliveryForm.values.farm_id}
                   onSelect={(id) => {
                     deliveryForm.setFieldValue("farm_id", id);

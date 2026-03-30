@@ -12,6 +12,7 @@ import ComboCheckbox from "@/components/ui/ComboCheckbox";
 import { useGetCustomersList } from "@/query/Customers.queries";
 import { useGetFarmersList, useGetLastOrderID, useMakeLifitingMutations } from "@/query/Farm.queries";
 import { toWords } from "@/hooks/useToWords";
+import useDebounce from "@/hooks/useDebounce";
 
 const settlementSchema = Yup.object({
     lifting_date: Yup.date()
@@ -57,6 +58,12 @@ const settlementSchema = Yup.object({
 
 
 const AddLifting = () => {
+    const [search, setSearch] = useState({
+        farmer_search: "",
+        customer_search: "",
+    });
+    let deboundCustomerSearched = useDebounce(search.customer_search, 400);
+    let deboundFarmerSearched = useDebounce(search.farmer_search, 400);
     let lifitingMutation = useMakeLifitingMutations();
     const inputRef = useRef<Record<string, HTMLInputElement | HTMLTextAreaElement | null>>({});
     const [openDate, setOpenDate] = useState<boolean>(false);
@@ -88,8 +95,8 @@ const AddLifting = () => {
 
         },
     });
-    let { data: users } = useGetCustomersList();
-    let { data: farms } = useGetFarmersList();
+    let { data: users } = useGetCustomersList({search: deboundCustomerSearched});
+    let { data: farms } = useGetFarmersList({ search: deboundFarmerSearched });
     const { data: lastOrderID } = useGetLastOrderID(Number(form.values.farm_id));
     useEffect(() => {
         if (!form.values.farm_id) return;
@@ -193,6 +200,7 @@ const AddLifting = () => {
                                 label="customer"
                                 items={users?.customers ?? []}
                                 selectedId={form.values.user_id}
+                                onSearch={(value:string)=>setSearch({...search, customer_search: value})}
                                 onSelect={(id) => {
                                     form.setFieldValue("user_id", id);
                                     form.setFieldTouched("user_id", true);
@@ -210,6 +218,7 @@ const AddLifting = () => {
                                 ref={null}
                                 label="Farmer"
                                 items={farms?.farms ?? []}
+                                onSearch={(value:string)=> setSearch({...search,farmer_search: value})}
                                 selectedId={Number(form.values.farm_id)}
                                 onSelect={(id) => {
                                     form.setFieldValue("farm_id", id);
@@ -230,7 +239,7 @@ const AddLifting = () => {
                                 name="order_id"
                                 ref={(el) => {
                                     el && (inputRef.current["order_id"] = el);
-                                }}  
+                                }}
                                 onChange={form.handleChange}
                                 value={form.values.order_id || ""}
                             />

@@ -11,6 +11,7 @@ import { format } from "date-fns";
 import type { ComboCheckboxRef } from "@/components/ui/ComboCheckbox";
 import ComboCheckbox from "@/components/ui/ComboCheckbox";
 import { useAddMoratlityMutations } from "@/query/Mortality.queries";
+import useDebounce from "@/hooks/useDebounce";
 
 const mortalitySchema = yup.object().shape({
   farm_id: yup.number().typeError("Farm must be a number").required("Farm is required"),
@@ -22,13 +23,14 @@ const mortalitySchema = yup.object().shape({
 });
 
 const AddMortality = () => {
-
+  const [search, setSearch] = useState("");
+  let deboundSearched = useDebounce(search, 400);
   const farmerRef = useRef<ComboCheckboxRef>(null);
   const [openDate, setOpenDate] = useState<boolean>(false);
 
   const inputRef = useRef<Record<string, HTMLInputElement | HTMLTextAreaElement | null>>({});
 
-  const { data } = useGetFarmersList();
+  const { data } = useGetFarmersList({search: deboundSearched});
   let addMortalityMutations = useAddMoratlityMutations();
 
   const mortalityForm = useFormik({
@@ -116,6 +118,7 @@ const AddMortality = () => {
                 ref={farmerRef}
                 label="Farmers"
                 items={data?.farms ?? []}
+                onSearch={(value:string)=>setSearch(value)}
                 selectedId={mortalityForm.values.farm_id}
                 onSelect={(id) => {
                   mortalityForm.setFieldValue("farm_id", id);

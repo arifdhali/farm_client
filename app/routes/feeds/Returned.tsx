@@ -3,6 +3,7 @@ import { Calendar } from "@/components/ui/calendar";
 import ComboCheckbox, { type ComboCheckboxRef } from "@/components/ui/ComboCheckbox";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import useDebounce from "@/hooks/useDebounce";
 import { cn } from "@/lib/utils";
 import { useGetFarmersList, useGetLastOrderID } from "@/query/Farm.queries";
 import { useFeedReturnedMutation, useGetFeedListQuery } from "@/query/Feed.queries";
@@ -28,11 +29,13 @@ const returnedFeedSchema = yup.object().shape({
     .required("Weight is required").positive("Weight must be a positive number"),
 });
 const Add = () => {
+  const [search, setSearch] = useState("");
+  let deboundSearched = useDebounce(search, 400);
   const farmerRef = useRef<ComboCheckboxRef>(null);
 
   const returnedFeedMutation = useFeedReturnedMutation();
   const inputRef = useRef<Record<string, HTMLInputElement | HTMLTextAreaElement | null>>({});
-  const { data } = useGetFarmersList();
+  const { data } = useGetFarmersList({search: deboundSearched});
 
   const [open, setOpen] = useState<any>({
     select_feed: false,
@@ -234,6 +237,7 @@ const Add = () => {
                 ref={farmerRef}
                 label="Farmers"
                 items={data?.farms ?? []}
+                onSearch={(value:string)=>setSearch(value)}
                 selectedId={returnedFeedFormik.values.farm_id}
                 onSelect={(id) => {
                   returnedFeedFormik.setFieldValue("farm_id", id);

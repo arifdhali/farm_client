@@ -6,9 +6,11 @@ const API_URL = `/customer`;
 
 
 
-export const getCustomersList = async () => {
+export const getCustomersList = async (filter: any) => {
     try {
-        const response = await HTTP.get(`${API_URL}/list`);
+        const response = await HTTP.get(`${API_URL}/list`,{
+            params: filter
+        });
         if (response.data.status) {
             return response.data.data;
         }

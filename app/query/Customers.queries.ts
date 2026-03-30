@@ -5,10 +5,10 @@ import toast from "react-hot-toast";
 import type { CreateCustomer } from "@/types/Customers.type";
 import { id } from "date-fns/locale";
 
-export const useGetCustomersList = () => {
+export const useGetCustomersList = (filter?: any) => {
     return useQuery({
-        queryKey: ["customers"],
-        queryFn: () => getCustomersList(),
+        queryKey: ["customers",filter],
+        queryFn: () => getCustomersList(filter),
     })
 }
 
