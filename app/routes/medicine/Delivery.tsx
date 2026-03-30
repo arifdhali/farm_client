@@ -17,6 +17,8 @@ import {
   useState,
 } from "react";
 import type { MedicineDeliveryFormValues } from "@/types/Medicine";
+import useDebounce from "@/hooks/useDebounce";
+import ComboCheckbox from "@/components/ui/ComboCheckbox";
 
 
 const medicineDeliverySchema = yup.object().shape({
@@ -32,13 +34,16 @@ const medicineDeliverySchema = yup.object().shape({
 
 });
 const Delivery = () => {
+  const [search, setSearch] = useState("");
+  let deboundSearched = useDebounce(search, 400);
+
   const medicineRef = useRef<ComboCheckboxRef>(null);
   const farmerRef = useRef<ComboCheckboxRef>(null);
   const [openDate, setOpenDate] = useState<boolean>(false);
 
   const inputRef = useRef<Record<string, HTMLInputElement | HTMLTextAreaElement | null>>({});
 
-  const { data } = useGetFarmersList({});
+  const { data } = useGetFarmersList({ search: deboundSearched });
   const makeDelivery = useMedicineDeliveryMutation();
   const deliveryForm = useFormik<MedicineDeliveryFormValues>({
     initialValues: {
@@ -47,7 +52,7 @@ const Delivery = () => {
       medicine_id: null,
       farm_id: null,
       quantity: 0,
-      price:0,
+      price: 0,
     },
     validationSchema: medicineDeliverySchema,
     validateOnBlur: false,
@@ -152,6 +157,7 @@ const Delivery = () => {
                 label="Farmers"
                 items={data?.farms ?? []}
                 selectedId={deliveryForm.values.farm_id}
+                onSearch={(value) => setSearch(value)}
                 onSelect={(id) => {
                   deliveryForm.setFieldValue("farm_id", id);
                   deliveryForm.setFieldTouched("farm_id", true);
@@ -310,67 +316,67 @@ type ComboCheckboxProps = {
   onSelect: (id: number) => void;
 };
 
-const ComboCheckbox = forwardRef<ComboCheckboxRef, ComboCheckboxProps>(({ label, items, selectedId, onSelect }, ref) => {
-  const [open, setOpen] = useState(false);
+// const ComboCheckbox = forwardRef<ComboCheckboxRef, ComboCheckboxProps>(({ label, items, selectedId, onSelect }, ref) => {
+//   const [open, setOpen] = useState(false);
 
-  const selectedItem = items.find(
-    (i) => Number(i.id) === selectedId
-  );
+//   const selectedItem = items.find(
+//     (i) => Number(i.id) === selectedId
+//   );
 
 
-  useImperativeHandle(ref, () => ({
-    open: () => setOpen(true),
-    close: () => setOpen(false),
-  }));
+//   useImperativeHandle(ref, () => ({
+//     open: () => setOpen(true),
+//     close: () => setOpen(false),
+//   }));
 
-  return (
+//   return (
 
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          role="combobox"
-          aria-expanded={open}
-          className="w-full border-slate-200 h-12 justify-between bg-white shadow-none font-normal text-sm"
-        >
-          {selectedItem ? selectedItem.name : `Select ${label}...`}
-          <ChevronsUpDown />
-        </Button>
-      </PopoverTrigger>
+//     <Popover open={open} onOpenChange={setOpen}>
+//       <PopoverTrigger asChild>
+//         <Button
+//           variant="outline"
+//           role="combobox"
+//           aria-expanded={open}
+//           className="w-full border-slate-200 h-12 justify-between bg-white shadow-none font-normal text-sm"
+//         >
+//           {selectedItem ? selectedItem.name : `Select ${label}...`}
+//           <ChevronsUpDown />
+//         </Button>
+//       </PopoverTrigger>
 
-      <PopoverContent className="p-0 border border-slate-200" align="start">
-        <Command className="border-0">
-          <CommandInput placeholder={`Search ${label}...`} className="border-0" />
-          <CommandList>
-            <CommandEmpty>No data found.</CommandEmpty>
-            <CommandGroup>
-              {items.map((item: any) => (
-                <CommandItem
-                  key={item.id}
-                  value={String(item.id)}
-                  onSelect={() => {
-                    onSelect(Number(item.id));
-                    setOpen(false);
-                  }}
-                >
-                  {item.name}
-                  <Check
-                    className={cn(
-                      "ml-auto",
-                      selectedId === Number(item.id)
-                        ? "opacity-100"
-                        : "opacity-0"
-                    )}
-                  />
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          </CommandList>
-        </Command>
-      </PopoverContent>
-    </Popover>
+//       <PopoverContent className="p-0 border border-slate-200" align="start">
+//         <Command className="border-0">
+//           <CommandInput placeholder={`Search ${label}...`} className="border-0" />
+//           <CommandList>
+//             <CommandEmpty>No data found.</CommandEmpty>
+//             <CommandGroup>
+//               {items.map((item: any) => (
+//                 <CommandItem
+//                   key={item.id}
+//                   value={String(item.id)}
+//                   onSelect={() => {
+//                     onSelect(Number(item.id));
+//                     setOpen(false);
+//                   }}
+//                 >
+//                   {item.name}
+//                   <Check
+//                     className={cn(
+//                       "ml-auto",
+//                       selectedId === Number(item.id)
+//                         ? "opacity-100"
+//                         : "opacity-0"
+//                     )}
+//                   />
+//                 </CommandItem>
+//               ))}
+//             </CommandGroup>
+//           </CommandList>
+//         </Command>
+//       </PopoverContent>
+//     </Popover>
 
-  );
-});
+//   );
+// });
 
 

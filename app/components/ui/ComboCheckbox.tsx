@@ -19,9 +19,10 @@ type ComboCheckboxProps = {
     items: any[];
     selectedId: number | null;
     onSelect: (id: number) => void;
+    onSearch?: (query: string) => void;
 };
 
-const ComboCheckbox = forwardRef<ComboCheckboxRef, ComboCheckboxProps>(({ disabled, label, items, selectedId, onSelect }, ref) => {
+const ComboCheckbox = forwardRef<ComboCheckboxRef, ComboCheckboxProps>(({ disabled, label, items, selectedId, onSelect, onSearch }, ref) => {
 
     const [open, setOpen] = useState(false);
     const [search, setSearch] = useState("");
@@ -61,7 +62,13 @@ const ComboCheckbox = forwardRef<ComboCheckboxRef, ComboCheckboxProps>(({ disabl
 
             <PopoverContent className="p-0 border border-slate-200" align="start">
                 <Command className="border-0">
-                    <CommandInput placeholder={`Search ${label}...`} value={search} onValueChange={(e) => setSearch(e)} className="border-0" />
+                    <CommandInput placeholder={`Search ${label}...`} value={search}
+                        onValueChange={
+                            (value) => {
+                                setSearch(value);
+                                onSearch?.(value);
+                            }
+                        } className="border-0" />
                     <CommandList>
                         <CommandEmpty>No data found.</CommandEmpty>
                         <CommandGroup>

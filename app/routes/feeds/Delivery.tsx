@@ -15,6 +15,7 @@ import type { ComboCheckboxRef } from "@/components/ui/ComboCheckbox";
 import ComboCheckbox from "@/components/ui/ComboCheckbox";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { cn } from "@/lib/utils";
+import useDebounce from "@/hooks/useDebounce";
 
 const feedDeliverySchema = yup.object().shape({
   farm_id: yup.number().typeError("Farm must be a number").required("Farm is required"),
@@ -30,14 +31,17 @@ const feedDeliverySchema = yup.object().shape({
 
 });
 const Delivery = () => {
-
+  const [search, setSearch] = useState("");
   const farmerRef = useRef<ComboCheckboxRef>(null);
   const [openDate, setOpenDate] = useState<boolean>(false);
   const [openFeed, setOpenFeed] = useState<boolean>(false);
 
   const inputRef = useRef<Record<string, HTMLInputElement | HTMLTextAreaElement | null>>({});
+  let deboundSearched = useDebounce(search, 400);
 
-  const { data } = useGetFarmersList();
+  const { data } = useGetFarmersList({ search: deboundSearched });
+
+
   const makeDelivery = useFeedDeliveryMutation();
   const deliveryForm = useFormik<FeedDeliveryFormValues>({
     initialValues: {
@@ -195,6 +199,7 @@ const Delivery = () => {
                 label="Farmers"
                 items={data?.farms ?? []}
                 selectedId={deliveryForm.values.farm_id}
+                onSearch={(value: string) => setSearch(value)}
                 onSelect={(id) => {
                   deliveryForm.setFieldValue("farm_id", id);
                   deliveryForm.setFieldTouched("farm_id", true);
