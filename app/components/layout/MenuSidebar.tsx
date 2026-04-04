@@ -27,10 +27,10 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
 } from "@/components/ui/sidebar";
-import { Link, useLocation } from "react-router";
+import { Link, useLoaderData, useLocation } from "react-router";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "../ui/alert-dialog";
-import { getMeQuery, useLogoutMutation } from "@/query/Auth.queries";
-import { useQuery } from "@tanstack/react-query";
+import {  useLogoutMutation } from "@/query/Auth.queries";
+
 
 const menuItems = [
   { title: "Dashboard", icon: LayoutDashboard, url: "/" },
@@ -107,9 +107,7 @@ const menuItems = [
 ];
 
 export default function MenuSidebar() {
-
-  const { data: user } = useQuery(getMeQuery());
-
+  let user = useLoaderData();
 
   const { mutate: logoutUser, isPending } = useLogoutMutation();
   const location = useLocation();

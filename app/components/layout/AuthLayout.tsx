@@ -12,7 +12,7 @@ export async function loader({ request }: { request: Request }) {
         let user = await queryClient.ensureQueryData(getMeQuery(cookie));
         if (user?.id) {
             throw redirect("/");
-        }
+        } 
         return null;
     } catch (error) {
         console.log("its Authlaout layout error")

@@ -102,11 +102,12 @@ export const updateMedicine = async ({ updateData, id }: { updateData: any, id: 
 }
 
 
-export const deleteMedicine = async (id: number) => {
+export const deleteMedicine = async (id: number, force_delete: boolean) => {
     try {
         let response = await HTTP.delete(`${API}`, {
             params: {
-                id: id
+                id: id,
+                force_delete: force_delete
             }
         });
         if (response.data.status) {

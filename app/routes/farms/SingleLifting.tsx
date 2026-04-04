@@ -2,15 +2,13 @@ import SmallLoading from "@/components/ui/smallLoading";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { toWords } from "@/hooks/useToWords";
-import { getMeQuery } from "@/query/Auth.queries";
 import { useAddBonusMutation, useSingleLiftingQuery } from "@/query/Farm.queries";
 import type { AddBonusType } from "@/types/Farm";
-import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
-import { CalendarRange, DollarSignIcon, IndianRupee, IndianRupeeIcon, Loader2, LucideBriefcaseMedical, LucideInbox, LucidePercent, LucideRabbit, LucideRatio, LucideWeight, LucideWheat, Shield, ShieldCheck } from "lucide-react";
+import { CalendarRange, IndianRupee, IndianRupeeIcon, Loader2, LucideBriefcaseMedical, LucideInbox, LucidePercent, LucideRabbit, LucideRatio, LucideWeight, LucideWheat, Shield, ShieldCheck } from "lucide-react";
 import { useEffect, useState } from "react";
 import { CheckmarkIcon } from "react-hot-toast";
-import { useParams, useSearchParams } from "react-router";
+import { useLoaderData, useParams, useSearchParams } from "react-router";
 
 const SingleLifting = () => {
 
@@ -19,7 +17,7 @@ const SingleLifting = () => {
     const order_id = searchParams.get("order_id");
     const { data: view, isLoading } = useSingleLiftingQuery({ farm_id, order_id });
     const addBonusMutation = useAddBonusMutation();
-    const { data: user } = useQuery(getMeQuery());
+    let user = useLoaderData();
     const [bonus, setBonus] = useState<number>(0);
     const [totalPayment, setTotalPayment] = useState<number>(0);
     const [isBounsAdded, setIsBonusAdded] = useState<boolean>(false);

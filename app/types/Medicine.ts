@@ -1,6 +1,8 @@
 export type MedicineFormValues = {
   name: string;
-  stock: number;
+  quantity: number;
+  unit_id: number;
+  price_per_unit: number;
 };
 
 
@@ -10,5 +12,5 @@ export type MedicineDeliveryFormValues = {
   delivery_date: Date | string;
   farm_id: number | null;
   quantity: number;
-  price:number;
+  unit_id: number | null;
 };

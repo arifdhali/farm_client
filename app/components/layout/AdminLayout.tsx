@@ -13,7 +13,8 @@ export async function loader({ request }: { request: Request }) {
     try {
         const user = await queryClient.ensureQueryData(getMeQuery(cookie));
         if (!user?.id) return redirect("/auth/login");
-        return null;
+
+        return user;
     } catch (error) {
         console.log("its admin layout error")
         if (error instanceof Response) throw error;

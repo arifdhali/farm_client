@@ -1,27 +1,43 @@
 import { Button } from "@/components/ui/button";
+import ComboCheckbox from "@/components/ui/ComboCheckbox";
 import { useAddMedicineMutation } from "@/query/Medicine.queries";
+import { useGetUnitsList } from "@/query/Units.queries";
 import type { MedicineFormValues } from "@/types/Medicine";
+import { sl } from "date-fns/locale";
 import { useFormik } from "formik";
-import { ArrowLeftIcon } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { ArrowLeftIcon, IndianRupee } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router";
 import * as yup from "yup";
 
 
 const addMedicineSchema = yup.object().shape({
   name: yup.string().required("Name is required"),
-  stock: yup.number().typeError("Stock must be a number")
-    .required("Stock is required").positive("Stock must be a positive number")
+  quantity: yup.number()
+    .required("Quantity is required")
+    .positive("Quantity must be positive"),
+  price_per_unit: yup.number()
+    .typeError("Price per unit must be a number")
+    .required("Price per unit is required")
+    .positive("Price per unit must be positive"),
+  unit_id: yup.number().required("Unit is required"),
 });
 const Add = () => {
   let navigate = useNavigate();
+  const [selectedUnit, setSelectedUnit] = useState<any | null>(null);
 
   const inputRef = useRef<Record<string, HTMLInputElement | HTMLTextAreaElement | null>>({});
   const addMedicine = useAddMedicineMutation();
+  const { data: units } = useGetUnitsList();
+
+
+
   const medicineForm = useFormik<MedicineFormValues>({
     initialValues: {
       name: "",
-      stock: 0,
+      quantity: 0,
+      price_per_unit: 0,
+      unit_id: 0,
     },
     validationSchema: addMedicineSchema,
     validateOnBlur: false,
@@ -29,12 +45,15 @@ const Add = () => {
     onSubmit: (values) => {
       addMedicine.mutate(values, {
         onSuccess: () => {
+          addMedicine.isSuccess && medicineForm.resetForm();
           navigate("/medicine/list", { replace: true });
         },
       });
-      addMedicine.isSuccess && medicineForm.resetForm();
     }
   });
+  useEffect(() => {
+    setSelectedUnit(units?.find((unit: any) => unit.id === medicineForm.values.unit_id));
+  }, [medicineForm.values.unit_id])
   useEffect(() => {
     if (!medicineForm.isSubmitting) return;
     let firstElement = Object.keys(medicineForm.errors)[0];
@@ -76,7 +95,6 @@ const Add = () => {
               </label>
               <input
                 className="w-full h-12 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-4 py-3 text-base"
-                placeholder="example medicine"
                 type="text"
                 name="name"
                 ref={(el) => {
@@ -92,26 +110,64 @@ const Add = () => {
                 </span>
               ) : null}
             </div>
-
             <div className="flex flex-col col-span-2 md:col-span-1">
               <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
-                Stock
+                Choose Unit
+              </label>
+              <ComboCheckbox
+                className="capitalize"
+                label="units"
+                items={units ?? []}
+                selectedId={medicineForm.values.unit_id}
+                onSelect={(id) => {
+                  medicineForm.setFieldValue("unit_id", id);
+                  medicineForm.setFieldTouched("unit_id", true);
+                }}
+              />
+            </div>
+            <div className="flex flex-col col-span-2 md:col-span-1">
+              <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
+                Quantity
               </label>
               <input
                 className="w-full h-12 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-4 py-3 text-base"
                 placeholder="200"
-                type="text"
-                name="stock"
+                type="number"
+                name="quantity"
                 ref={(el) => {
-                  el && (inputRef.current["stock"] = el);
+                  el && (inputRef.current["quantity"] = el);
                 }}
                 onChange={medicineForm.handleChange}
                 onBlur={medicineForm.handleBlur}
-                value={medicineForm.values.stock}
+                value={medicineForm.values.quantity}
               />
-              {medicineForm.touched.stock && medicineForm.errors.stock ? (
+              {medicineForm.touched.quantity && medicineForm.errors.quantity ? (
                 <span className="text-red-500 text-sm">
-                  {medicineForm.errors.stock}
+                  {medicineForm.errors.quantity}
+                </span>
+              ) : null}
+            </div>
+
+            <div className="flex flex-col col-span-2 md:col-span-1">
+              <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
+                Price per <span className="text-primary capitalize">{selectedUnit?.short_name}</span>
+              </label>
+              <input
+                className="w-full h-12 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-4 py-3 text-base"
+                placeholder="200"
+                type="number"
+                name="price_per_unit"
+                ref={(el) => {
+                  el && (inputRef.current["price_per_unit"] = el);
+                }}
+                onChange={medicineForm.handleChange}
+                onBlur={medicineForm.handleBlur}
+                value={medicineForm.values.price_per_unit}
+              />
+
+              {medicineForm.touched.price_per_unit && medicineForm.errors.price_per_unit ? (
+                <span className="text-red-500 text-sm">
+                  {medicineForm.errors.price_per_unit}
                 </span>
               ) : null}
             </div>

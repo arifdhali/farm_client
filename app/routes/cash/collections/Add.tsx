@@ -1,6 +1,6 @@
 import { ArrowLeftIcon, Check, ChevronsUpDown } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router";
+import { Link, useLoaderData } from "react-router";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -35,7 +35,7 @@ const CollectionAdd = () => {
     batch_id: false,
   });
   const { data } = useGetCustomersList();
-  const { data: user } = useQuery(getMeQuery());
+  let user = useLoaderData();
 
   const { mutate: addCashCollection, isPending, isError, error } = useAddCollectionMutations();
 

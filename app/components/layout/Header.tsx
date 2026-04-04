@@ -2,12 +2,11 @@ import React from 'react'
 import { Input } from '../ui/input'
 import { BellIcon, Hamburger, MenuSquareIcon, Settings } from 'lucide-react'
 import { SidebarTrigger } from '../ui/sidebar'
-import { Link } from 'react-router'
-import { useQuery } from '@tanstack/react-query'
-import { getMeQuery } from '@/query/Auth.queries'
+import { Link, useLoaderData } from 'react-router'
+
 
 const Header = () => {
-  const { data: user } = useQuery(getMeQuery());
+  let user = useLoaderData();
   return (
     <header className="h-16 bg-white dark:bg-[#1a1630] border-b border-[#dddbe6] dark:border-white/10 flex items-center justify-between px-6 sticky top-0 z-10">
 

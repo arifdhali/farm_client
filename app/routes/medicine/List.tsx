@@ -40,15 +40,30 @@ const List = () => {
     const [medicine, setMedicine] = useState<any>({});
     const [openAlert, setOpenAlert] = useState<boolean>(false);
     const deleteMutaion = useDeleteMedicineMutation();
+    const [forceDelete, setForceDelete] = useState(false);
 
     const { data, isLoading } = useGetMedicineListQuery();
     const handleDeleteModal = (id: number): void => {
         setMedicine(id);
-        setOpenAlert(!openAlert);
+        setForceDelete(false);
+        setOpenAlert(true);
     };
 
     const handleDeleteMedicine = () => {
-        deleteMutaion.mutate(medicine);
+        deleteMutaion.mutate({ id: medicine, force_delete: forceDelete },
+            {
+                onSuccess: () => {
+                    setOpenAlert(false);
+                    setForceDelete(false);
+                },
+                onError: (error: any) => {
+                    if (error?.status === 400) {
+                        setForceDelete(true);
+                    }
+                    setOpenAlert(true);
+                }
+            }
+        );
     };
 
     return (
@@ -89,6 +104,9 @@ const List = () => {
                                                 Stock
                                             </TableHead>
                                             <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider min-w-50 text-center">
+                                                Added Unit
+                                            </TableHead>
+                                            <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider min-w-50 text-center">
                                                 Availblity
                                             </TableHead>
 
@@ -110,23 +128,26 @@ const List = () => {
                                         }
                                         {
                                             !isLoading && data?.medicines?.length > 0 && (
-                                                data?.medicines?.map((list: any) => (
-                                                    <TableRow key={list.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors group">
+                                                data?.medicines?.map((list: any, i) => (
+                                                    <TableRow key={i} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors group">
                                                         <TableCell className="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">
                                                             {list?.name}
                                                         </TableCell>
 
                                                         <TableCell className="px-6 py-4 text-sm font-medium text-slate-900 dark:text-white text-center">
-                                                            {list?.stock} <sup>Qty</sup>
+                                                            {list?.stock} <sup>{list?.unit_short_name}</sup>
+                                                        </TableCell>
+                                                        <TableCell className="px-6 py-4 capitalize text-sm font-medium text-slate-900 dark:text-white text-center">
+                                                            {list?.unit_name}
                                                         </TableCell>
                                                         <TableCell className="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 font-medium text-center">
 
                                                             <div className="flex w-fit items-center gap-2 justify-center mx-auto">
                                                                 <div className=" bg-gray-300 relative w-37.5 h-1.25 rounded-full mx-auto mt-1 flex justify-baseline">
-                                                                    <span className={`${list?.stock_percentage >= 50 ? 'bg-green-500' : 'bg-red-500'} absolute transition duration-300 ease-in-out start-0 h-full rounded-full`} style={{ width: `${list?.stock_percentage}%` }}>
+                                                                    <span className={`${list?.available_percentage >= 50 ? 'bg-green-500' : 'bg-red-500'} absolute transition duration-300 ease-in-out start-0 h-full rounded-full`} style={{ width: `${list?.available_percentage}%` }}>
                                                                     </span>
                                                                 </div>
-                                                                <span className="text-xs text-slate-500 dark:text-slate-400">{Number(list?.stock_percentage).toFixed(0)}%</span>
+                                                                <span className="text-xs text-slate-500 dark:text-slate-400">{Number(list?.available_percentage).toFixed(0)}%</span>
 
                                                             </div>
 
@@ -192,10 +213,12 @@ const List = () => {
                     </div>
                     <AlertDialogHeader className="mb-8 mt-4 items-center">
                         <AlertDialogTitle className="text-2xl font-bold text-[#181111] dark:text-white leading-tight">
-                            Delete Medicine?
+                            {forceDelete ? "Force " : ""}Delete Medicine?
                         </AlertDialogTitle>
                         <AlertDialogDescription className="text-[#896161] text-sm leading-relaxed mt-3 text-center">
-                            Are you sure you want to delete, This action cannot be undone.
+                            {forceDelete
+                                ? "This medicine has related data. Are you sure you want to permanently delete it?"
+                                : "Are you sure you want to delete? This action cannot be undone."}
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter className="grid grid-cols-2 gap-4">
@@ -204,10 +227,13 @@ const List = () => {
                         </AlertDialogCancel>
                         <AlertDialogAction
                             disabled={deleteMutaion.isPending}
-                            onClick={handleDeleteMedicine}
+                            onClick={(e) => {
+                                e.preventDefault();
+                                handleDeleteMedicine();
+                            }}
                             className="flex items-center justify-center rounded-lg h-12 bg-red-600 text-white text-sm font-bold hover:bg-primary/90  shadow-lg shadow-primary/20"
                         >
-                            {deleteMutaion.isPending ? "Processing" : "Confirm"}
+                            {deleteMutaion.isPending ? "Processing" : forceDelete ? "Force Delete" : "Confirm"}
                         </AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>

@@ -74,12 +74,12 @@ export const useUpdateMedicineMutation = () => {
 
 export const useDeleteMedicineMutation = () => {
     return useMutation({
-        mutationFn: deleteMedicine,
-        onSuccess: async (data) => {
+        mutationFn: ({id, force_delete}:{id:number;force_delete:boolean}) => deleteMedicine(id, force_delete),
+        onSuccess: async () => {
             await queryClient.invalidateQueries({ queryKey: ["medicines"] });
             toast.success("Medicine deleted successfully");
         },
-        onError: (err) => {
+        onError: (err) => { 
             const error: any = err;
             toast.error(error.response.data.message);
         }

@@ -66,18 +66,17 @@ const Delivery = () => {
         ...values,
         delivery_date: format(values.delivery_date, "yyyy-MM-dd"),
       }
-      console.log(payload)
-      // makeDelivery.mutate(payload, {
-      //   onSuccess: (data) => {
-      //     deliveryForm.resetForm();
+      makeDelivery.mutate(payload, {
+        onSuccess: (data) => {
+          deliveryForm.resetForm();
 
-      //   },
-      // });
+        },
+      });
 
     }
   });
 
-  
+
   useEffect(() => {
     if (!deliveryForm.isSubmitting) return;
     let firstElement = Object.keys(deliveryForm.errors)[0];
@@ -247,6 +246,11 @@ const Delivery = () => {
                   deliveryForm.setFieldTouched("unit_id", true);
                 }}
               />
+              {deliveryForm.touched.unit_id && deliveryForm.errors.unit_id ? (
+                <span className="text-red-500 text-sm">
+                  {deliveryForm.errors.unit_id}
+                </span>
+              ) : null}
             </div>
             <div className="flex flex-col col-span-2 md:col-span-1">
               <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">

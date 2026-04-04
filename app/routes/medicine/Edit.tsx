@@ -22,10 +22,11 @@ const Edit = () => {
     const { data: singleMedicine } = useGetSingleMedicine(Number(id));
 
     const updateMedicine = useUpdateMedicineMutation();
-    const medicineForm = useFormik<Pick<MedicineFormValues, "stock">>({
+    const medicineForm = useFormik<any>({
         enableReinitialize: true,
         initialValues: {
             stock: singleMedicine?.stock ?? 0,
+            price_per_unit: singleMedicine?.price_per_unit ?? 0,
         },
         validationSchema: editMedicineSchema,
         validateOnBlur: false,
@@ -87,7 +88,8 @@ const Edit = () => {
                                 className="w-full h-12 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-4 py-3 text-base"
                                 placeholder="200"
                                 type="text"
-                                name="stock" onChange={medicineForm.handleChange}
+                                name="stock"
+                                onChange={medicineForm.handleChange}
                                 onBlur={medicineForm.handleBlur}
                                 value={medicineForm.values.stock}
                             />
@@ -99,15 +101,25 @@ const Edit = () => {
                         </div>
                         <div className="flex flex-col col-span-2 md:col-span-1">
                             <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
-                                Price
+                                Price per <span className="text-primary">
+                                    {singleMedicine?.unit_short_name}
+                                </span>
                             </label>
                             <input
-                                className="w-full rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-200 cursor-not-allowed dark:bg-zinc-800 px-4 py-3"
-                                placeholder="Fixed price"
+                                className="w-full h-12 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-4 py-3 text-base"
                                 type="text"
-                                name="price"
-                                value={singleMedicine?.price ?? ""}
+                                onChange={medicineForm.handleChange}
+                                onBlur={medicineForm.handleBlur}
+                                name="price_per_unit"
+                                value={medicineForm.values.price_per_unit}
                             />
+                            <span className="text-xs mt-1 text-gray-700">Per {singleMedicine?.unit_name} price</span>
+
+                            {medicineForm.touched.price_per_unit && medicineForm.errors.price_per_unit ? (
+                                <span className="text-red-500 text-sm">
+                                    {medicineForm.errors.price_per_unit}
+                                </span>
+                            ) : null}
                         </div>
                     </div>
 
