@@ -108,10 +108,10 @@ const Add = () => {
         <div className="flex flex-wrap justify-between items-end gap-3">
           <div className="flex flex-col ">
             <h2 className="text-zinc-900 dark:text-zinc-100 text-3xl font-black leading-tight tracking-[-0.033em]">
-              Add Feed
+              Returned Feed
             </h2>
             <p className="text-zinc-500 dark:text-zinc-400 text-base font-normal leading-normal">
-              Add new feed to the system.
+              Returned feed from Farm
             </p>
           </div>
           <Link

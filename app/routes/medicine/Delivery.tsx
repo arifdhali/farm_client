@@ -217,7 +217,6 @@ const Delivery = () => {
                     className="w-75"
                     mode="single"
                     buttonVariant="outline"
-                    disabled={{ before: new Date() }}
                     onSelect={(date) => {
                       if (!date) return;
                       setOpenDate(false);
