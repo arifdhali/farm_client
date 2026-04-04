@@ -14,6 +14,7 @@ export type ComboCheckboxRef = {
 };
 
 type ComboCheckboxProps = {
+    className?: string;
     disabled?: boolean;
     label: string;
     items: any[];
@@ -22,7 +23,7 @@ type ComboCheckboxProps = {
     onSearch?: (query: string) => void;
 };
 
-const ComboCheckbox = forwardRef<ComboCheckboxRef, ComboCheckboxProps>(({ disabled, label, items, selectedId, onSelect, onSearch }, ref) => {
+const ComboCheckbox = forwardRef<ComboCheckboxRef, ComboCheckboxProps>(({ className, disabled, label, items, selectedId, onSelect, onSearch }, ref) => {
 
     const [open, setOpen] = useState(false);
     const [search, setSearch] = useState("");
@@ -53,7 +54,7 @@ const ComboCheckbox = forwardRef<ComboCheckboxRef, ComboCheckboxProps>(({ disabl
                     role="combobox"
                     aria-expanded={open}
                     disabled={disabled}
-                    className={`w-full border-slate-200 h-12 justify-between  shadow-none font-normal text-sm ${disabled ? "cursor-not-allowed bg-gray-200" : "bg-white"}`}
+                    className={cn(className,`w-full border-slate-200 h-12 justify-between  shadow-none font-normal text-sm ${disabled ? "cursor-not-allowed bg-gray-200" : "bg-white"}`)}
                 >
                     {selectedItem ? selectedItem.name : `Select ${label}...`}
                     <ChevronsUpDown />
@@ -80,6 +81,7 @@ const ComboCheckbox = forwardRef<ComboCheckboxRef, ComboCheckboxProps>(({ disabl
                                         onSelect(Number(item.id));
                                         setOpen(false);
                                     }}
+                                    className={cn(className)}
                                 >
                                     {item.name}
                                     <Check
@@ -96,7 +98,7 @@ const ComboCheckbox = forwardRef<ComboCheckboxRef, ComboCheckboxProps>(({ disabl
                     </CommandList>
                 </Command>
             </PopoverContent>
-        </Popover>
+        </Popover >
 
     );
 });
