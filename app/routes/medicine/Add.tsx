@@ -17,7 +17,6 @@ const addMedicineSchema = yup.object().shape({
     .required("Quantity is required")
     .positive("Quantity must be positive"),
   price_per_unit: yup.number()
-    .typeError("Price per unit must be a number")
     .required("Price per unit is required")
     .positive("Price per unit must be positive"),
   unit_id: yup.number().required("Unit is required"),
@@ -154,7 +153,6 @@ const Add = () => {
               </label>
               <input
                 className="w-full h-12 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-4 py-3 text-base"
-                placeholder="200"
                 type="number"
                 name="price_per_unit"
                 ref={(el) => {
