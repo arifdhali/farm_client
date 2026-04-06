@@ -20,25 +20,69 @@ import type { MedicineDeliveryFormValues } from "@/types/Medicine";
 import useDebounce from "@/hooks/useDebounce";
 import ComboCheckbox from "@/components/ui/ComboCheckbox";
 import { useGetUnitsList } from "@/query/Units.queries";
+import {
+  Field,
+  FieldContent,
+  FieldDescription,
+  FieldLabel,
+  FieldTitle,
+} from "@/components/ui/field"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 
 
-const medicineDeliverySchema = yup.object().shape({
-  delivery_date: yup.date().required("Delivery date is required").min(
-    new Date(new Date().setHours(0, 0, 0, 0)),
-    "Delivery date cannot be in the past"
-  ),
-  farm_id: yup.number().typeError("Farm must be a number").required("Farm is required"),
-  order_id: yup.string().required("Order is required"),
-  medicine_id: yup.number().typeError("Medicine must be a number").required("Medicine is required"),
-  quantity: yup.number().typeError("Quantity must be a number")
-    .required("Quantity is required").positive("Quantity must be a positive number"),
-  unit_id: yup.number().required("Unit is required"),
 
-});
+const getSchema = (deliveryType: "0" | "1") =>
+  yup.object().shape({
+    delivery_date: yup
+      .date()
+      .required("Delivery date is required")
+      .min(
+        new Date(new Date().setHours(0, 0, 0, 0)),
+        "Delivery date cannot be in the past"
+      ),
+
+    farm_id: yup
+      .number()
+      .typeError("Farm must be a number")
+      .required("Farm is required"),
+
+    order_id: yup.string().required("Order is required"),
+
+    medicine_id:
+      deliveryType === "0"
+        ? yup
+          .number()
+          .typeError("Medicine must be a number")
+          .required("Medicine is required")
+        : yup.number().nullable(),
+
+    quantity:
+      deliveryType === "0"
+        ? yup
+          .number()
+          .typeError("Quantity must be a number")
+          .required("Quantity is required")
+        : yup.number().nullable(),
+
+    unit_id:
+      deliveryType === "0"
+        ? yup.number().required("Unit is required")
+        : yup.number().nullable(),
+
+    amount:
+      deliveryType === "1"
+        ? yup
+          .number()
+          .typeError("Amount must be a number")
+          .required("Amount is required")
+          .positive("Amount must be positive")
+        : yup.number().nullable(),
+  });
+
 const Delivery = () => {
   const [search, setSearch] = useState("");
   let deboundSearched = useDebounce(search, 400);
-
+  const [deliveryType, setDeliveryType] = useState<"0" | "1">("0");
   const { data: units } = useGetUnitsList();
 
   const medicineRef = useRef<ComboCheckboxRef>(null);
@@ -55,18 +99,37 @@ const Delivery = () => {
       order_id: "",
       medicine_id: null,
       farm_id: null,
-      quantity: 0,
       unit_id: null,
+      quantity: null,
+      amount: null,
     },
-    validationSchema: medicineDeliverySchema,
+    validationSchema: getSchema(deliveryType),
     validateOnBlur: false,
     validateOnChange: false,
     onSubmit: (values) => {
-      let payload = {
-        ...values,
+      const basePayload = {
+        farm_id: values.farm_id,
+        order_id: values.order_id,
         delivery_date: format(values.delivery_date, "yyyy-MM-dd"),
+      };
+      let payload;
+      if (deliveryType == "1") {
+        payload = {
+          ...basePayload,
+          amount: values.amount,
+          one_time: 1,
+        }
+      } else {
+        payload = {
+          ...basePayload,
+          medicine_id: values.medicine_id,
+          quantity: values.quantity,
+          unit_id: values.unit_id,
+          one_time: 0,
+        };
       }
-      makeDelivery.mutate(payload, {
+      
+     makeDelivery.mutate(payload, {
         onSuccess: (data) => {
           deliveryForm.resetForm();
 
@@ -102,7 +165,6 @@ const Delivery = () => {
     deliveryForm.setErrors(error.fieldErrors ?? "");
   }, [makeDelivery.isError])
 
-
   return (
     <div className="flex-1 overflow-y-auto bg-background-light dark:bg-background-dark">
       <div className="mb-8 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-8 py-6">
@@ -127,30 +189,58 @@ const Delivery = () => {
       <div className="bg-white dark:bg-zinc-900 w-150 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-800 overflow-hidden">
         <form onSubmit={deliveryForm.handleSubmit} className="p-8">
           <div className="grid grid-cols-1 md:grid-cols-1 gap-x-8 gap-y-6">
-            <div className="flex flex-col col-span-1 md:col-span-1">
-              <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
-                Select Medicine
-              </label>
-              <ComboCheckbox
-                ref={medicineRef}
-                label="Medicine"
-                items={medicine?.medicines ?? []}
-                selectedId={deliveryForm.values.medicine_id}
-                onSelect={(id) => {
-                  deliveryForm.setFieldValue("medicine_id", id);
-                  deliveryForm.setFieldTouched("medicine_id", true);
-                  farmerRef.current?.open();
-                }}
-              />
-              {deliveryForm.touched.medicine_id && deliveryForm.errors.medicine_id ? (
-                <span className="text-red-500 text-sm">
-                  {deliveryForm.errors.medicine_id}
-                </span>
-              ) : null}
-
+            <div className="">
+              <RadioGroup value={deliveryType}
+                onValueChange={(val) => setDeliveryType(val as "0" | "1")}
+                defaultValue="0" className=" flex">
+                <FieldLabel className="border border-zinc-200 " htmlFor="regular-delivery">
+                  <Field orientation="horizontal">
+                    <FieldContent>
+                      <FieldTitle>Regular Delivery</FieldTitle>
+                      <FieldDescription>
+                        If you want regular  delivery
+                      </FieldDescription>
+                    </FieldContent>
+                    <RadioGroupItem value="0" id="regular-delivery" />
+                  </Field>
+                </FieldLabel>
+                <FieldLabel className="border border-zinc-200 " htmlFor="one-time-delivery">
+                  <Field orientation="horizontal">
+                    <FieldContent>
+                      <FieldTitle>One-Time Delivery</FieldTitle>
+                      <FieldDescription>For one-time delivery.</FieldDescription>
+                    </FieldContent>
+                    <RadioGroupItem value="1" id="one-time-delivery" />
+                  </Field>
+                </FieldLabel>
+              </RadioGroup>
             </div>
+            {
+              deliveryType == "0" && (
+                <div className="flex flex-col col-span-1 md:col-span-1">
+                  <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
+                    Select Medicine
+                  </label>
+                  <ComboCheckbox
+                    ref={medicineRef}
+                    label="Medicine"
+                    items={medicine?.medicines ?? []}
+                    selectedId={deliveryForm.values.medicine_id}
+                    onSelect={(id) => {
+                      deliveryForm.setFieldValue("medicine_id", id);
+                      deliveryForm.setFieldTouched("medicine_id", true);
+                      farmerRef.current?.open();
+                    }}
+                  />
+                  {deliveryForm.touched.medicine_id && deliveryForm.errors.medicine_id ? (
+                    <span className="text-red-500 text-sm">
+                      {deliveryForm.errors.medicine_id}
+                    </span>
+                  ) : null}
 
-
+                </div>
+              )
+            }
             <div className="flex flex-col col-span-1 md:col-span-1">
               <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
                 Select Farmer
@@ -231,49 +321,78 @@ const Delivery = () => {
                 </span>
               ) : null}
             </div>
-            <div className="flex flex-col col-span-2 md:col-span-1">
-              <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
-                Choose Unit
-              </label>
-              <ComboCheckbox
-                className="capitalize"
-                label="units"
-                items={units ?? []}
-                selectedId={deliveryForm.values.unit_id}
-                onSelect={(id) => {
-                  deliveryForm.setFieldValue("unit_id", id);
-                  deliveryForm.setFieldTouched("unit_id", true);
-                }}
-              />
-              {deliveryForm.touched.unit_id && deliveryForm.errors.unit_id ? (
-                <span className="text-red-500 text-sm">
-                  {deliveryForm.errors.unit_id}
-                </span>
-              ) : null}
-            </div>
-            <div className="flex flex-col col-span-2 md:col-span-1">
-              <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
-                Quantity
-              </label>
-              <input
-                className="w-full h-12 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-4 py-3 text-base"
-                placeholder="200"
-                type="number"
-                name="quantity"
-                ref={(el) => {
-                  el && (inputRef.current["quantity"] = el);
-                }}
-                onChange={deliveryForm.handleChange}
-                onBlur={deliveryForm.handleBlur}
-                value={deliveryForm.values.quantity}
-              />
-              {deliveryForm.touched.quantity && deliveryForm.errors.quantity ? (
-                <span className="text-red-500 text-sm">
-                  {deliveryForm.errors.quantity}
-                </span>
-              ) : null}
-            </div>
-
+            {
+              deliveryType == "0" ? (
+                <>
+                  <div className="flex flex-col col-span-2 md:col-span-1">
+                    <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
+                      Choose Unit
+                    </label>
+                    <ComboCheckbox
+                      className="capitalize"
+                      label="units"
+                      items={units ?? []}
+                      selectedId={deliveryForm.values.unit_id}
+                      onSelect={(id) => {
+                        deliveryForm.setFieldValue("unit_id", id);
+                        deliveryForm.setFieldTouched("unit_id", true);
+                      }}
+                    />
+                    {deliveryForm.touched.unit_id && deliveryForm.errors.unit_id ? (
+                      <span className="text-red-500 text-sm">
+                        {deliveryForm.errors.unit_id}
+                      </span>
+                    ) : null}
+                  </div>
+                  <div className="flex flex-col col-span-2 md:col-span-1">
+                    <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
+                      Quantity
+                    </label>
+                    <input
+                      className="w-full h-12 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-4 py-3 text-base"
+                      placeholder="200"
+                      type="number"
+                      name="quantity"
+                      ref={(el) => {
+                        el && (inputRef.current["quantity"] = el);
+                      }}
+                      onChange={(e) =>
+                        deliveryForm.setFieldValue("quantity", Number(e.target.value))
+                      } onBlur={deliveryForm.handleBlur}
+                      value={deliveryForm.values.quantity || ""} />
+                    {deliveryForm.touched.quantity && deliveryForm.errors.quantity ? (
+                      <span className="text-red-500 text-sm">
+                        {deliveryForm.errors.quantity}
+                      </span>
+                    ) : null}
+                  </div>
+                </>
+              ) : (
+                <div className="flex flex-col col-span-2 md:col-span-1">
+                  <label className="text-zinc-900 dark:text-zinc-100 text-sm font-bold leading-normal mb-2">
+                    Amount
+                  </label>
+                  <input
+                    className="w-full h-12 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-4 py-3 text-base"
+                    placeholder="200"
+                    type="number"
+                    name="amount"
+                    ref={(el) => {
+                      el && (inputRef.current["amount"] = el);
+                    }}
+                    onChange={(e) =>
+                      deliveryForm.setFieldValue("amount", Number(e.target.value))
+                    }
+                    onBlur={deliveryForm.handleBlur}
+                    value={deliveryForm.values.amount || ""} />
+                  {deliveryForm.touched.amount && deliveryForm.errors.amount ? (
+                    <span className="text-red-500 text-sm">
+                      {deliveryForm.errors.amount}
+                    </span>
+                  ) : null}
+                </div>
+              )
+            }
 
           </div>
 
