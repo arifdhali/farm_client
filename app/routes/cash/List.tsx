@@ -8,6 +8,7 @@ import { useGetCashList } from "@/query/Cash.queries";
 import HeaderFilter from "@/components/ui/headerFilter";
 import { useCallback, useMemo, useState } from "react";
 import CustomPagination from "@/components/ui/CustomPagination";
+import { format } from "date-fns";
 
 const List = () => {
   const [filter, setFilter] = useState({
@@ -82,7 +83,7 @@ const List = () => {
                         className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors"
                       >
                         <TableCell className="px-6 py-4 text-sm hidden md:table-cell">
-                          {expense?.date}
+                          {format(new Date(expense?.date), "dd/MM/yyyy")}
                         </TableCell>
 
                         <TableCell className="px-6 py-4 text-sm font-medium">

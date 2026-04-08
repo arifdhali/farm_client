@@ -3,7 +3,7 @@ import type { MetaArgs } from "react-router";
 export function meta({ }: MetaArgs) {
   return [
     { title: "Sohana Farm" },
-    { name: "description", content: "Welcome to React Router!" },
+    { name: "description", content: "Welcome to sohana farm" },
   ];
 }
 

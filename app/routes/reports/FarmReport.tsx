@@ -134,7 +134,9 @@ const FarmReport = () => {
                                         </TableCell>
                                         <TableCell className="px-6 py-4 text-sm font-medium text-center">
                                             <div className="flex gap-1 items-center justify-center">
-                                                <IndianRupeeIcon size={14} /> {farm?.medicine_price}
+                                                <IndianRupeeIcon size={14} /> {(farm?.medicine_price.toLocaleString("en-IN", {
+                                                    maximumFractionDigits: 2,
+                                                })) || 0}
                                             </div>
                                         </TableCell>
 
