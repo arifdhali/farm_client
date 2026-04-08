@@ -17,6 +17,7 @@ import { useQuery } from "@tanstack/react-query";
 import ComboCheckbox from "@/components/ui/ComboCheckbox";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Field, FieldLabel } from "@/components/ui/field";
+import useDebounce from "@/hooks/useDebounce";
 
 
 const addExpensesSchema = yup.object().shape({
@@ -29,12 +30,15 @@ const addExpensesSchema = yup.object().shape({
 });
 
 const CollectionAdd = () => {
-  const [searchBatchID, setSearchBatchID] = useState("")
+  const [searchBatchID, setSearchBatchID] = useState("");
+  const [search, setSearch] = useState("");
+  let deboundSearched = useDebounce(search, 400);
+
   const [open, setOpen] = useState<any>({
     payment_type: false,
     batch_id: false,
   });
-  const { data } = useGetCustomersList();
+  const { data } = useGetCustomersList({ search: deboundSearched });
   let user = useLoaderData();
 
   const { mutate: addCashCollection, isPending, isError, error } = useAddCollectionMutations();
@@ -218,6 +222,7 @@ const CollectionAdd = () => {
                 ref={null}
                 label="customer"
                 items={data?.customers ?? []}
+                onSearch={(value: string) => setSearch(value)}
                 selectedId={addCollectionFormik.values.customer_id}
                 onSelect={(id) => {
                   addCollectionFormik.setFieldValue("customer_id", id);
